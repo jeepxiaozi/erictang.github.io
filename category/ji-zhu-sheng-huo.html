@@ -56,11 +56,11 @@
 <p>然后我就没招儿了，而且加上老是在CSDN写博客吧，也没啥意思了，受到的限制还多，算了，懒也没有办法啊，还是要学习一下新东西的，加上最近也经常用Markdown写笔记，cold好基友他们也大多用GitHub Pages，所以嘞，干脆用起来好了，这个算是前言，不是重点，简单记录一下博客的诞生吧。</p>
 <p>该博客采用的是Markdown形式编写，由静态博客工具Pelican生成，部署在GitHub Pages上。</p>
 <p>参考链接:<a href="http://www.linuxzen.com/shi-yong-pelicanda-zao-jing-tai-bo-ke.html" title="Title">使用Pelican打造静态博客-cold's wold</a></p>
-<h1>Pelican介绍</h1>
+<h3>Pelican介绍</h3>
 <p>Pelican是一套使用Python编写的开源静态博客生成工具，它可以让你添加文章和创建页面，可以使用Markdown reStructuredText 和 AsiiDoc 等不同的格式来抒写博客，我个人对Markdown的格式也比较喜欢，它可以让你更专注在博客的内容上，而且本身也特别简洁，嗯。</p>
-<h1>Pelican的安装</h1>
+<h3>Pelican的安装</h3>
 <p>可以选择从GitHub上clone最新的代码，然后通过python setup.py install来进行安装，也可以通过easy_install或者pip等进行安装。</p>
-<h1>创建博客</h1>
+<h3>创建博客</h3>
 <div class="highlight"><pre>mkdir /path/of/ur/blog
 <span class="nb">cd</span> /path/of/ur/blog
 pelican-quickstart
@@ -79,7 +79,7 @@ pelican-quickstart
 
 
 <p>然后我们把我们的这个md文档扔到content目录下，然后执行<code>make html</code>命令，然后我们就可以看到，在output目录下生成了我们所需要的静态博客页面，之后我们执行<code>./develop_server.sh start</code>命令就可以通过在浏览器里打开<code>http://localhost:8000/</code>来进行访问了</p>
-<h1>创建页面</h1>
+<h3>创建页面</h3>
 <p>在content目录下创建一个叫pages的目录，然后在其中创建一个About.md的文档，并且填如下面的内容</p>
 <div class="highlight"><pre><span class="nl">Title:</span><span class="err">关于作者</span>
 <span class="nl">Date:</span><span class="mi">2015</span><span class="o">-</span><span class="mo">02</span><span class="o">-</span><span class="mo">05</span>
@@ -89,7 +89,7 @@ pelican-quickstart
 
 <p>之后，我们继续make html，可以先预览一下生成的博客页面。</p>
 <p>啊，差点儿忘了，我们还需要新建一个GitHub Pages，关于GitHub Pages的介绍可以看这里：https://pages.github.com </p>
-<h1>创建GitHub Pages</h1>
+<h3>创建GitHub Pages</h3>
 <p>OK，首先我们创建一个仓库，命名的方式采用“你的GitHub用户名.github.io”这样儿的形式，否则不会识别到，然后进入到我们的这个仓库的管理界面，选择“Settings”，在下方找到GitHub Pages区域，然后选择“Automatic page generator”，然后填写项目名，Tagline以及基础的一些其他的信息，如果想要自定义的话默认即可，因为我们待会儿把项目clone到本地之后，肯定还要替换掉的。</p>
 <p>OK，接下来我们就可以把刚新建的这个项目clone到本地，这里我直接使用了SourceTree，个人觉得了解Git命令也是有必要的，但是如果不是特别熟练的话也可以配合这种GUI工具来使用。</p>
 <p>然后我们提交上去，过会儿就可以看到生效的页面了。</p>
