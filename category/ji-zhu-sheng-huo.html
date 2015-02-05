@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8" />
+    <!-- Set the viewport width to device width for mobile -->
+    <meta name="viewport" content="width=device-width" />
+
+    <title>一把汤勺 - 技术生活</title>
+
+    <link rel="stylesheet" href="/theme/css/normalize.css" />
+    <link rel="stylesheet" href="/theme/css/foundation.min.css" />
+    <link rel="stylesheet" href="/theme/css/style.css" />
+    <link rel="stylesheet" href="/theme/css/pygments.css" />	
+    <script src="/theme/js/modernizr.js"></script>
+</head>
+
+<body>
+
+<!-- Nav Bar -->
+<nav>
+<div class="top-bar">
+<div class="row">
+    <div class="large-9 large-centered columns">
+	    <h1><a href="">一把汤勺</a></h1>
+    </div>
+</div>
+</div>
+
+<!-- Show menu items and pages -->
+<div class="row">
+<div class="large-9 columns">
+    <ul class="button-group navigation">
+
+            <li><a href="/pages/guan-yu-zuo-zhe.html" class="button secondary small">关于作者</a></li>
+    </ul>
+</div>
+</div>
+</nav>
+<!-- End Nav -->
+
+
+<!-- Main Page Content and Sidebar -->
+<div class="row">
+
+    <!-- Main Blog Content -->
+    <div class="large-9 columns">
+        
+        
+
+            <article>
+                <a href="/bo-ke-dan-sheng-ji.html"><h3 class="article-title">博客诞生记</h3></a>
+<h6 class="subheader" title="2015-02-05T00:00:00+08:00">四 05 二月 2015
+</h6>
+
+
+<p>本来我这么懒惰的人，写博客大多都是在CSDN或者博客园，CSDN更多一些吧，但最近接连两天的被封号让我表示很蛋疼了，起因就是我转载小伙伴的博客，据CSDN客服人员的回复说是因为我的博客里有“敏感词”。。。T_T! 敏感词，好吧，通篇读了好多遍了，没看到一篇关于四轴飞行器的博客到底哪里有敏感词了，唔对，CSDN客服表示说我们没法儿透露敏感词给您。。。然后我说呵呵。。。</p>
+<p>然后我就没招儿了，而且加上老是在CSDN写博客吧，也没啥意思了，受到的限制还多，算了，懒也没有办法啊，还是要学习一下新东西的，加上最近也经常用Markdown写笔记，cold好基友他们也大多用GitHub Pages，所以嘞，干脆用起来好了，这个算是前言，不是重点，简单记录一下博客的诞生吧。</p>
+<p>该博客采用的是Markdown形式编写，由静态博客工具Pelican生成，部署在GitHub Pages上。</p>
+<p>Pelican介绍</p>
+<p>Pelican是一套使用Python编写的开源静态博客生成工具，它可以让你添加文章和创建页面，可以使用Markdown reStructuredText 和 AsiiDoc 等不同的格式来抒写博客，我个人对Markdown的格式也比较喜欢，它可以让你更专注在博客的内容上，而且本身也特别简洁，嗯。</p>
+<p>Pelican的安装</p>
+<p>可以选择从GitHub上clone最新的代码，然后通过python setup.py install来进行安装，也可以通过easy_install或者pip等进行安装。</p>
+<p>创建博客</p>
+<div class="highlight"><pre><span class="n">mkdir</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">of</span><span class="o">/</span><span class="n">ur</span><span class="o">/</span><span class="n">blog</span>
+<span class="n">cd</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">of</span><span class="o">/</span><span class="n">ur</span><span class="o">/</span><span class="n">blog</span>
+<span class="n">pelican</span><span class="o">-</span><span class="n">quickstart</span>
+</pre></div>
+
+
+<p>然后就会出现一系列的问题，其实也不难，会的就写，不会的就选择默认就好了，而且万一不小心写错了也没啥的，后续的话可以通过编辑pelicanconf.py文件进行更改配置，关于设置这里就直接略过了。</p>
+<p>回答完问题之后，博客就创建成功了，主要会生成以下的一些文件：</p>
+<div class="highlight"><pre><span class="o">|--</span> <span class="n">content</span>                <span class="err">#</span> <span class="err">用于存放文章的目录</span>
+<span class="o">|--</span> <span class="n">develop_server</span><span class="p">.</span><span class="n">sh</span>      <span class="err">#</span> <span class="err">测试服务器</span>
+<span class="o">|--</span> <span class="n">Makefile</span>               <span class="err">#</span> <span class="n">Makefile</span>
+<span class="o">|--</span> <span class="n">output</span>                 <span class="err">#</span> <span class="err">静态生成文件</span>
+<span class="o">|--</span> <span class="n">pelicanconf</span><span class="p">.</span><span class="n">py</span>         <span class="err">#</span> <span class="err">配置文件</span>
+<span class="o">|--</span> <span class="n">publishconf</span><span class="p">.</span><span class="n">py</span>         <span class="err">#</span> <span class="err">配置文件</span>
+</pre></div>
+
+
+<p>然后我们把我们的这个md文档扔到content目录下，然后执行<code>make html</code>命令，然后我们就可以看到，在output目录下生成了我们所需要的静态博客页面，之后我们执行<code>./develop_server.sh start</code>命令就可以通过在浏览器里打开<code>http://localhost:8000/</code>来进行访问了</p>
+<p>创建页面</p>
+<p>在content目录下创建一个叫pages的目录，然后在其中创建一个About.md的文档，并且填如下面的内容</p>
+<div class="highlight"><pre><span class="nl">Title:</span><span class="err">关于作者</span>
+<span class="nl">Date:</span><span class="mi">2015</span><span class="o">-</span><span class="mo">02</span><span class="o">-</span><span class="mo">05</span>
+<span class="err">作者是一只擅长打酱油和灌水的老光棍儿，喜欢摇滚，热爱编程，对移动端有兴趣，对硬件也有兴趣，对萌妹纸当然更有兴趣，</span><span class="o">~</span><span class="err">\</span><span class="p">(</span><span class="err">≧▽≦</span><span class="p">)</span><span class="o">/~</span><span class="err">啦啦啦，嗯，暂时就这么多先。。。</span>
+</pre></div>
+
+
+<p>之后，我们继续make html，可以先预览一下生成的博客页面。</p>
+<p>啊，差点儿忘了，我们还需要新建一个GitHub Pages，关于GitHub Pages的介绍可以看这里：https://pages.github.com </p>
+<p>OK，首先我们创建一个仓库，命名的方式采用“erictang.github.io”这样儿的形式，我比较懒，直接用“erictangblog”这样儿，然后进入到我们的这个仓库的管理界面，选择“Settings”，在下方找到GitHub Pages区域，然后选择“Automatic page generator”，然后填写项目名，Tagline以及基础的一些其他的信息，如果想要自定义的话默认即可，因为我们待会儿把项目clone到本地之后，肯定还要替换掉的。</p>
+<p>OK，接下来我们就可以把刚新建的这个项目clone到本地，这里我直接使用了SourceTree，个人觉得了解Git命令也是有必要的，但是如果不是特别熟练的话也可以配合这种GUI工具来使用。</p>
+<p>然后我们提交上去，过会儿就可以看到生效的页面了。</p>
+<p>唔，然后写到这里，差不多一个还算说得过去的博客就已经差不多就位了，剩下的工作还需要熟悉一下Pelican，然后适当美化一下，留待后续补充吧。</p><p class="subheader">Category: <a href="/category/ji-zhu-sheng-huo.html">技术生活</a>
+
+</p>
+
+
+
+            </article>
+
+<div class="pagination-centered">
+<h6 class="subheader">Page 1 of 1</h6>
+
+<p>
+
+</p>
+</div>
+
+
+
+            <!-- /#posts-list -->
+
+    </div>
+    <!-- End Main Content -->
+
+    <!-- Sidebar -->
+    <aside class="large-3 columns">
+        <h5 class="sidebar-title">Site</h5>
+        <ul class="side-nav">
+            <li><a href="/archives.html">Archives</a>
+            <li><a href="/tags.html">Tags</a>
+        </ul>
+
+		
+        <h5 class="sidebar-title">Categories</h5>
+        <ul class="side-nav">
+            <li><a href="/category/ji-zhu-sheng-huo.html">技术生活</a></li>
+            <li><a href="/category/pages.html">Pages</a></li>
+   
+        </ul>
+
+        <h5 class="sidebar-title">Links</h5>
+        <ul class="side-nav">
+            <li><a href="http://www.linuxzen.com">cold's world</a></li>
+        </ul>
+		
+        <h5 class="sidebar-title">Social</h5>
+        <ul class="side-nav">
+            <li><a href="https://github.com/jeepxiaozi">GitHub</a></li>
+        </ul>
+
+    </aside> <!-- End Sidebar -->
+
+</div> <!-- End Main Content and Sidebar -->
+
+
+<!-- Footer -->
+<footer class="row">
+    <div class="large-12 columns">
+        <hr />
+        <div class="row">
+            <div class="large-6 columns">
+              <!--                  <p>一把汤勺 by EricTang</p> -->
+            </div>
+            </div>
+    </div>
+</footer>
+</body>
+</html>
