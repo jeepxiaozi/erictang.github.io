@@ -61,14 +61,15 @@
 <p>Pelican是一套使用Python编写的开源静态博客生成工具，它可以让你添加文章和创建页面，可以使用Markdown reStructuredText 和 AsiiDoc 等不同的格式来抒写博客，我个人对Markdown的格式也比较喜欢，它可以让你更专注在博客的内容上，而且本身也特别简洁，嗯。</p>
 <p>Pelican的安装</p>
 <p>可以选择从GitHub上clone最新的代码，然后通过python setup.py install来进行安装，也可以通过easy_install或者pip等进行安装。</p>
-<p>创建博客</p>
-<div class="highlight"><pre><span class="n">mkdir</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">of</span><span class="o">/</span><span class="n">ur</span><span class="o">/</span><span class="n">blog</span>
-<span class="n">cd</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">of</span><span class="o">/</span><span class="n">ur</span><span class="o">/</span><span class="n">blog</span>
-<span class="n">pelican</span><span class="o">-</span><span class="n">quickstart</span>
-</pre></div>
-
-
-<p>然后就会出现一系列的问题，其实也不难，会的就写，不会的就选择默认就好了，而且万一不小心写错了也没啥的，后续的话可以通过编辑pelicanconf.py文件进行更改配置，关于设置这里就直接略过了。</p>
+<p>创建博客
+<pre>
+<code>
+mkdir /path/of/ur/blog
+cd /path/of/ur/blog
+pelican-quickstart
+</code>
+</pre>
+然后就会出现一系列的问题，其实也不难，会的就写，不会的就选择默认就好了，而且万一不小心写错了也没啥的，后续的话可以通过编辑pelicanconf.py文件进行更改配置，关于设置这里就直接略过了。</p>
 <p>回答完问题之后，博客就创建成功了，主要会生成以下的一些文件：</p>
 <div class="highlight"><pre><span class="o">|--</span> <span class="n">content</span>                <span class="err">#</span> <span class="err">用于存放文章的目录</span>
 <span class="o">|--</span> <span class="n">develop_server</span><span class="p">.</span><span class="n">sh</span>      <span class="err">#</span> <span class="err">测试服务器</span>
