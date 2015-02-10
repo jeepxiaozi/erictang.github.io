@@ -5,28 +5,28 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://jeepxiaozi.github.io/</loc>
-<lastmod>2015-02-10T11:36:09-00:00</lastmod>
+<lastmod>2015-02-10T15:16:26-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://jeepxiaozi.github.io/archives.html</loc>
-<lastmod>2015-02-10T11:36:09-00:00</lastmod>
+<lastmod>2015-02-10T15:16:26-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://jeepxiaozi.github.io/tags.html</loc>
-<lastmod>2015-02-10T11:36:09-00:00</lastmod>
+<lastmod>2015-02-10T15:16:26-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://jeepxiaozi.github.io/categories.html</loc>
-<lastmod>2015-02-10T11:36:09-00:00</lastmod>
+<lastmod>2015-02-10T15:16:26-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -41,13 +41,6 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>http://jeepxiaozi.github.io/zhuan-zai-kai-pian-cong-ling-zuo-si-zhou-fei-xing-qi-1.html</loc>
 <lastmod>2015-02-09T23:06:51+08:00</lastmod>
-<changefreq>monthly</changefreq>
-<priority>0.7</priority>
-</url>
-
-<url>
-<loc>http://jeepxiaozi.github.io/cornerstoneshi-yong-jiao-cheng.html</loc>
-<lastmod>2015-02-06T00:00:00+08:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.7</priority>
 </url>
@@ -75,13 +68,6 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo.html</loc>
-<lastmod>2015-02-06T00:00:00+08:06</lastmod>
-<changefreq>daily</changefreq>
-<priority>0.5</priority>
-</url>
-
-<url>
-<loc>http://jeepxiaozi.github.io/category/kai-fa-gong-ju.html</loc>
 <lastmod>2015-02-06T00:00:00+08:06</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
