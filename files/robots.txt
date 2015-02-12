@@ -1,0 +1,2 @@
+User-agent: *
+Sitemap: http://jeepxiaozi.github.io/sitemap.xml
