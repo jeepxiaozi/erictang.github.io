@@ -5,28 +5,28 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://jeepxiaozi.github.io/</loc>
-<lastmod>2015-02-15T16:20:00-00:00</lastmod>
+<lastmod>2015-02-15T16:26:32-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://jeepxiaozi.github.io/archives.html</loc>
-<lastmod>2015-02-15T16:20:00-00:00</lastmod>
+<lastmod>2015-02-15T16:26:32-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://jeepxiaozi.github.io/tags.html</loc>
-<lastmod>2015-02-15T16:20:00-00:00</lastmod>
+<lastmod>2015-02-15T16:26:32-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://jeepxiaozi.github.io/categories.html</loc>
-<lastmod>2015-02-15T16:20:00-00:00</lastmod>
+<lastmod>2015-02-15T16:26:32-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -81,7 +81,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo-markdownxie-zuo.html</loc>
+<loc>http://jeepxiaozi.github.io/category/markdownxie-zuo.html</loc>
 <lastmod>2015-02-15T00:00:00+08:06</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
