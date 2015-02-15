@@ -5,7 +5,7 @@
     <!-- Set the viewport width to device width for mobile -->
     <meta name="viewport" content="width=device-width" />
 
-    <title>关于作者</title>
+    <title>为自己的GitHub Pages添加一个图床</title>
 
     <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/normalize.css" />
     <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/foundation.min.css" />
@@ -46,16 +46,31 @@
         <div class="large-9 columns">
 <article>
     <header>
-        <h3 class="article-title"><a href="http://jeepxiaozi.github.io/guan-yu-zuo-zhe.html" rel="bookmark"
-        title="Permalink to 关于作者">关于作者</a></h3>
+        <h3 class="article-title"><a href="http://jeepxiaozi.github.io/wei-zi-ji-de-github-pagestian-jia-ge-tu-chuang.html" rel="bookmark"
+        title="Permalink to 为自己的GitHub Pages添加一个图床">为自己的GitHub Pages添加一个图床</a></h3>
     </header>
 
-<h6 class="subheader" title="2015-02-05T00:00:00+08:00">四 05 二月 2015
+<h6 class="subheader" title="2015-02-15T00:00:00+08:00">日 15 二月 2015
 </h6>
 
 
-    <p>作者是一只擅长打酱油和灌水的老光棍儿，喜欢摇滚，热爱编程，对移动端有兴趣，对硬件也有兴趣，对萌妹纸当然更有兴趣，~(≧▽≦)/~啦啦啦，嗯，暂时就这么多先。。。</p>
-<p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/pages.html">Pages</a>
+    <p>前几天的时候把GitHub Pages弄好之后就一直没怎么正式写博客，主要还是因为图床的问题，因为虽然用Markdown写博客会让人更加专注在文章的内容上，但是如果全篇都是文字的话估计没人愿意看了就，同时呢，GitHub Pages对于存储空间貌似也是有一定的限制的，所以在朋友的推荐下，试用一下七牛云存储作为图床，这里简单记录一下。</p>
+<p>七牛注册之后会赠送一定的存储空间，大概有10个G，作为图床来说的话，应该足够了（又不是放啥高清无码大图），只不过需要注意的是，要创建空间需要先实名认证一哈子，就是简单的填写一下基本信息然后等待审核通过成为标准用户就好了。
+如下图，点击新建一个空间：</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/fda341dfa.jpg-img.normal" /></p>
+<p>创建一个在七牛中唯一用户名的空间，记住如果是作为图床的话一定要设置为公开空间，否则。。。我还没试过设置为私有空间，但是如果你的博客里的配图需要别人输入密码才能访问的话，是不是有点儿太。。。
+总之，创建完成之后，如下：</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/H~GROGRVGY3R455AOE3U.jpg" /></p>
+<p>看，这里，就是我们的图片的外链地址：</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/2NXM5_8$RG$PPM9P66.jpg-img.normal" /></p>
+<p>但是等下。。。好像哪里不对？为啥这图片显示成这样儿了啊，这么大的图是要哪样儿？啊，当然这里说的大是显示出来的尺寸大，而不是体积大。无需担心，七牛云存储还是很强大的，我们来看一下数据处理功能。点击数据处理，选择新建一个图片样式，然后根据你自己的实际情况进行样式添加，比如我这里只是希望可以缩放图片，让它们不要显示的那么大，如下图：</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/6GQ_TB4TN3NMNU0CA2S$F$M.jpg-img.normal" /></p>
+<p>而且，七牛还很贴心的提供了水印功能：</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/L83U_LBZX76Y8BKU3.jpg-img.normal" /></p>
+<p>OK，样式添加完了，但是我们怎么使用呢？我们可以在数据处理选项栏中看到这样儿一行操作提醒：</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/LXE37SG0${6[5@MJXIV}@$K.jpg-img.normal" />，举个例子，我们的图片外链地址，是这个“http://7vzo2i.com1.z0.glb.clouddn.com/fda341dfa.jpg”，然后呢，我们在七牛中所使用的样式分隔符是“-”，我们在数据处理中新添加的样式是“img.normal”，那么我们在使用的时候，只需要在Markdown文档中的的img标签中填写图片URL地址时填入如下内容“http://7vzo2i.com1.z0.glb.clouddn.com/fda341dfa.jpg-img.normal”，即可。</p>
+<p>那么，七牛云存储还提供了一些其他的功能，诸如404页面啊、防盗链功能啊之类的，只不过目前防盗链功能需要充值，这个等后续充费后我再体验一下吧，至少，暂时性的图床问题已经解决了，这下就可以更加欢快的用Markdown方式写博客了。</p>
+<p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo-markdownxie-zuo.html">技术生活,Markdown写作</a>
 
 </p>
 
@@ -66,8 +81,8 @@
     <div id="disqus_thread"></div>
     <script type="text/javascript">
         var disqus_shortname = 'erictang'
-        var disqus_identifier = "guan-yu-zuo-zhe.html";
-        var disqus_url = "http://jeepxiaozi.github.io/guan-yu-zuo-zhe.html";
+        var disqus_identifier = "wei-zi-ji-de-github-pagestian-jia-ge-tu-chuang.html";
+        var disqus_url = "http://jeepxiaozi.github.io/wei-zi-ji-de-github-pagestian-jia-ge-tu-chuang.html";
 
         (function() {
             var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

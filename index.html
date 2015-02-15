@@ -48,6 +48,42 @@
         
 
             <article>
+                <a href="http://jeepxiaozi.github.io/wei-zi-ji-de-github-pagestian-jia-ge-tu-chuang.html"><h3 class="article-title">为自己的GitHub Pages添加一个图床</h3></a>
+<h6 class="subheader" title="2015-02-15T00:00:00+08:00">日 15 二月 2015
+</h6>
+
+
+<p>前几天的时候把GitHub Pages弄好之后就一直没怎么正式写博客，主要还是因为图床的问题，因为虽然用Markdown写博客会让人更加专注在文章的内容上，但是如果全篇都是文字的话估计没人愿意看了就，同时呢，GitHub Pages对于存储空间貌似也是有一定的限制的，所以在朋友的推荐下，试用一下七牛云存储作为图床，这里简单记录一下。</p>
+<p>七牛注册之后会赠送一定的存储空间，大概有10个G，作为图床来说的话，应该足够了（又不是放啥高清无码大图），只不过需要注意的是，要创建空间需要先实名认证一哈子，就是简单的填写一下基本信息然后等待审核通过成为标准用户就好了。
+如下图，点击新建一个空间：</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/fda341dfa.jpg-img.normal" /></p>
+<p>创建一个在七牛中唯一用户名的空间，记住如果是作为图床的话一定要设置为公开空间，否则。。。我还没试过设置为私有空间，但是如果你的博客里的配图需要别人输入密码才能访问的话，是不是有点儿太。。。
+总之，创建完成之后，如下：</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/H~GROGRVGY3R455AOE3U.jpg" /></p>
+<p>看，这里，就是我们的图片的外链地址：</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/2NXM5_8$RG$PPM9P66.jpg-img.normal" /></p>
+<p>但是等下。。。好像哪里不对？为啥这图片显示成这样儿了啊，这么大的图是要哪样儿？啊，当然这里说的大是显示出来的尺寸大，而不是体积大。无需担心，七牛云存储还是很强大的，我们来看一下数据处理功能。点击数据处理，选择新建一个图片样式，然后根据你自己的实际情况进行样式添加，比如我这里只是希望可以缩放图片，让它们不要显示的那么大，如下图：</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/6GQ_TB4TN3NMNU0CA2S$F$M.jpg-img.normal" /></p>
+<p>而且，七牛还很贴心的提供了水印功能：</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/L83U_LBZX76Y8BKU3.jpg-img.normal" /></p>
+<p>OK，样式添加完了，但是我们怎么使用呢？我们可以在数据处理选项栏中看到这样儿一行操作提醒：</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/LXE37SG0${6[5@MJXIV}@$K.jpg-img.normal" />，举个例子，我们的图片外链地址，是这个“http://7vzo2i.com1.z0.glb.clouddn.com/fda341dfa.jpg”，然后呢，我们在七牛中所使用的样式分隔符是“-”，我们在数据处理中新添加的样式是“img.normal”，那么我们在使用的时候，只需要在Markdown文档中的的img标签中填写图片URL地址时填入如下内容“http://7vzo2i.com1.z0.glb.clouddn.com/fda341dfa.jpg-img.normal”，即可。</p>
+<p>那么，七牛云存储还提供了一些其他的功能，诸如404页面啊、防盗链功能啊之类的，只不过目前防盗链功能需要充值，这个等后续充费后我再体验一下吧，至少，暂时性的图床问题已经解决了，这下就可以更加欢快的用Markdown方式写博客了。</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo-markdownxie-zuo.html">技术生活,Markdown写作</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/wei-zi-ji-de-github-pagestian-jia-ge-tu-chuang.html#disqus_thread">comments</a></p>            </article>
+
+
+                <hr  class="gradient"/>
+
+
+        
+
+
+            <article>
                 <a href="http://jeepxiaozi.github.io/zhuan-zai-kai-pian-cong-ling-zuo-si-zhou-fei-xing-qi-1.html"><h3 class="article-title">[转载]开篇 从零做四轴飞行器(1)</h3></a>
 <h6 class="subheader" title="2015-02-09T23:06:51+08:00">一 09 二月 2015
 </h6>
@@ -55,90 +91,15 @@
 
 <p>我个人对于四轴飞行器（或者说专业一点儿讲，多旋翼飞行器）的爱好，具体也不记得是从哪天起来的了，但是无疑Ted上的那个四轴的视频给我很大的触动，然后机缘巧合，认识了这篇文章的作者：洋仔，具体的机缘巧合地点在此：<a href="http://www.zhihu.com/question/21775696">如何学习自制四轴飞行器</a>，啊，各位看官如果对我们的基情，啊不是，是纯洁的友情，要进行点上1024个赞的话，欢迎前去围观。</p>
 <p>扯完闲篇儿，聊点儿正经的爱好，四轴飞行器，当然啦，这个目前是很火爆的，国内国外的都有，自不必说，可问题是，咱们是攻城狮诶！高（不）端（折）大（滕）气（不）上（不）档（成）次（活）的攻城狮诶！所以嘞，在四轴飞行器方面我还是个菜鸟菜鸟菜菜鸟，但是洋仔同学已经有较为丰富的折腾经验，并且也是专业算是对口啊，所以他整理了不少博客，详情请戳<a href="http://wellmakers.com/?cat=13">四轴飞行器</a>。</p>
-<p>那么OK，我们顺着洋仔同学的折腾轨迹，看一下，四轴飞行器的自制（折腾）须知，以下是洋仔的Blog原文：</p>
-<p>自从大二接触并参加飞思卡尔智能车以来，林林总总也做过一些其他项目，但是心中一直有强烈的欲望想做一台四轴飞行器，尤其是看了宾夕法尼亚大学在TED演讲上做的四轴集群飞行，帅的简直一B，不过当我开始准备的时候发现当时四轴并不像智能车那么好做，原因就是那时候四轴飞行器的资料实在是太少了。京东上四轴DIY的书一本都找不到，找到的全是建模控制，对于非自动化的孩子来说简直是天书。我对四轴的认识也都是来自于百度或者某些开源帖子片段性的认识，并不系统，脑海中国对四轴没有一个清晰的认识。在做的过程中也因为摸索浪费了一些人民币(ToT)。想必像我这样想做四轴却没有思路的人一定不少，现在我的四轴终于能够稳稳的飞起来了(网站搭起来时四轴还都没调好呢！都是泪啊..)
-<img alt="image" src="http://wellmakers.com/wp-content/uploads/2014/09/四轴最后.bmp" /></p>
-<p>目前四轴的状态是：
-1.安卓手机蓝牙</p>
-<p><img alt="image" src="http://wellmakers.com/wp-content/uploads/2014/09/安卓上位机-180x300.jpg" /></p>
-<p>2.自制双摇杆多通道遥控器
-<img alt="image" src="http://wellmakers.com/wp-content/uploads/2014/09/QQ图片20130907084603-300x297.jpg" /></p>
-<p>3.PC端上位机波形+姿态显示+手柄驱动支持(插入游戏手柄就可以遥控四轴)</p>
-<p>飞行视频：</p>
-<p><embed src="http://player.youku.com/player.php/sid/XNzAyNzU1MDEy/v.swf" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" wmode="opaque" width="480" height="400"></embed></p>
-<p><embed src="http://player.youku.com/player.php/sid/XNzAyNzc3MTMy/v.swf" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" wmode="opaque" width="480" height="400"></embed></p>
-<p>现在网上大多数教你做四轴的帖子都是买商品飞控，电机电调，做一个大四轴花钱多不说还学不到四轴的知识，我希望从电路做起，从电路设计一直走到算法设计，一路走来收获很多。</p>
-<p>代码我要整理整理再发上来（- -.因为代码写得实在是太凌乱了，还有一些不完善的地方，想改又懒得动弹）
-一路做下来也主要是靠看各种开源贴或者博客分享的内容弄出来的。想把这些东西系统的总结一下,下面是我做小四轴要看的方方面面，建议最好还是先拿一个四轴来玩玩再做</p>
-<p>1.四轴飞行器的历史和发展</p>
-<p>2.都有哪几种四轴飞行器？！哪种适合DIY?!</p>
-<p>做个四轴要花多少钱！？做个四轴都需要什么！？</p>
-<p>3.开源四轴介绍</p>
-<div class="highlight"><pre><span class="err">德国</span><span class="n">MK</span>
-<span class="n">Crazyflie</span>
-<span class="err">匿名四轴</span>
-<span class="err">圆点博士</span>
-</pre></div>
-
-
-<p>4.小型四轴飞行器电路详解</p>
-<div class="highlight"><pre><span class="err">四轴飞控所有器件总览</span>
-<span class="err">有刷电机！？无刷！？空心杯电机又是什么！？</span>
-<span class="err">电源与电池的参数和选择</span>
-<span class="err">主控芯片</span><span class="p">(</span><span class="n">MCU</span><span class="p">)</span><span class="err">的选择</span>
-<span class="err">传感器之陀螺仪</span>
-<span class="err">传感器之加速度计</span>
-<span class="err">传感器之</span> <span class="mi">6</span><span class="err">轴传感器</span><span class="n">MPU6050</span><span class="p">(</span><span class="err">三轴加速度计</span><span class="o">+</span><span class="err">三轴陀螺仪</span><span class="p">)</span><span class="err">介绍</span>
-<span class="err">传感器之电子罗盘</span><span class="n">HMC5883</span>
-<span class="err">用手机来遥控四轴–蓝牙模块的选择</span>
-<span class="err">美国手</span><span class="o">!?</span><span class="err">日本手</span><span class="o">!?</span><span class="err">遥控器的电路设计</span>
-<span class="err">油门摇杆与方向摇杆的选择</span>
-</pre></div>
-
-
-<p>5.四轴飞行器程序设计</p>
-<div class="highlight"><pre><span class="err">四轴飞行器程序概要</span>
-<span class="n">STM32</span><span class="err">单片机底层设计</span>
-<span class="n">MPU6050</span><span class="err">的处理</span>
-<span class="err">为什么暂时不需要电子罗盘</span><span class="n">HMC5883</span>
-<span class="err">姿态解算–什么是姿态解算</span>
-<span class="err">姿态解算–什么是欧拉角</span>
-<span class="err">姿态解算–什么是四元数</span>
-<span class="err">看看姿态，</span><span class="n">PC</span><span class="err">上位机的使用</span>
-<span class="err">电机的</span><span class="n">x</span><span class="err">型与</span><span class="o">+</span><span class="err">型的区别</span>
-<span class="err">四轴</span><span class="n">PID</span><span class="err">参数的作用</span>
-<span class="err">四轴</span><span class="n">PID</span><span class="err">调试方法和经验</span>
-<span class="err">遥控器的程序设计</span>
-</pre></div>
-
-
-<p>6.四轴飞行器的上位机设计</p>
-<div class="highlight"><pre><span class="err">遥控器的那些事</span>
-<span class="err">串口通信与协议</span>
-<span class="n">PC</span><span class="err">姿态和波形上位机的编写</span>
-<span class="n">C</span><span class="o">++</span><span class="err">与</span><span class="n">Windows</span> <span class="err">编程</span><span class="p">(</span><span class="n">MFC</span><span class="p">)</span>
-<span class="n">OPENGL</span><span class="err">的空间姿态显示</span>
-<span class="err">用你的</span><span class="n">Android</span><span class="err">手机来控制四轴</span>
-<span class="n">Java</span><span class="err">与</span><span class="n">Android</span> <span class="err">简介</span>
-<span class="n">Android</span> <span class="err">遥控器之蓝牙通信</span>
-<span class="n">Android</span> <span class="err">遥控器之双摇杆设计</span>
-</pre></div>
-
-
-<p>7.四轴的操作控制</p>
-<p>打赏作者喝杯咖啡吧</p>
-<p><a href="http://wellmakers.com/?page_id=135">http://wellmakers.com/?page_id=135</a></p>
-<p>转载请注明：<a href="http://wellmakers.com/">Wellmakers&amp;&amp;Owl</a> 》<a href="http://wellmakers.com/?p=7">开篇 从零做四轴飞行器(1)</a></p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/multicopter.html">MultiCopter</a>
+<p>那么OK，我们顺着洋仔同学的折腾轨迹 ...</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/multicopter.html">MultiCopter</a>
 
 </p>
 
 
 
-<p><a href="http://jeepxiaozi.github.io/zhuan-zai-kai-pian-cong-ling-zuo-si-zhou-fei-xing-qi-1.html#disqus_thread">comments</a></p>            </article>
-
-
+<p><a href="http://jeepxiaozi.github.io/zhuan-zai-kai-pian-cong-ling-zuo-si-zhou-fei-xing-qi-1.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/zhuan-zai-kai-pian-cong-ling-zuo-si-zhou-fei-xing-qi-1.html">Read More</a>
                 <hr  class="gradient"/>
-
+            </article>
 
         
 
@@ -227,6 +188,8 @@
             <h5 class="sidebar-title">Categories</h5>
             <ul class="side-nav">
                 <li><a href="http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo.html">技术生活</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo-markdownxie-zuo.html">技术生活,Markdown写作</a>
                 </li>
                 <li><a href="http://jeepxiaozi.github.io/category/multicopter.html">MultiCopter</a>
                 </li>
