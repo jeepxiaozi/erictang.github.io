@@ -48,6 +48,232 @@
         
 
             <article>
+                <a href="http://jeepxiaozi.github.io/hei-kuo-de-macxi-tong-zhuang-ji-zhi-nan.html"><h3 class="article-title">黑阔的Mac系统装机指南</h3></a>
+<h6 class="subheader" title="2015-02-24T16:42:22+08:00">二 24 二月 2015
+</h6>
+
+
+<h1>黑阔的Mac系统装机指南</h1>
+<p>本文为译文，原文链接：http://lapwinglabs.com/blog/hacker-guide-to-setting-up-your-mac</p>
+<p>嗯，大概就这样儿了，郑重其事的第一篇译作，一定要用心好好翻译。一来是电脑用的时间略长了然后好多东西随便扔随便扔确实打算过阵子不忙的时候重装一下系统了，二来是，之前都是自己看英文文档但是从来没翻译过，所以，嗯，差不多是时候了，翻译的不好，最开始打算是自己拿来看看，参考一下就好，如有翻译的实在令人承受不了的地方欢迎大家斧正，然后就是大家如果参考这篇文章进行重装系统的话，本人就重装系统产生的一些列问题统统都是不负责任的哟，请仔细参考原文下方的评论，可能会对电源管理产生一定的影响，慎重！</p>
+<p><strong>开始正文</strong></p>
+<p>黑阔们大多痴迷于自动化，我们希望让机器来做那些巴拉巴拉（无聊的事儿），这样儿我们就能把精力更加集中在那些有意思的事儿上了。比如，设置你的电脑（安装系统和软件）就是一个很常见的大部分工作都可以自动化但是很多人都么有注意到的地方。</p>
+<p>来，我们今天就来给大家讲解一些技巧，帮助大家伙儿完成自动初始化你的电脑。今天这篇博文的目标，就是为了实现80%的安装都自动化，让你可以轻松在几个小时内搞定你的mac，而不是像以前一样花费好几天。</p>
+<p>先秀秀图。。。
+<img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/terminal.png-img.normal" /></p>
+<p><strong>准备工作</strong>
+俗话说“工欲善其事，必先利其器”，俗话还说“没有那金刚钻就憋揽那瓷器活儿”，嗯，要实现mac系统的自动化安装，<a href="https://boxen.github.com">Boxen</a>就是其中必须要提一提的。Boxen是Github自家的一个解决方案，用来统一开发环境（有点儿像最近如日中天的Docker），这样儿就不会出现“诶代码在我的机器上是好的啊”这种情况了。Boxen对于那些自有开发团队的建制较为完善的公司来说是一个灰常不错的解决方案，但是，那些小的刚起步的团队呢？那些如“独狼”一般的黑阔呢？我们需要一个更适合他们的解决方案。</p>
+<p><strong>我们的工具箱</strong></p>
+<p>这篇博客里呢，我们将会用到一下的开源工具来实现Mac的自动化配置：</p>
+<ul>
+<li>通过<a href="http://brew.sh">homebrew</a>来安装二进制文件</li>
+<li>通过<a href="http://caskroom.io">homebrew cask</a>来安装应用程序</li>
+<li>通过<a href="https://github.com/lra/mackup">mackup</a>来备份和保存相应的配置文件</li>
+<li>通过<a href="https://gist.github.com/brandonb927/3195465">osx-for-hackers.sh</a>来加固Mac系统</li>
+<li>通过<a href="https://github.com/matthewmueller/dots">dots</a>把他们整合在一起</li>
+</ul>
+<p>下面分别来讲解一下</p>
+<p><strong>通过Homebrew来安装二进制文件</strong></p>
+<p>Homebrew是一个社区主导的包管理工具，并且也是每个黑阔的必备工具包。Homebrew能够自动完成二进制文件的安装、编译和链接，它同时也使得更新和卸载二进制文件变得灰常轻松。</p>
+<p>下面呢就是你应该首先在一台全新的Mac，将下面的代码片段放在 bash 脚本来确保homebrew安装了：</p>
+<div class="highlight"><pre><span class="cp"># Check for Homebrew,</span>
+<span class="cp"># Install if we don&#39;t have it</span>
+<span class="k">if</span> <span class="n">test</span> <span class="o">!</span> <span class="err">$</span><span class="p">(</span><span class="n">which</span> <span class="n">brew</span><span class="p">);</span> <span class="n">then</span>
+  <span class="n">echo</span> <span class="s">&quot;Installing homebrew...&quot;</span>
+  <span class="n">ruby</span> <span class="o">-</span><span class="n">e</span> <span class="s">&quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&quot;</span>
+<span class="n">fi</span>
+
+<span class="cp"># Update homebrew recipes</span>
+<span class="n">brew</span> <span class="n">update</span>
+</pre></div>
+
+
+<p>接下来呢，你就应该首先更新一下你的Mac系统上已有的 unix 工具。自从"<a href="http://goo.gl/zElPKk">Shellshock</a>"漏洞粗线之后，及时打补丁包和更新的必要性越来越大了。</p>
+<p>下面的代码片段会帮你更新这些 unix 工具：</p>
+<div class="highlight"><pre><span class="cp"># Install GNU core utilities (those that come with OS X are outdated)</span>
+<span class="n">brew</span> <span class="n">install</span> <span class="n">coreutils</span>
+
+<span class="cp"># Install GNU `find`, `locate`, `updatedb`, and `xargs`, g-prefixed</span>
+<span class="n">brew</span> <span class="n">install</span> <span class="n">findutils</span>
+
+<span class="cp"># Install Bash 4</span>
+<span class="n">brew</span> <span class="n">install</span> <span class="n">bash</span>
+
+<span class="cp"># Install more recent versions of some OS X tools</span>
+<span class="n">brew</span> <span class="n">tap</span> <span class="n">homebrew</span><span class="o">/</span><span class="n">dupes</span>
+<span class="n">brew</span> <span class="n">install</span> <span class="n">homebrew</span><span class="o">/</span><span class="n">dupes</span><span class="o">/</span><span class="n">grep</span>
+</pre></div>
+
+
+<p>为了更好的在Mac上使用这些 unix 工具你还需要更新一下你的~/目录下的 .bash_profile 文件：</p>
+<div class="highlight"><pre><span class="err">$</span><span class="n">PATH</span><span class="o">=</span><span class="err">$</span><span class="p">(</span><span class="n">brew</span> <span class="o">--</span><span class="n">prefix</span> <span class="n">coreutils</span><span class="p">)</span><span class="o">/</span><span class="n">libexec</span><span class="o">/</span><span class="n">gnubin</span><span class="o">:</span><span class="err">$</span><span class="n">PATH</span>
+</pre></div>
+
+
+<p>上面的代码希望可以让你的Mac系统固若金汤（但我们都知道那是不可能滴），但你同时可能还会需要用Homebrew来安装一些其他的工具来提高你的工作效率，下面这个是我的安装列表：</p>
+<div class="highlight"><pre>binaries=(
+  graphicsmagick
+  webkit2png
+  rename
+  zopfli
+  ffmpeg
+  python
+  sshfs
+  trash
+  node
+  tree
+  ack
+  hub
+  git
+)
+echo &quot;installing binaries...&quot;
+brew install <span class="cp">${</span><span class="n">binaries</span><span class="p">[</span><span class="err">@</span><span class="p">]</span><span class="cp">}</span>
+</pre></div>
+
+
+<p>安装完成之后，你应该清理一下，使用如下命令进行清理:</p>
+<div class="highlight"><pre><span class="n">brew</span> <span class="n">cleanup</span>
+</pre></div>
+
+
+<p><strong>通过Homebrew Cask来安装应用</strong></p>
+<p><a href="http://caskroom.io/">Homebrew Cask</a>是Homebrew的扩展，它可以帮助你自动安装Mac应用和字体。</p>
+<p>一旦你安装了Homebrew这个利器之后，你可以通过如下命令安装 Homebrew Cask ：</p>
+<div class="highlight"><pre><span class="n">brew</span> <span class="n">install</span> <span class="n">caskroom</span><span class="o">/</span><span class="n">cask</span><span class="o">/</span><span class="n">brew</span><span class="o">-</span><span class="n">cask</span>
+</pre></div>
+
+
+<p>目前可以通过Homebrew Cask来安装的应用的数量是灰常庞大的，并且每天都在不停的增长，你可以通过戳<a href="https://github.com/caskroom/homebrew-cask/tree/master/Casks">这个链接</a>看看目前已有的应用，或者你可以自己通过如下的命令在CLI上搜索：</p>
+<div class="highlight"><pre><span class="n">brew</span> <span class="n">cask</span> <span class="n">search</span> <span class="o">/</span><span class="n">google</span><span class="o">-</span><span class="n">chrome</span><span class="o">/</span>
+</pre></div>
+
+
+<p>每个人都有自己喜欢的应用，以下的脚本是我的一些常用应用：</p>
+<div class="highlight"><pre># Apps
+apps=(
+  alfred
+  dropbox
+  google-chrome
+  qlcolorcode
+  screenflick
+  slack
+  transmit
+  appcleaner
+  firefox
+  hazel
+  qlmarkdown
+  seil
+  spotify
+  vagrant
+  arq
+  flash
+  iterm2
+  qlprettypatch
+  shiori
+  sublime-text3
+  virtualbox
+  atom
+  flux
+  mailbox
+  qlstephen
+  sketch
+  tower
+  vlc
+  cloudup
+  nvalt
+  quicklook-json
+  skype
+  transmission
+)
+# Install apps to /Applications
+# Default is: /Users/<span class="nv">$user</span>/Applications
+echo &quot;installing apps...&quot;
+brew cask install --appdir=&quot;/Applications&quot; <span class="cp">${</span><span class="n">apps</span><span class="p">[</span><span class="err">@</span><span class="p">]</span><span class="cp">}</span>
+</pre></div>
+
+
+<p>如果你希望通过Homebrew Cask来安装beta版本的应用比如“金丝雀版的Chrome”啦又或者是Sublime Text3啦，你只需要使用versions命令：</p>
+<div class="highlight"><pre><span class="n">brew</span> <span class="n">tap</span> <span class="n">caskroom</span><span class="o">/</span><span class="n">versions</span>
+</pre></div>
+
+
+<h6>Alfred用户须知</h6>
+<p>但是<a href="http://www.alfredapp.com/">Alfred</a>用户需要当心了，你们无法启动应用了哟，因为应用真正的安装目录不在/Applications下了，而是相应的挪到了/opt/homebrew-cask/Caskroom/下了。</p>
+<p>为了满足你们的需求，你们可以通过如下的命令来解决这个问题:</p>
+<div class="highlight"><pre><span class="n">brew</span> <span class="n">cask</span> <span class="n">alfred</span> <span class="n">link</span>
+</pre></div>
+
+
+<p>哇啦！(T_T!一惊一乍的这是干屁啊。。。)</p>
+<h6>额外的奖励(又不是真人秀)：像Boss一样安装字体(你家Boss天天装字体玩儿么)</h6>
+<p>Cask也能被用来自动下载并安装字体，为了能够成为Boss你需要键入fonts命令：</p>
+<div class="highlight"><pre><span class="n">brew</span> <span class="n">tap</span> <span class="n">caskroom</span><span class="o">/</span><span class="n">fonts</span>
+</pre></div>
+
+
+<p>字体的前缀都是采用了<code>font-*</code>的形式，所以如果你想要下载<a href="http://www.google.com/fonts/specimen/Roboto">Roboto</a>的话，试试搜索<code>font-roboto</code>关键词：</p>
+<div class="highlight"><pre><span class="n">brew</span> <span class="n">cask</span> <span class="n">search</span> <span class="o">/</span><span class="n">font</span><span class="o">-</span><span class="n">roboto</span><span class="o">/</span>
+</pre></div>
+
+
+<p>以下是我安装字体的方式：</p>
+<div class="highlight"><pre># fonts
+fonts=(
+  font-m-plus
+  font-clear-sans
+  font-roboto
+)
+# install fonts
+echo &quot;installing fonts...&quot;
+brew cask install <span class="cp">${</span><span class="n">fonts</span><span class="p">[</span><span class="err">@</span><span class="p">]</span><span class="cp">}</span>
+</pre></div>
+
+
+<p>你也可以通过<a href="https://github.com/caskroom/homebrew-fonts/tree/master/Casks">caskroom/homebrew-fonts</a>的repo查看所有的字体列表。</p>
+<p><strong>Mackup</strong></p>
+<p><a href="https://github.com/lra/mackup">Mackup</a>是一个社区主导的用来备份系统和应用设置的工具，你可以通过<a href="https://github.com/lra/mackup/tree/master/mackup/applications">lra/mackup</a>的repo查看它支持的应用程序的列表。</p>
+<p>在“用肾买滴”系统上我还没有通过Homebrew把Mackup安装成功，但是通过python的pip来安装也是灰常容易的：</p>
+<div class="highlight"><pre><span class="n">pip</span> <span class="n">install</span> <span class="n">mackup</span>
+</pre></div>
+
+
+<p>如果pip不可用，那你需要通过brew来安装 <code>brew install python</code>。</p>
+<p>通过默认的mackup可以把你的常用设置保存到你的Dropbox中，所以你可能需要首先设置Dropbox。一旦完成了Dropbox的设置，你的备份就变得灰常容易了：</p>
+<div class="highlight"><pre><span class="n">mackup</span> <span class="n">backup</span>
+</pre></div>
+
+
+<p>这条命令会在你的电脑上检索你安装好的应用的票证并且把配置文件软连接到 ~/Dropbox/Mackup中。</p>
+<p>要想在另一台或者一台全新的Mac系统上恢复设置，只需要运行以下简单的命令：</p>
+<div class="highlight"><pre><span class="n">mackup</span> <span class="n">restore</span>
+</pre></div>
+
+
+<p><strong>osx-for-hackers.sh</strong></p>
+<p><a href="https://gist.github.com/brandonb927/3195465">osx-for-hackers.sh</a>是一个由<a href="https://github.com/brandonb927">Brandon Brown</a>创建的基于<a href="https://github.com/mathiasbynens">Mathias Bynens</a>著名的<a href="https://github.com/mathiasbynens/dotfiles/blob/master/.osx">dotfiles</a>衍生的脚本。</p>
+<p>这个脚本可以帮助我们实现Mac系统下的hack能力，它会帮我们把Mac系统下很多很烦人的默认设置禁用掉，提高键盘重复响应速率和窗体动画效果以及其他的一些改进。</p>
+<p>这个脚本最好不要不经过预先检查就直接执行了，它是可以随意被修改的，你可以看下我修改过的这个版本：</p>
+<p><a href="https://gist.github.com/MatthewMueller/e22d9840f9ea2fee4716">https://gist.github.com/MatthewMueller/e22d9840f9ea2fee4716</a></p>
+<p>这个版本的与原脚本相似，只是去除了一些我希望在其他地方处理的提示。</p>
+<p><strong>dots(1)</strong></p>
+<p><a href="https://github.com/matthewmueller/dots">dots(1)</a>是我自己写的一个用来把上述我的想法融合在一起的一个脚本，它理应成为你在你的Mac或者ubuntu服务器上安装的第一个工具。无需任何外部引用，即可直接运行在多个不同的发行版系统上。只需要运行下面的命令即可完成安装：</p>
+<div class="highlight"><pre><span class="p">(</span><span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">dots</span> <span class="o">&amp;&amp;</span> <span class="n">cd</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">dots</span> <span class="o">&amp;&amp;</span> <span class="n">curl</span> <span class="o">-</span><span class="n">L</span><span class="err">#</span> <span class="n">https</span><span class="o">:</span><span class="c1">//github.com/matthewmueller/dots/archive/master.tar.gz | tar zx --strip 1 &amp;&amp; sh ./install.sh)</span>
+</pre></div><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo.html">技术生活</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/hei-kuo-de-macxi-tong-zhuang-ji-zhi-nan.html#disqus_thread">comments</a></p>            </article>
+
+
+                <hr  class="gradient"/>
+
+
+        
+
+
+            <article>
                 <a href="http://jeepxiaozi.github.io/wei-zi-ji-de-github-pagestian-jia-ge-tu-chuang.html"><h3 class="article-title">为自己的GitHub Pages添加一个图床</h3></a>
 <h6 class="subheader" title="2015-02-15T00:00:00+08:00">日 15 二月 2015
 </h6>
@@ -66,21 +292,15 @@
 <p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/U~PYTAB03IW8GR2EJD.jpg-img.normal" /></p>
 <p>为啥这图片显示成这样儿了啊，这么大的图是要哪样儿？啊，当然这里说的大是显示出来的尺寸大，而不是体积大。无需担心，七牛云存储还是很强大的，我们来看一下数据处理功能。点击数据处理，选择新建一个图片样式，然后根据你自己的实际情况进行样式添加，比如我这里只是希望可以缩放图片，让它们不要显示的那么大，如下图：</p>
 <p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/6GQ_TB4TN3NMNU0CA2S$F$M.jpg-img.normal" /></p>
-<p>而且，七牛还很贴心的提供了水印功能：</p>
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/L83U_LBZX76Y8BKU3.jpg-img.normal" /></p>
-<p>OK，样式添加完了，但是我们怎么使用呢？我们可以在数据处理选项栏中看到这样儿一行操作提醒：</p>
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/LXE37SG0${6[5@MJXIV}@$K.jpg-img.normal" />，举个例子，我们的图片外链地址，是这个“http://7vzo2i.com1.z0.glb.clouddn.com/fda341dfa.jpg”，然后呢，我们在七牛中所使用的样式分隔符是“-”，我们在数据处理中新添加的样式是“img.normal”，那么我们在使用的时候，只需要在Markdown文档中的的img标签中填写图片URL地址时填入如下内容“http://7vzo2i.com1.z0.glb.clouddn.com/fda341dfa.jpg-img.normal”，即可。</p>
-<p>那么，七牛云存储还提供了一些其他的功能，诸如404页面啊、防盗链功能啊之类的，只不过目前防盗链功能需要充值，这个等后续充费后我再体验一下吧，至少，暂时性的图床问题已经解决了，这下就可以更加欢快的用Markdown方式写博客了。</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/markdownxie-zuo.html">Markdown写作</a>
+<p>而且 ...</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/markdownxie-zuo.html">Markdown写作</a>
 
 </p>
 
 
 
-<p><a href="http://jeepxiaozi.github.io/wei-zi-ji-de-github-pagestian-jia-ge-tu-chuang.html#disqus_thread">comments</a></p>            </article>
-
-
+<p><a href="http://jeepxiaozi.github.io/wei-zi-ji-de-github-pagestian-jia-ge-tu-chuang.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/wei-zi-ji-de-github-pagestian-jia-ge-tu-chuang.html">Read More</a>
                 <hr  class="gradient"/>
-
+            </article>
 
         
 
