@@ -71,21 +71,21 @@ pelican-quickstart
 
 <p>然后就会出现一系列的问题，其实也不难，会的就写，不会的就选择默认就好了，而且万一不小心写错了也没啥的，后续的话可以通过编辑pelicanconf.py文件进行更改配置，关于设置这里就直接略过了。</p>
 <p>回答完问题之后，博客就创建成功了，主要会生成以下的一些文件：</p>
-<div class="highlight"><pre><span class="o">|--</span> <span class="n">content</span>                <span class="err">#</span> <span class="err">用于存放文章的目录</span>
-<span class="o">|--</span> <span class="n">develop_server</span><span class="p">.</span><span class="n">sh</span>      <span class="err">#</span> <span class="err">测试服务器</span>
-<span class="o">|--</span> <span class="n">Makefile</span>               <span class="err">#</span> <span class="n">Makefile</span>
-<span class="o">|--</span> <span class="n">output</span>                 <span class="err">#</span> <span class="err">静态生成文件</span>
-<span class="o">|--</span> <span class="n">pelicanconf</span><span class="p">.</span><span class="n">py</span>         <span class="err">#</span> <span class="err">配置文件</span>
-<span class="o">|--</span> <span class="n">publishconf</span><span class="p">.</span><span class="n">py</span>         <span class="err">#</span> <span class="err">配置文件</span>
+<div class="highlight"><pre>|-- content                # 用于存放文章的目录
+|-- develop_server.sh      # 测试服务器
+|-- Makefile               # Makefile
+|-- output                 # 静态生成文件
+|-- pelicanconf.py         # 配置文件
+|-- publishconf.py         # 配置文件
 </pre></div>
 
 
 <p>然后我们把我们的这个md文档扔到content目录下，然后执行<code>make html</code>命令，然后我们就可以看到，在output目录下生成了我们所需要的静态博客页面，之后我们执行<code>./develop_server.sh start</code>命令就可以通过在浏览器里打开<code>http://localhost:8000/</code>来进行访问了</p>
 <h3>创建页面</h3>
 <p>在content目录下创建一个叫pages的目录，然后在其中创建一个About.md的文档，并且填如下面的内容</p>
-<div class="highlight"><pre><span class="nl">Title:</span><span class="err">关于作者</span>
-<span class="nl">Date:</span><span class="mi">2015</span><span class="o">-</span><span class="mo">02</span><span class="o">-</span><span class="mo">05</span>
-<span class="err">作者是一只擅长打酱油和灌水的老光棍儿，喜欢摇滚，热爱编程，对移动端有兴趣，对硬件也有兴趣，对萌妹纸当然更有兴趣，</span><span class="o">~</span><span class="err">\</span><span class="p">(</span><span class="err">≧▽≦</span><span class="p">)</span><span class="o">/~</span><span class="err">啦啦啦，嗯，暂时就这么多先。。。</span>
+<div class="highlight"><pre>Title:关于作者
+Date:2015-02-05
+作者是一只擅长打酱油和灌水的老光棍儿，喜欢摇滚，热爱编程，对移动端有兴趣，对硬件也有兴趣，对萌妹纸当然更有兴趣，~\(≧▽≦)/~啦啦啦，嗯，暂时就这么多先。。。
 </pre></div>
 
 
@@ -130,6 +130,8 @@ pelican-quickstart
 
             <h5 class="sidebar-title">Categories</h5>
             <ul class="side-nav">
+                <li><a href="http://jeepxiaozi.github.io/category/android-develop.html">Android Develop</a>
+                </li>
                 <li><a href="http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo.html">技术生活</a>
                 </li>
                 <li><a href="http://jeepxiaozi.github.io/category/markdownxie-zuo.html">Markdown写作</a>

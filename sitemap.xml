@@ -5,28 +5,28 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://jeepxiaozi.github.io/</loc>
-<lastmod>2015-02-24T16:57:35-00:00</lastmod>
+<lastmod>2015-03-11T00:49:29-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://jeepxiaozi.github.io/archives.html</loc>
-<lastmod>2015-02-24T16:57:35-00:00</lastmod>
+<lastmod>2015-03-11T00:49:29-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://jeepxiaozi.github.io/tags.html</loc>
-<lastmod>2015-02-24T16:57:35-00:00</lastmod>
+<lastmod>2015-03-11T00:49:29-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://jeepxiaozi.github.io/categories.html</loc>
-<lastmod>2015-02-24T16:57:35-00:00</lastmod>
+<lastmod>2015-03-11T00:49:29-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -39,6 +39,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://jeepxiaozi.github.io/androidxing-neng-fen-xi-gong-ju-traceview.html</loc>
+<lastmod>2015-03-05T21:30:58+08:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.7</priority>
+</url>
+
+<url>
 <loc>http://jeepxiaozi.github.io/hei-kuo-de-macxi-tong-zhuang-ji-zhi-nan.html</loc>
 <lastmod>2015-02-24T16:42:22+08:00</lastmod>
 <changefreq>monthly</changefreq>
@@ -46,7 +53,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://jeepxiaozi.github.io/wei-zi-ji-de-github-pagestian-jia-ge-tu-chuang.html</loc>
+<loc>http://jeepxiaozi.github.io/wei-zi-ji-de-github-pagestian-jia-yi-ge-tu-chuang.html</loc>
 <lastmod>2015-02-15T00:00:00+08:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.7</priority>
@@ -81,6 +88,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://jeepxiaozi.github.io/category/android-develop.html</loc>
+<lastmod>2015-03-05T21:30:58+08:06</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo.html</loc>
 <lastmod>2015-02-24T16:42:22+08:06</lastmod>
 <changefreq>daily</changefreq>
@@ -110,7 +124,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://jeepxiaozi.github.io/author/erictang.html</loc>
-<lastmod>2015-02-24T16:42:22+08:06</lastmod>
+<lastmod>2015-03-05T21:30:58+08:06</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>

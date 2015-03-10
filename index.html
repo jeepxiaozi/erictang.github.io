@@ -48,6 +48,70 @@
         
 
             <article>
+                <a href="http://jeepxiaozi.github.io/androidxing-neng-fen-xi-gong-ju-traceview.html"><h3 class="article-title">Android性能分析工具——TraceView</h3></a>
+<h6 class="subheader" title="2015-03-05T21:30:58+08:00">四 05 三月 2015
+</h6>
+
+
+<h5>起因</h5>
+<p>最近一直都是在忙活后台的东西，然后突然客户那边儿说你们的App做好了没？唔，好像还没有，然后就赶紧开始调试之前扔掉的Android应用，由于这个App是通过WiFi控制LED灯的，所以并不是由我们独立来做的，首先是由硬件团队做出硬件控制板以及相应的SDK，我们在他们的基础上做上层应用。</p>
+<p>但是一直有个问题，我写的Demo中，只要发现了LED设备，可以进行很快速的操控，十秒钟内基本上可以进行7到8次左右的开关灯操作，但是由我们的Android小伙伴集成到我们之前做好的UI界面中，效果就完全不一样了，卡得要死要死的了，很明显这样儿的产品客户是不会同意的，所以我就准备赶紧解决掉这个问题，避免客户爆豆。。。</p>
+<p>既然要分析性能了，那就肯定要借助工具来了，Android性能分析的工具有很多，而且是内置了也有好多，今天我们这里用到的是TraceView，因为熟悉我的同学也都知道我只是个打酱油的，所以边学边总结。</p>
+<h5>TraceView如何使用</h5>
+<p>TraceView有两种使用方式。</p>
+<h5>一种方式是直接打开DDMS</h5>
+<p>不管你用的是Idea还是Eclipse，都可以，大致如图所示:</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/Q8FPFPHKM9ONGZFFC.jpg-img.normal" /></p>
+<p>等“Start Method Profiling”按钮编程一个黑色的小方块了之后，就表示它正在记录，点击停止之后，你就可以看到如下图所示的效果了:</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/2T4LOFFZFJ3C8YF6]M.jpg-img.normal" /></p>
+<p>然后你就可以好好分析一下为啥各项指标是否达标以及哪里出了问题了，当然需要注意的是这种方式使用起来虽然比较方便但是范围过大，不够精确，如果要实现对一个方法的略为精准的分析的同学可以继续往下看。</p>
+<h5>另一种方式是直接在你个人觉得可能比较耗时的地方写上如下代码，例如，我们现在怀疑onCreate()方法耗时严重，那么我们就可以填写如下代码：</h5>
+<div class="highlight"><pre>    <span class="nd">@Override</span>
+    <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">(</span><span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">){</span>
+        <span class="c1">// TODO Auto-generated method stub</span>
+
+        <span class="n">Debug</span><span class="o">.</span><span class="na">startMethodTracing</span><span class="o">(</span><span class="s">&quot;DemoTrace&quot;</span><span class="o">);</span>
+        <span class="c1">//中间是我的各项操作</span>
+        <span class="n">doSomething</span><span class="o">();</span>
+        <span class="n">Debug</span><span class="o">.</span><span class="na">stopMethodTracing</span><span class="o">();</span>
+    <span class="o">}</span>
+</pre></div>
+
+
+<p>这样儿运行之后你得sd卡根目录会生成“DemoTrace.trace”这样一个log文件，它记录了这段时间内的运行信息，把它从手机里pull出来就可以。。。唔对，继续用DDMS工具打开了，这种方式会比上一种方式更加精确，相当于定向爆破，但也很有可能会因为你自己掌握不好方向，爆破错了反而适得其反，所以我个人觉得两种方式结合起来用还是很不错的。</p>
+<h5>TraceView中的指标</h5>
+<p>不过很多同学就要问了，这图太乱了，方法这么多，怎么看啊，我也是新手，真是无比头大，所以尽量还是参照一下<a href="http://developer.android.com/tools/debugging/debugging-tracing.html">官方文档--Profiling with Traceview and amtracedump</a>。</p>
+<p>根据官方文档的介绍，Traceview总共有两个面板：</p>
+<p>一个是Timeline Panel，即时间线面板，如下图：</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/traceview_timeline.png-img.normal" /></p>
+<p>Timeline Panel展示了每个线程的执行情况，其中的[3]main是UI主线程，将鼠标移动到某个位置可以查看该点对应的方法的执行信息，可以选择用左键按住不放，选中区域放大局部查看详细的，不同的方法采用不同的颜色标注。不过，跟我一样色弱（也可以直呼为瞎）的同学可以考虑静静的看一下就好，总之就是各种颜色不敏感。。。所以我们关注另外一个。。。</p>
+<p>另一个是Profile Panel，即性能面板（暂且就这么翻译吧，大家理解意思就好），如下图：</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/traceview_profile.png-img.normal" /></p>
+<p>Profile Panel展示了所有方法的执行情况，点击某个方法可以查看对应线程上得执行时间区域，并且会显示其父方法和子方法。</p>
+<p>每个方法包括如下信息列，可以点击根据某列进行排序，从而确定产生性能问题的函数：
+Icnl Cpu Time， Excl Cpu Time， Incl Real Time， Incl Cpu Time%， Excl Cup Time%， Incl Real Time%， Calls+RecurCalls/Total， Cpu Time/Call， Real Time/Call， 所有的Time都是以毫秒计算的。</p>
+<ol>
+<li>Incl表示将所有子函数耗时计算在内的调用时间，Excl则表示不包括子函数的调用时间，通过将这两项进行对比，基本就可以确定耗时的操作到底是发生在自身函数中，还是发生在子函数中。</li>
+<li>Cpu Time表示占用Cpu执行的时间，Real Time则包括Cpu Time以及其他的等待或者切换的时间，所以一般情况下Real Time肯定大于Cpu Time，通过将这两项进行对比可以基本判断耗时的操作是否发生在Cpu执行段内。</li>
+<li>Calls+RecurCalls/Total表示被外部调用次数+递归次数/总次数，通过该项可以查看相应的函数的调用次数是否在自己的预期以内。</li>
+<li>Cpu Time/Call， Reall Time/Call表示总的Cpu Time及Real Time与总次数的比例，如果觉得这些所有的指标都太复杂的话，想要查看每次调用的耗时的时候，一般就可以直接通过该项指标来确定每个函数的性能。</li>
+</ol>
+<p>当然，还有其他的很多Android的性能分析工具，后续如果有时间的话，我也会选择性的看看学习一下如何使用。但是总的来说，性能优化基本上是个很庞大的话题，涉及到方方面面的知识也很多，在Android开发方面我很多时候也只是为了解决问题而解决问题，慢慢积累吧。</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/android-develop.html">Android Develop</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/androidxing-neng-fen-xi-gong-ju-traceview.html#disqus_thread">comments</a></p>            </article>
+
+
+                <hr  class="gradient"/>
+
+
+        
+
+
+            <article>
                 <a href="http://jeepxiaozi.github.io/hei-kuo-de-macxi-tong-zhuang-ji-zhi-nan.html"><h3 class="article-title">黑阔的Mac系统装机指南</h3></a>
 <h6 class="subheader" title="2015-02-24T16:42:22+08:00">二 24 二月 2015
 </h6>
@@ -62,219 +126,21 @@
 <p>先秀秀图。。。
 <img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/terminal.png-img.normal" /></p>
 <p><strong>准备工作</strong>
-俗话说“工欲善其事，必先利其器”，俗话还说“没有那金刚钻就憋揽那瓷器活儿”，嗯，要实现mac系统的自动化安装，<a href="https://boxen.github.com">Boxen</a>就是其中必须要提一提的。Boxen是Github自家的一个解决方案，用来统一开发环境（有点儿像最近如日中天的Docker），这样儿就不会出现“诶代码在我的机器上是好的啊”这种情况了。Boxen对于那些自有开发团队的建制较为完善的公司来说是一个灰常不错的解决方案，但是，那些小的刚起步的团队呢？那些如“独狼”一般的黑阔呢？我们需要一个更适合他们的解决方案。</p>
-<p><strong>我们的工具箱</strong></p>
-<p>这篇博客里呢，我们将会用到一下的开源工具来实现Mac的自动化配置：</p>
-<ul>
-<li>通过<a href="http://brew.sh">homebrew</a>来安装二进制文件</li>
-<li>通过<a href="http://caskroom.io">homebrew cask</a>来安装应用程序</li>
-<li>通过<a href="https://github.com/lra/mackup">mackup</a>来备份和保存相应的配置文件</li>
-<li>通过<a href="https://gist.github.com/brandonb927/3195465">osx-for-hackers.sh</a>来加固Mac系统</li>
-<li>通过<a href="https://github.com/matthewmueller/dots">dots</a>把他们整合在一起</li>
-</ul>
-<p>下面分别来讲解一下</p>
-<p><strong>通过Homebrew来安装二进制文件</strong></p>
-<p>Homebrew是一个社区主导的包管理工具，并且也是每个黑阔的必备工具包。Homebrew能够自动完成二进制文件的安装、编译和链接，它同时也使得更新和卸载二进制文件变得灰常轻松。</p>
-<p>下面呢就是你应该首先在一台全新的Mac，将下面的代码片段放在 bash 脚本来确保homebrew安装了：</p>
-<div class="highlight"><pre><span class="cp"># Check for Homebrew,</span>
-<span class="cp"># Install if we don&#39;t have it</span>
-<span class="k">if</span> <span class="n">test</span> <span class="o">!</span> <span class="err">$</span><span class="p">(</span><span class="n">which</span> <span class="n">brew</span><span class="p">);</span> <span class="n">then</span>
-  <span class="n">echo</span> <span class="s">&quot;Installing homebrew...&quot;</span>
-  <span class="n">ruby</span> <span class="o">-</span><span class="n">e</span> <span class="s">&quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&quot;</span>
-<span class="n">fi</span>
-
-<span class="cp"># Update homebrew recipes</span>
-<span class="n">brew</span> <span class="n">update</span>
-</pre></div>
-
-
-<p>接下来呢，你就应该首先更新一下你的Mac系统上已有的 unix 工具。自从"<a href="http://goo.gl/zElPKk">Shellshock</a>"漏洞粗线之后，及时打补丁包和更新的必要性越来越大了。</p>
-<p>下面的代码片段会帮你更新这些 unix 工具：</p>
-<div class="highlight"><pre><span class="cp"># Install GNU core utilities (those that come with OS X are outdated)</span>
-<span class="n">brew</span> <span class="n">install</span> <span class="n">coreutils</span>
-
-<span class="cp"># Install GNU `find`, `locate`, `updatedb`, and `xargs`, g-prefixed</span>
-<span class="n">brew</span> <span class="n">install</span> <span class="n">findutils</span>
-
-<span class="cp"># Install Bash 4</span>
-<span class="n">brew</span> <span class="n">install</span> <span class="n">bash</span>
-
-<span class="cp"># Install more recent versions of some OS X tools</span>
-<span class="n">brew</span> <span class="n">tap</span> <span class="n">homebrew</span><span class="o">/</span><span class="n">dupes</span>
-<span class="n">brew</span> <span class="n">install</span> <span class="n">homebrew</span><span class="o">/</span><span class="n">dupes</span><span class="o">/</span><span class="n">grep</span>
-</pre></div>
-
-
-<p>为了更好的在Mac上使用这些 unix 工具你还需要更新一下你的~/目录下的 .bash_profile 文件：</p>
-<div class="highlight"><pre><span class="err">$</span><span class="n">PATH</span><span class="o">=</span><span class="err">$</span><span class="p">(</span><span class="n">brew</span> <span class="o">--</span><span class="n">prefix</span> <span class="n">coreutils</span><span class="p">)</span><span class="o">/</span><span class="n">libexec</span><span class="o">/</span><span class="n">gnubin</span><span class="o">:</span><span class="err">$</span><span class="n">PATH</span>
-</pre></div>
-
-
-<p>上面的代码希望可以让你的Mac系统固若金汤（但我们都知道那是不可能滴），但你同时可能还会需要用Homebrew来安装一些其他的工具来提高你的工作效率，下面这个是我的安装列表：</p>
-<div class="highlight"><pre>binaries=(
-  graphicsmagick
-  webkit2png
-  rename
-  zopfli
-  ffmpeg
-  python
-  sshfs
-  trash
-  node
-  tree
-  ack
-  hub
-  git
-)
-echo &quot;installing binaries...&quot;
-brew install <span class="cp">${</span><span class="n">binaries</span><span class="p">[</span><span class="err">@</span><span class="p">]</span><span class="cp">}</span>
-</pre></div>
-
-
-<p>安装完成之后，你应该清理一下，使用如下命令进行清理:</p>
-<div class="highlight"><pre><span class="n">brew</span> <span class="n">cleanup</span>
-</pre></div>
-
-
-<p><strong>通过Homebrew Cask来安装应用</strong></p>
-<p><a href="http://caskroom.io/">Homebrew Cask</a>是Homebrew的扩展，它可以帮助你自动安装Mac应用和字体。</p>
-<p>一旦你安装了Homebrew这个利器之后，你可以通过如下命令安装 Homebrew Cask ：</p>
-<div class="highlight"><pre><span class="n">brew</span> <span class="n">install</span> <span class="n">caskroom</span><span class="o">/</span><span class="n">cask</span><span class="o">/</span><span class="n">brew</span><span class="o">-</span><span class="n">cask</span>
-</pre></div>
-
-
-<p>目前可以通过Homebrew Cask来安装的应用的数量是灰常庞大的，并且每天都在不停的增长，你可以通过戳<a href="https://github.com/caskroom/homebrew-cask/tree/master/Casks">这个链接</a>看看目前已有的应用，或者你可以自己通过如下的命令在CLI上搜索：</p>
-<div class="highlight"><pre><span class="n">brew</span> <span class="n">cask</span> <span class="n">search</span> <span class="o">/</span><span class="n">google</span><span class="o">-</span><span class="n">chrome</span><span class="o">/</span>
-</pre></div>
-
-
-<p>每个人都有自己喜欢的应用，以下的脚本是我的一些常用应用：</p>
-<div class="highlight"><pre># Apps
-apps=(
-  alfred
-  dropbox
-  google-chrome
-  qlcolorcode
-  screenflick
-  slack
-  transmit
-  appcleaner
-  firefox
-  hazel
-  qlmarkdown
-  seil
-  spotify
-  vagrant
-  arq
-  flash
-  iterm2
-  qlprettypatch
-  shiori
-  sublime-text3
-  virtualbox
-  atom
-  flux
-  mailbox
-  qlstephen
-  sketch
-  tower
-  vlc
-  cloudup
-  nvalt
-  quicklook-json
-  skype
-  transmission
-)
-# Install apps to /Applications
-# Default is: /Users/<span class="nv">$user</span>/Applications
-echo &quot;installing apps...&quot;
-brew cask install --appdir=&quot;/Applications&quot; <span class="cp">${</span><span class="n">apps</span><span class="p">[</span><span class="err">@</span><span class="p">]</span><span class="cp">}</span>
-</pre></div>
-
-
-<p>如果你希望通过Homebrew Cask来安装beta版本的应用比如“金丝雀版的Chrome”啦又或者是Sublime Text3啦，你只需要使用versions命令：</p>
-<div class="highlight"><pre><span class="n">brew</span> <span class="n">tap</span> <span class="n">caskroom</span><span class="o">/</span><span class="n">versions</span>
-</pre></div>
-
-
-<h6>Alfred用户须知</h6>
-<p>但是<a href="http://www.alfredapp.com/">Alfred</a>用户需要当心了，你们无法启动应用了哟，因为应用真正的安装目录不在/Applications下了，而是相应的挪到了/opt/homebrew-cask/Caskroom/下了。</p>
-<p>为了满足你们的需求，你们可以通过如下的命令来解决这个问题:</p>
-<div class="highlight"><pre><span class="n">brew</span> <span class="n">cask</span> <span class="n">alfred</span> <span class="n">link</span>
-</pre></div>
-
-
-<p>哇啦！(T_T!一惊一乍的这是干屁啊。。。)</p>
-<h6>额外的奖励(又不是真人秀)：像Boss一样安装字体(你家Boss天天装字体玩儿么)</h6>
-<p>Cask也能被用来自动下载并安装字体，为了能够成为Boss你需要键入fonts命令：</p>
-<div class="highlight"><pre><span class="n">brew</span> <span class="n">tap</span> <span class="n">caskroom</span><span class="o">/</span><span class="n">fonts</span>
-</pre></div>
-
-
-<p>字体的前缀都是采用了<code>font-*</code>的形式，所以如果你想要下载<a href="http://www.google.com/fonts/specimen/Roboto">Roboto</a>的话，试试搜索<code>font-roboto</code>关键词：</p>
-<div class="highlight"><pre><span class="n">brew</span> <span class="n">cask</span> <span class="n">search</span> <span class="o">/</span><span class="n">font</span><span class="o">-</span><span class="n">roboto</span><span class="o">/</span>
-</pre></div>
-
-
-<p>以下是我安装字体的方式：</p>
-<div class="highlight"><pre># fonts
-fonts=(
-  font-m-plus
-  font-clear-sans
-  font-roboto
-)
-# install fonts
-echo &quot;installing fonts...&quot;
-brew cask install <span class="cp">${</span><span class="n">fonts</span><span class="p">[</span><span class="err">@</span><span class="p">]</span><span class="cp">}</span>
-</pre></div>
-
-
-<p>你也可以通过<a href="https://github.com/caskroom/homebrew-fonts/tree/master/Casks">caskroom/homebrew-fonts</a>的repo查看所有的字体列表。</p>
-<p><strong>Mackup</strong></p>
-<p><a href="https://github.com/lra/mackup">Mackup</a>是一个社区主导的用来备份系统和应用设置的工具，你可以通过<a href="https://github.com/lra/mackup/tree/master/mackup/applications">lra/mackup</a>的repo查看它支持的应用程序的列表。</p>
-<p>在“用肾买滴”系统上我还没有通过Homebrew把Mackup安装成功，但是通过python的pip来安装也是灰常容易的：</p>
-<div class="highlight"><pre><span class="n">pip</span> <span class="n">install</span> <span class="n">mackup</span>
-</pre></div>
-
-
-<p>如果pip不可用，那你需要通过brew来安装 <code>brew install python</code>。</p>
-<p>通过默认的mackup可以把你的常用设置保存到你的Dropbox中，所以你可能需要首先设置Dropbox。一旦完成了Dropbox的设置，你的备份就变得灰常容易了：</p>
-<div class="highlight"><pre><span class="n">mackup</span> <span class="n">backup</span>
-</pre></div>
-
-
-<p>这条命令会在你的电脑上检索你安装好的应用的票证并且把配置文件软连接到 ~/Dropbox/Mackup中。</p>
-<p>要想在另一台或者一台全新的Mac系统上恢复设置，只需要运行以下简单的命令：</p>
-<div class="highlight"><pre><span class="n">mackup</span> <span class="n">restore</span>
-</pre></div>
-
-
-<p><strong>osx-for-hackers.sh</strong></p>
-<p><a href="https://gist.github.com/brandonb927/3195465">osx-for-hackers.sh</a>是一个由<a href="https://github.com/brandonb927">Brandon Brown</a>创建的基于<a href="https://github.com/mathiasbynens">Mathias Bynens</a>著名的<a href="https://github.com/mathiasbynens/dotfiles/blob/master/.osx">dotfiles</a>衍生的脚本。</p>
-<p>这个脚本可以帮助我们实现Mac系统下的hack能力，它会帮我们把Mac系统下很多很烦人的默认设置禁用掉，提高键盘重复响应速率和窗体动画效果以及其他的一些改进。</p>
-<p>这个脚本最好不要不经过预先检查就直接执行了，它是可以随意被修改的，你可以看下我修改过的这个版本：</p>
-<p><a href="https://gist.github.com/MatthewMueller/e22d9840f9ea2fee4716">https://gist.github.com/MatthewMueller/e22d9840f9ea2fee4716</a></p>
-<p>这个版本的与原脚本相似，只是去除了一些我希望在其他地方处理的提示。</p>
-<p><strong>dots(1)</strong></p>
-<p><a href="https://github.com/matthewmueller/dots">dots(1)</a>是我自己写的一个用来把上述我的想法融合在一起的一个脚本，它理应成为你在你的Mac或者ubuntu服务器上安装的第一个工具。无需任何外部引用，即可直接运行在多个不同的发行版系统上。只需要运行下面的命令即可完成安装：</p>
-<div class="highlight"><pre><span class="p">(</span><span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">dots</span> <span class="o">&amp;&amp;</span> <span class="n">cd</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">dots</span> <span class="o">&amp;&amp;</span> <span class="n">curl</span> <span class="o">-</span><span class="n">L</span><span class="err">#</span> <span class="n">https</span><span class="o">:</span><span class="c1">//github.com/matthewmueller/dots/archive/master.tar.gz | tar zx --strip 1 &amp;&amp; sh ./install.sh)</span>
-</pre></div><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo.html">技术生活</a>
+俗话说“工欲善其事，必先利其器”，俗话还说 ...</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo.html">技术生活</a>
 
 </p>
 
 
 
-<p><a href="http://jeepxiaozi.github.io/hei-kuo-de-macxi-tong-zhuang-ji-zhi-nan.html#disqus_thread">comments</a></p>            </article>
-
-
+<p><a href="http://jeepxiaozi.github.io/hei-kuo-de-macxi-tong-zhuang-ji-zhi-nan.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/hei-kuo-de-macxi-tong-zhuang-ji-zhi-nan.html">Read More</a>
                 <hr  class="gradient"/>
-
+            </article>
 
         
 
 
             <article>
-                <a href="http://jeepxiaozi.github.io/wei-zi-ji-de-github-pagestian-jia-ge-tu-chuang.html"><h3 class="article-title">为自己的GitHub Pages添加一个图床</h3></a>
+                <a href="http://jeepxiaozi.github.io/wei-zi-ji-de-github-pagestian-jia-yi-ge-tu-chuang.html"><h3 class="article-title">为自己的GitHub Pages添加一个图床</h3></a>
 <h6 class="subheader" title="2015-02-15T00:00:00+08:00">日 15 二月 2015
 </h6>
 
@@ -298,7 +164,7 @@ brew cask install <span class="cp">${</span><span class="n">fonts</span><span cl
 
 
 
-<p><a href="http://jeepxiaozi.github.io/wei-zi-ji-de-github-pagestian-jia-ge-tu-chuang.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/wei-zi-ji-de-github-pagestian-jia-ge-tu-chuang.html">Read More</a>
+<p><a href="http://jeepxiaozi.github.io/wei-zi-ji-de-github-pagestian-jia-yi-ge-tu-chuang.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/wei-zi-ji-de-github-pagestian-jia-yi-ge-tu-chuang.html">Read More</a>
                 <hr  class="gradient"/>
             </article>
 
@@ -409,6 +275,8 @@ brew cask install <span class="cp">${</span><span class="n">fonts</span><span cl
 
             <h5 class="sidebar-title">Categories</h5>
             <ul class="side-nav">
+                <li><a href="http://jeepxiaozi.github.io/category/android-develop.html">Android Develop</a>
+                </li>
                 <li><a href="http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo.html">技术生活</a>
                 </li>
                 <li><a href="http://jeepxiaozi.github.io/category/markdownxie-zuo.html">Markdown写作</a>
