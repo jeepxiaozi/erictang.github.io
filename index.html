@@ -48,6 +48,107 @@
         
 
             <article>
+                <a href="http://jeepxiaozi.github.io/mian-app-storefen-fa-iosying-yong.html"><h3 class="article-title">免App Store分发iOS应用</h3></a>
+<h6 class="subheader" title="2015-03-21T00:03:59+08:00">六 21 三月 2015
+</h6>
+
+
+<h5>众所周知的原因</h5>
+<p>因为苹果对iOS应用限制比较多，而且严格，所以一般情况下用户下载软件都是要从App Store上下载，或者说干脆像我之前那样儿，直接用公司的测试证书跑各种有源码的iOS应用，但我们总不可能给每个人的手机上都跑测试版本的吧？毕竟，99刀的证书只能调试一百台设备，所以吧，99刀不够的，我们还需要299刀的，这样儿就可以开发各种企业应用，并且自己搭建服务器进行应用分发了，当然，大家即使在最开始也好，或者说现在能看到的也好，好多东西都是可以被玩儿坏了的，尤其是可以说很“自豪”的说是被我大天朝的一些公司玩儿坏了的。比如我最开始知道的299刀证书是为了企业内部定制开发App所用的，然后就被我大天朝一些公司给硬生生的做成了寨版“App Store”。。。咳咳，但这里我们不做过多的讨论，我们还是来看看如何进行iOS的企业分发。</p>
+<h5>神马是OTA</h5>
+<p>这个也不用整的那么高大上，就是over the air，即，空中下载（表示我啥也不知道啊，我好像是从某移动哪里翻出来的），嗯，就是一种无线发布方式，可以实现App在线安装，从此无需数据线啊有么有，而且岂止是么有数据线啊，连App Store都一边儿玩儿蛋去了诶（唔，作者今天没次药）</p>
+<h5>如何实现OTA</h5>
+<p>要实现OTA，我们需要准备三个文件：</p>
+<h6>.ipa文件</h6>
+<p>——即我们构建好的ipa安装包，不过这里需要说明一下，这个ipa包是需要签名的：可以是开发证书签名的（99刀的），比如只是给自己公司的产品汪和测试团队用的；也可以是企业证书（299刀的），比如我就是做了一个寨版的App Store</p>
+<h6>.plist文件</h6>
+<p>——这个文件主要用来描述我们的应用的安装信息，主要内容可以参考我们项目源码中的Info.plist文件，只不过从Xcode6开始，即使选择企业方式也没法儿自动生成plist文件了，所以简单的办法是我们可以手写，当然也有一些第三方的工具或者脚本之类的，我懒得找，所以找了个模板然后花了点儿时间自己写了一个，这里打个小广告，嘿嘿 <a href="https://github.com/jeepxiaozi/PlistGenerator">PlistGenerator</a>，当然，这里直接放一个模板，方便大家保存之后手动修改。</p>
+<div class="highlight"><pre>    <span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+    <span class="cp">&lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;</span>
+    <span class="nt">&lt;plist</span> <span class="na">version=</span><span class="s">&quot;1.0&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;dict&gt;</span>
+            <span class="nt">&lt;key&gt;</span>items<span class="nt">&lt;/key&gt;</span>
+            <span class="nt">&lt;array&gt;</span>
+                    <span class="nt">&lt;dict&gt;</span>
+                            <span class="nt">&lt;key&gt;</span>assets<span class="nt">&lt;/key&gt;</span>
+                            <span class="nt">&lt;array&gt;</span>
+                                    <span class="nt">&lt;dict&gt;</span>
+                                        <span class="nt">&lt;key&gt;</span>kind<span class="nt">&lt;/key&gt;</span>
+                                        <span class="nt">&lt;string&gt;</span>software-package<span class="nt">&lt;/string&gt;</span>
+                                        <span class="nt">&lt;key&gt;</span>url<span class="nt">&lt;/key&gt;</span>
+                                        <span class="nt">&lt;string&gt;</span>这里填写.ipa文件的下载地址（例如，http://xx.com/xx.ipa）<span class="nt">&lt;/string&gt;</span>
+                                    <span class="nt">&lt;/dict&gt;</span>
+                            <span class="nt">&lt;/array&gt;</span>
+                            <span class="nt">&lt;key&gt;</span>metadata<span class="nt">&lt;/key&gt;</span>
+                            <span class="nt">&lt;dict&gt;</span>
+                                <span class="nt">&lt;key&gt;</span>bundle-identifier<span class="nt">&lt;/key&gt;</span>
+                                <span class="nt">&lt;string&gt;</span>这里填写Bundle ID<span class="nt">&lt;/string&gt;</span>
+                                <span class="nt">&lt;key&gt;</span>bundle-version<span class="nt">&lt;/key&gt;</span>
+                                <span class="nt">&lt;string&gt;</span>这里填写版本号<span class="nt">&lt;/string&gt;</span>
+                                <span class="nt">&lt;key&gt;</span>kind<span class="nt">&lt;/key&gt;</span>
+                                <span class="nt">&lt;string&gt;</span>software<span class="nt">&lt;/string&gt;</span>
+                                <span class="nt">&lt;key&gt;</span>title<span class="nt">&lt;/key&gt;</span>
+                                <span class="nt">&lt;string&gt;</span>这里填写应用标题<span class="nt">&lt;/string&gt;</span>
+                            <span class="nt">&lt;/dict&gt;</span>
+                    <span class="nt">&lt;/dict&gt;</span>
+            <span class="nt">&lt;/array&gt;</span>
+    <span class="nt">&lt;/dict&gt;</span>
+    <span class="nt">&lt;/plist&gt;</span>
+</pre></div>
+
+
+<h6>html文件</h6>
+<p>——不管怎么样儿，最终还是要通过浏览器进行安装的，嗯，对，不管你是用的Safari还是用的QQ、微信的内置浏览器，所以我们要提供一个html页面，在这个html页面上我们需要放置一个按钮，提供一个itms-services协议的链接，用户只需要打开这个链接就可以进行在线安装，这里需要注意的是，这个链接指向的是plist文件地址，例如：</p>
+<div class="highlight"><pre>    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;itms-services://?action=download-manifest&amp;url=https://xx.com/xx.plist&quot;</span><span class="nt">&gt;</span>一键安装<span class="nt">&lt;/a&gt;</span>
+</pre></div>
+
+
+<p>所以说，iOS应用的OTA方式安装的核心就是苹果的itms-services协议，Safari可以通过解析itms-services协议来实现一键安装，在iOS7.1之前plist文件的url地址是没有限制的，但是之后，苹果修改了规则，这个url必须是可信任的https链接，至于其他的例如ipa文件的链接，没有特殊要求。</p>
+<p>那么，https链接该怎么处理呢？主要的几种方法的优缺点对比如下：
+1. 由公司购买https证书
+这个其实没啥好说的，有钱就可以任性。</p>
+<div class="highlight"><pre>优点：最直接最踏实最靠谱儿的方式
+
+缺点：当然，如果说你们的公司是创业小公司，https证书也是一笔可大可小的费用，但是，能省则省嘛，可以考虑例如startssl、instantssl之类的免费证书，只要是主流浏览器都认可的就可以，关于https证书其实是另外一个话题了，这里不作神展开。
+</pre></div>
+
+
+<ol>
+<li>
+<p>单独将plist文件进行托管
+呃，是的，你没听错，单独托管plist文件，将plist托管到可以支持https外链的网盘之类的。dropbox被墙掉了，目前我知道的提供https外链的七牛云存储算一个，嗯，这个算安利，嘿嘿，因为我的github pages的图床也是用的他家的。</p>
+<p>优点：无需自己购买或者配置https证书</p>
+<p>缺点：T_T! 虽然只是托管了plist文件但是基本上是个人都可以看到plist文件及其内容，除非你用啥黑魔法。。你懂得</p>
+</li>
+<li>
+<p>采用自签名证书的方式
+啊，这里你也没看错，对的，自己给自己颁发证书，表示我是可信赖的网站哟，譬如之前某123售票网站给自己也颁发过证书。</p>
+<p>优点：分分钟拿到“可信任”的证书</p>
+<p>缺点：首先，你得需要客户端信任你的证书，是的，你么有看错，你给自己颁发了一个证书，还需要用户选择信任这个证书，如果是小公司的话建议这个可以放弃了，因为一是人家本来就对你不够信任，而是，你不光让人家装你的应用还要人家装你的证书，啊，没啥冒犯的意思但是总觉得这么多东西下来用户估计早就跑没影儿了吧</p>
+</li>
+<li>
+<p>将应用整体托管到第三方平台
+嗯，这里国内也有不少，我知道的也就是像蒲公英iOS内测平台以及fir，他们可以提供全程的服务，并且你的应用可以实现内部分发，即设置访问密码之类的隐私功能。</p>
+<p>优点：方便快捷，自己无需操心，而且这些应用托管平台根据自己的名气来定，也可以作为让用户信任你的应用的佐证</p>
+<p>缺点：有些人可能不太放心把自己的安装包交粗来。。。</p>
+</li>
+</ol>
+<p>OK，大概就是介个样子，配置好了之后，就可以通过OTA方式分发或者安装你的iOS应用了</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/ios-develop.html">iOS Develop</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/mian-app-storefen-fa-iosying-yong.html#disqus_thread">comments</a></p>            </article>
+
+
+                <hr  class="gradient"/>
+
+
+        
+
+
+            <article>
                 <a href="http://jeepxiaozi.github.io/androidxing-neng-fen-xi-gong-ju-traceview.html"><h3 class="article-title">Android性能分析工具——TraceView</h3></a>
 <h6 class="subheader" title="2015-03-05T21:30:58+08:00">四 05 三月 2015
 </h6>
@@ -65,48 +166,15 @@
 <p>等“Start Method Profiling”按钮编程一个黑色的小方块了之后，就表示它正在记录，点击停止之后，你就可以看到如下图所示的效果了:</p>
 <p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/2T4LOFFZFJ3C8YF6]M.jpg-img.normal" /></p>
 <p>然后你就可以好好分析一下为啥各项指标是否达标以及哪里出了问题了，当然需要注意的是这种方式使用起来虽然比较方便但是范围过大，不够精确，如果要实现对一个方法的略为精准的分析的同学可以继续往下看。</p>
-<h5>另一种方式是直接在你个人觉得可能比较耗时的地方写上如下代码，例如，我们现在怀疑onCreate()方法耗时严重，那么我们就可以填写如下代码：</h5>
-<div class="highlight"><pre>    <span class="nd">@Override</span>
-    <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">(</span><span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">){</span>
-        <span class="c1">// TODO Auto-generated method stub</span>
-
-        <span class="n">Debug</span><span class="o">.</span><span class="na">startMethodTracing</span><span class="o">(</span><span class="s">&quot;DemoTrace&quot;</span><span class="o">);</span>
-        <span class="c1">//中间是我的各项操作</span>
-        <span class="n">doSomething</span><span class="o">();</span>
-        <span class="n">Debug</span><span class="o">.</span><span class="na">stopMethodTracing</span><span class="o">();</span>
-    <span class="o">}</span>
-</pre></div>
-
-
-<p>这样儿运行之后你得sd卡根目录会生成“DemoTrace.trace”这样一个log文件，它记录了这段时间内的运行信息，把它从手机里pull出来就可以。。。唔对，继续用DDMS工具打开了，这种方式会比上一种方式更加精确，相当于定向爆破，但也很有可能会因为你自己掌握不好方向，爆破错了反而适得其反，所以我个人觉得两种方式结合起来用还是很不错的。</p>
-<h5>TraceView中的指标</h5>
-<p>不过很多同学就要问了，这图太乱了，方法这么多，怎么看啊，我也是新手，真是无比头大，所以尽量还是参照一下<a href="http://developer.android.com/tools/debugging/debugging-tracing.html">官方文档--Profiling with Traceview and amtracedump</a>。</p>
-<p>根据官方文档的介绍，Traceview总共有两个面板：</p>
-<p>一个是Timeline Panel，即时间线面板，如下图：</p>
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/traceview_timeline.png-img.normal" /></p>
-<p>Timeline Panel展示了每个线程的执行情况，其中的[3]main是UI主线程，将鼠标移动到某个位置可以查看该点对应的方法的执行信息，可以选择用左键按住不放，选中区域放大局部查看详细的，不同的方法采用不同的颜色标注。不过，跟我一样色弱（也可以直呼为瞎）的同学可以考虑静静的看一下就好，总之就是各种颜色不敏感。。。所以我们关注另外一个。。。</p>
-<p>另一个是Profile Panel，即性能面板（暂且就这么翻译吧，大家理解意思就好），如下图：</p>
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/traceview_profile.png-img.normal" /></p>
-<p>Profile Panel展示了所有方法的执行情况，点击某个方法可以查看对应线程上得执行时间区域，并且会显示其父方法和子方法。</p>
-<p>每个方法包括如下信息列，可以点击根据某列进行排序，从而确定产生性能问题的函数：
-Icnl Cpu Time， Excl Cpu Time， Incl Real Time， Incl Cpu Time%， Excl Cup Time%， Incl Real Time%， Calls+RecurCalls/Total， Cpu Time/Call， Real Time/Call， 所有的Time都是以毫秒计算的。</p>
-<ol>
-<li>Incl表示将所有子函数耗时计算在内的调用时间，Excl则表示不包括子函数的调用时间，通过将这两项进行对比，基本就可以确定耗时的操作到底是发生在自身函数中，还是发生在子函数中。</li>
-<li>Cpu Time表示占用Cpu执行的时间，Real Time则包括Cpu Time以及其他的等待或者切换的时间，所以一般情况下Real Time肯定大于Cpu Time，通过将这两项进行对比可以基本判断耗时的操作是否发生在Cpu执行段内。</li>
-<li>Calls+RecurCalls/Total表示被外部调用次数+递归次数/总次数，通过该项可以查看相应的函数的调用次数是否在自己的预期以内。</li>
-<li>Cpu Time/Call， Reall Time/Call表示总的Cpu Time及Real Time与总次数的比例，如果觉得这些所有的指标都太复杂的话，想要查看每次调用的耗时的时候，一般就可以直接通过该项指标来确定每个函数的性能。</li>
-</ol>
-<p>当然，还有其他的很多Android的性能分析工具，后续如果有时间的话，我也会选择性的看看学习一下如何使用。但是总的来说，性能优化基本上是个很庞大的话题，涉及到方方面面的知识也很多，在Android开发方面我很多时候也只是为了解决问题而解决问题，慢慢积累吧。</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/android-develop.html">Android Develop</a>
+<h5>另一种方式是直接在你个人觉得可能比较耗时的地方写上如下代码，例如，我们现在怀疑onCreate()方法耗时严重 ...</h5><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/android-develop.html">Android Develop</a>
 
 </p>
 
 
 
-<p><a href="http://jeepxiaozi.github.io/androidxing-neng-fen-xi-gong-ju-traceview.html#disqus_thread">comments</a></p>            </article>
-
-
+<p><a href="http://jeepxiaozi.github.io/androidxing-neng-fen-xi-gong-ju-traceview.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/androidxing-neng-fen-xi-gong-ju-traceview.html">Read More</a>
                 <hr  class="gradient"/>
-
+            </article>
 
         
 
@@ -276,6 +344,8 @@ Icnl Cpu Time， Excl Cpu Time， Incl Real Time， Incl Cpu Time%， Excl Cup T
             <h5 class="sidebar-title">Categories</h5>
             <ul class="side-nav">
                 <li><a href="http://jeepxiaozi.github.io/category/android-develop.html">Android Develop</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/ios-develop.html">iOS Develop</a>
                 </li>
                 <li><a href="http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo.html">技术生活</a>
                 </li>

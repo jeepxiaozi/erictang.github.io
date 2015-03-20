@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8" />
+    <!-- Set the viewport width to device width for mobile -->
+    <meta name="viewport" content="width=device-width" />
+
+    <title>免App Store分发iOS应用</title>
+
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/normalize.css" />
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/foundation.min.css" />
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/style.css" />
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/pygments.css" />
+    <script src="http://jeepxiaozi.github.io/theme/js/modernizr.js"></script>
+</head>
+
+<body>
+
+    <!-- Nav Bar -->
+    <nav>
+        <div class="top-bar">
+            <div class="row">
+                <div class="large-9 large-centered columns">
+                    <h1><a href="http://jeepxiaozi.github.io">一把汤勺</a></h1>
+                </div>
+            </div>
+        </div>
+
+        <!-- Show menu items and pages -->
+        <div class="row">
+            <div class="large-9 columns">
+                <ul class="button-group navigation">
+                      <li><a href="http://jeepxiaozi.github.io/pages/guan-yu-zuo-zhe.html" class="button secondary small">关于作者</a>
+                    </li>
+                 </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- End Nav -->
+
+
+    <!-- Main Page Content and Sidebar -->
+    <div class="row">
+
+        <!-- Main Blog Content -->
+        <div class="large-9 columns">
+<article>
+    <header>
+        <h3 class="article-title"><a href="http://jeepxiaozi.github.io/mian-app-storefen-fa-iosying-yong.html" rel="bookmark"
+        title="Permalink to 免App Store分发iOS应用">免App Store分发iOS应用</a></h3>
+    </header>
+
+<h6 class="subheader" title="2015-03-21T00:03:59+08:00">六 21 三月 2015
+</h6>
+
+
+    <h5>众所周知的原因</h5>
+<p>因为苹果对iOS应用限制比较多，而且严格，所以一般情况下用户下载软件都是要从App Store上下载，或者说干脆像我之前那样儿，直接用公司的测试证书跑各种有源码的iOS应用，但我们总不可能给每个人的手机上都跑测试版本的吧？毕竟，99刀的证书只能调试一百台设备，所以吧，99刀不够的，我们还需要299刀的，这样儿就可以开发各种企业应用，并且自己搭建服务器进行应用分发了，当然，大家即使在最开始也好，或者说现在能看到的也好，好多东西都是可以被玩儿坏了的，尤其是可以说很“自豪”的说是被我大天朝的一些公司玩儿坏了的。比如我最开始知道的299刀证书是为了企业内部定制开发App所用的，然后就被我大天朝一些公司给硬生生的做成了寨版“App Store”。。。咳咳，但这里我们不做过多的讨论，我们还是来看看如何进行iOS的企业分发。</p>
+<h5>神马是OTA</h5>
+<p>这个也不用整的那么高大上，就是over the air，即，空中下载（表示我啥也不知道啊，我好像是从某移动哪里翻出来的），嗯，就是一种无线发布方式，可以实现App在线安装，从此无需数据线啊有么有，而且岂止是么有数据线啊，连App Store都一边儿玩儿蛋去了诶（唔，作者今天没次药）</p>
+<h5>如何实现OTA</h5>
+<p>要实现OTA，我们需要准备三个文件：</p>
+<h6>.ipa文件</h6>
+<p>——即我们构建好的ipa安装包，不过这里需要说明一下，这个ipa包是需要签名的：可以是开发证书签名的（99刀的），比如只是给自己公司的产品汪和测试团队用的；也可以是企业证书（299刀的），比如我就是做了一个寨版的App Store</p>
+<h6>.plist文件</h6>
+<p>——这个文件主要用来描述我们的应用的安装信息，主要内容可以参考我们项目源码中的Info.plist文件，只不过从Xcode6开始，即使选择企业方式也没法儿自动生成plist文件了，所以简单的办法是我们可以手写，当然也有一些第三方的工具或者脚本之类的，我懒得找，所以找了个模板然后花了点儿时间自己写了一个，这里打个小广告，嘿嘿 <a href="https://github.com/jeepxiaozi/PlistGenerator">PlistGenerator</a>，当然，这里直接放一个模板，方便大家保存之后手动修改。</p>
+<div class="highlight"><pre>    <span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+    <span class="cp">&lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;</span>
+    <span class="nt">&lt;plist</span> <span class="na">version=</span><span class="s">&quot;1.0&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;dict&gt;</span>
+            <span class="nt">&lt;key&gt;</span>items<span class="nt">&lt;/key&gt;</span>
+            <span class="nt">&lt;array&gt;</span>
+                    <span class="nt">&lt;dict&gt;</span>
+                            <span class="nt">&lt;key&gt;</span>assets<span class="nt">&lt;/key&gt;</span>
+                            <span class="nt">&lt;array&gt;</span>
+                                    <span class="nt">&lt;dict&gt;</span>
+                                        <span class="nt">&lt;key&gt;</span>kind<span class="nt">&lt;/key&gt;</span>
+                                        <span class="nt">&lt;string&gt;</span>software-package<span class="nt">&lt;/string&gt;</span>
+                                        <span class="nt">&lt;key&gt;</span>url<span class="nt">&lt;/key&gt;</span>
+                                        <span class="nt">&lt;string&gt;</span>这里填写.ipa文件的下载地址（例如，http://xx.com/xx.ipa）<span class="nt">&lt;/string&gt;</span>
+                                    <span class="nt">&lt;/dict&gt;</span>
+                            <span class="nt">&lt;/array&gt;</span>
+                            <span class="nt">&lt;key&gt;</span>metadata<span class="nt">&lt;/key&gt;</span>
+                            <span class="nt">&lt;dict&gt;</span>
+                                <span class="nt">&lt;key&gt;</span>bundle-identifier<span class="nt">&lt;/key&gt;</span>
+                                <span class="nt">&lt;string&gt;</span>这里填写Bundle ID<span class="nt">&lt;/string&gt;</span>
+                                <span class="nt">&lt;key&gt;</span>bundle-version<span class="nt">&lt;/key&gt;</span>
+                                <span class="nt">&lt;string&gt;</span>这里填写版本号<span class="nt">&lt;/string&gt;</span>
+                                <span class="nt">&lt;key&gt;</span>kind<span class="nt">&lt;/key&gt;</span>
+                                <span class="nt">&lt;string&gt;</span>software<span class="nt">&lt;/string&gt;</span>
+                                <span class="nt">&lt;key&gt;</span>title<span class="nt">&lt;/key&gt;</span>
+                                <span class="nt">&lt;string&gt;</span>这里填写应用标题<span class="nt">&lt;/string&gt;</span>
+                            <span class="nt">&lt;/dict&gt;</span>
+                    <span class="nt">&lt;/dict&gt;</span>
+            <span class="nt">&lt;/array&gt;</span>
+    <span class="nt">&lt;/dict&gt;</span>
+    <span class="nt">&lt;/plist&gt;</span>
+</pre></div>
+
+
+<h6>html文件</h6>
+<p>——不管怎么样儿，最终还是要通过浏览器进行安装的，嗯，对，不管你是用的Safari还是用的QQ、微信的内置浏览器，所以我们要提供一个html页面，在这个html页面上我们需要放置一个按钮，提供一个itms-services协议的链接，用户只需要打开这个链接就可以进行在线安装，这里需要注意的是，这个链接指向的是plist文件地址，例如：</p>
+<div class="highlight"><pre>    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;itms-services://?action=download-manifest&amp;url=https://xx.com/xx.plist&quot;</span><span class="nt">&gt;</span>一键安装<span class="nt">&lt;/a&gt;</span>
+</pre></div>
+
+
+<p>所以说，iOS应用的OTA方式安装的核心就是苹果的itms-services协议，Safari可以通过解析itms-services协议来实现一键安装，在iOS7.1之前plist文件的url地址是没有限制的，但是之后，苹果修改了规则，这个url必须是可信任的https链接，至于其他的例如ipa文件的链接，没有特殊要求。</p>
+<p>那么，https链接该怎么处理呢？主要的几种方法的优缺点对比如下：
+1. 由公司购买https证书
+这个其实没啥好说的，有钱就可以任性。</p>
+<div class="highlight"><pre>优点：最直接最踏实最靠谱儿的方式
+
+缺点：当然，如果说你们的公司是创业小公司，https证书也是一笔可大可小的费用，但是，能省则省嘛，可以考虑例如startssl、instantssl之类的免费证书，只要是主流浏览器都认可的就可以，关于https证书其实是另外一个话题了，这里不作神展开。
+</pre></div>
+
+
+<ol>
+<li>
+<p>单独将plist文件进行托管
+呃，是的，你没听错，单独托管plist文件，将plist托管到可以支持https外链的网盘之类的。dropbox被墙掉了，目前我知道的提供https外链的七牛云存储算一个，嗯，这个算安利，嘿嘿，因为我的github pages的图床也是用的他家的。</p>
+<p>优点：无需自己购买或者配置https证书</p>
+<p>缺点：T_T! 虽然只是托管了plist文件但是基本上是个人都可以看到plist文件及其内容，除非你用啥黑魔法。。你懂得</p>
+</li>
+<li>
+<p>采用自签名证书的方式
+啊，这里你也没看错，对的，自己给自己颁发证书，表示我是可信赖的网站哟，譬如之前某123售票网站给自己也颁发过证书。</p>
+<p>优点：分分钟拿到“可信任”的证书</p>
+<p>缺点：首先，你得需要客户端信任你的证书，是的，你么有看错，你给自己颁发了一个证书，还需要用户选择信任这个证书，如果是小公司的话建议这个可以放弃了，因为一是人家本来就对你不够信任，而是，你不光让人家装你的应用还要人家装你的证书，啊，没啥冒犯的意思但是总觉得这么多东西下来用户估计早就跑没影儿了吧</p>
+</li>
+<li>
+<p>将应用整体托管到第三方平台
+嗯，这里国内也有不少，我知道的也就是像蒲公英iOS内测平台以及fir，他们可以提供全程的服务，并且你的应用可以实现内部分发，即设置访问密码之类的隐私功能。</p>
+<p>优点：方便快捷，自己无需操心，而且这些应用托管平台根据自己的名气来定，也可以作为让用户信任你的应用的佐证</p>
+<p>缺点：有些人可能不太放心把自己的安装包交粗来。。。</p>
+</li>
+</ol>
+<p>OK，大概就是介个样子，配置好了之后，就可以通过OTA方式分发或者安装你的iOS应用了</p>
+<p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/ios-develop.html">iOS Develop</a>
+
+</p>
+
+
+
+
+	<h4>Comments</h4>
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        var disqus_shortname = 'erictang'
+        var disqus_identifier = "mian-app-storefen-fa-iosying-yong.html";
+        var disqus_url = "http://jeepxiaozi.github.io/mian-app-storefen-fa-iosying-yong.html";
+
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</article>
+        </div>
+        <!-- End Main Content -->
+
+        <!-- Sidebar -->
+        <aside class="large-3 columns">
+            <h5 class="sidebar-title">Site</h5>
+            <ul class="side-nav">
+                <li><a href="http://jeepxiaozi.github.io/archives.html">Archives</a>
+                    <li><a href="http://jeepxiaozi.github.io/tags.html">Tags</a>              </ul>
+
+            <h5 class="sidebar-title">Categories</h5>
+            <ul class="side-nav">
+                <li><a href="http://jeepxiaozi.github.io/category/android-develop.html">Android Develop</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/ios-develop.html">iOS Develop</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo.html">技术生活</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/markdownxie-zuo.html">Markdown写作</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/multicopter.html">MultiCopter</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/pages.html">Pages</a>
+                </li>
+            </ul>
+             <h5 class="sidebar-title">Links</h5>
+            <ul class="side-nav">
+                <li><a href="http://www.linuxzen.com">cold's world</a>
+                </li>
+                <li><a href="http://www.cnwsjs.cn">城南往事小站</a>
+                </li>
+                <li><a href="http://wellmakers.com">电子匠人</a>
+                </li>
+            </ul>
+             <h5 class="sidebar-title">Social</h5>
+            <ul class="side-nav">
+                <li><a href="https://twitter.com/jeepxiaoxiaozi">twitter</a>
+                </li>
+                <li><a href="https://github.com/jeepxiaozi">GitHub</a>
+                </li>
+            </ul>
+
+        </aside>
+        <!-- End Sidebar -->
+
+    </div>
+    <!-- End Main Content and Sidebar -->
+
+
+    <!-- Footer -->
+    <footer class="row">
+        <div class="large-12 columns">
+            <hr />
+            <div class="row">
+                <div class="large-6 columns">
+                    <p><a href="http://jeepxiaozi.github.io">一把汤勺</a> &copy; EricTang 2015 
+ 
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1254253569'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s95.cnzz.com/z_stat.php%3Fid%3D1254253569%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));</script>
+                 </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>
