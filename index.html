@@ -48,6 +48,178 @@
         
 
             <article>
+                <a href="http://jeepxiaozi.github.io/androidkai-fa-zhi-gradlebi-ji-zheng-li-1.html"><h3 class="article-title">Android开发之Gradle笔记整理1</h3></a>
+<h6 class="subheader" title="2015-04-05T17:55:50+08:00">日 05 四月 2015
+</h6>
+
+
+<p>在Android开发中，我们经常会涉及到打包的问题，不管是debug包还是release包或者是beta包，又或是形形色色的各种国内的应用市场，即使是常见的应用市场，也不下几十个，所以打包的时候尤其痛苦，好在我们有Gradle。当然，看过美团的Android项目打包方案，也是一个不错的选择，感兴趣的同学也同样可以研究一下：<a href="http://tech.meituan.com/mt-apk-packaging.html">美团Android自动化之旅—生成渠道包</a></p>
+<h5>Gradle是啥？</h5>
+<p>Gradle是一个依赖管理工具，基于Groovy语言，面向java应用为主，它抛弃了各种基于XML的繁琐配置，取而代之的时基于Groovy的内部领域特定语言，即DSL语言。</p>
+<h5>Gradle安装</h5>
+<p>在Mac下，安装了Idea并且启用了Gradle支持的话，首次创建Gradle: Android Module的时候会自动下载Gradle，最好翻墙下载，速度会快一些，当然不翻墙也可以成功下载。</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/64502CCD-3560-49F8-A520-9D2B737FF2F0.png-img.normal" /></p>
+<p>下载之后的Gradle保存在 <code>shell /Users/EricTang/.gradle</code>下</p>
+<h5>Gradle快速入门</h5>
+<p>我们随便新建一个项目，命名为GradleTest，然后我们看一下Gradle的相关配置文件，跟Gradle配置相关的文件主要有：
+一、 GradleTest/GradleTest/build.gradle</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/2E9D9E49-7D82-413D-BDDD-6E16C57191E2.png-img.normal" /></p>
+<p>此处的build.gradle是整个Module的Gradle配置文件，也是主要的Gradle配置文件，然后我们看一下主Gradle配置文件的内容以及注释：</p>
+<div class="highlight"><pre>buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath &#39;com.android.tools.build:gradle:1.1.1&#39;
+    }
+}
+//声明这是Android应用程序
+apply plugin: &#39;com.android.application&#39;
+
+repositories {
+    jcenter()
+}
+
+android {
+        // 编译的SDK版本
+        compileSdkVersion 19
+        // buildTools的版本
+        buildToolsVersion &quot;21.1.1&quot;
+
+    defaultConfig {
+        // 应用包名
+        applicationId &quot;com.aiscot.gradle.test&quot;
+        minSdkVersion 9
+        targetSdkVersion 19
+        versionCode 1
+        versionName &quot;1.0&quot;
+    }
+    // java版本
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+    buildTypes {
+        debug {
+            // debug模式
+        }
+        release {
+            // release模式
+            // 是否进行混淆
+            minifyEnabled false
+            // 混淆文件的位置
+            proguardFiles getDefaultProguardFile(&#39;proguard-android.txt&#39;), &#39;proguard-rules.pro&#39;
+        }
+    }
+}
+
+dependencies {
+    // 将项目中libs目录下的所有jar包包含到编译目录中
+    compile fileTree(dir: &#39;libs&#39;, include: [&#39;*.jar&#39;])
+    compile &#39;com.android.support:appcompat-v7:22.0.0&#39;
+}
+</pre></div>
+
+
+<p>几点注意事项：</p>
+<ol>
+<li>
+<p>apply plugin是最新的Gradle版本写法，之前的版本写法是apply plugin: “android”，以前使用过的同学记得改正过来，刚开始用的同学（比如我）算是比较幸运的，可以直接从新的语法开始写起</p>
+</li>
+<li>
+<p>buildToolsVersion需要本地的SDK里安装过的版本才行，这个可以手动更改，或者通过Android SDK Manager下载相对应的版本</p>
+</li>
+<li>
+<p>sourceCompatibility后面的JavaVersion.VERSION_1_X指的是编译项目所需的java版本，Mac系统在10.9之前都是自带JDK1.6的，但是从10.9开始，java就不是Mac系统的一等公民了，不默认安装，这点我想大家在运行Idea或者Eclipse之类的IDE的时候应该已经知道了，运行的时候会提示你当前没有安装JDK，点击更多信息之后会跳转到Apple的Support网站去下载。不过还需要注意一点，最好把JDK1.7或者JDK1.8安装上，因为Android从5.0开始需要JDK1.7才能进行编译</p>
+</li>
+<li>
+<p>创建Gradle Android项目之后，自动生成的是默认基本配置，当然还有很多其他的自定义部分，例如自动打包debug、release、beta等，签名，多渠道打包等。</p>
+</li>
+</ol>
+<p>二、 GradleTest/build.gradle</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/A2D81006-ECEA-441A-8E7F-3053A4669879.png" /></p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/8FE1D91D-43CD-49B6-842B-7F9B4029283A.png" /></p>
+<p>Idea中每个Project相当于一个Workspace，而一个Module相当于一个Project，我们的Android项目中肯定有一个是运行的，而其他的Module就是引用的Library，每个Module（不论是运行的工程还是引用的Library）都需要有一个gradle配置文件，语法都是一样的，唯一不同的是开头声明的：运行的工程师开头声明的是“apply plugin:’com.android.application’”，而引用的Library开头声明的则是“apply plugin:’com.android.library'”</p>
+<p>上面这个文件，就是整个Project的gradle基础配置文件，我们来看一下它的内容：</p>
+<div class="highlight"><pre><span class="o">//</span> <span class="nt">Top-level</span> <span class="nt">build</span> <span class="nt">file</span> <span class="nt">where</span> <span class="nt">you</span> <span class="nt">can</span> <span class="nt">add</span> <span class="nt">configuration</span> <span class="nt">options</span> <span class="nt">common</span> <span class="nt">to</span> <span class="nt">all</span> <span class="nt">sub-projects</span><span class="o">/</span><span class="nt">modules</span><span class="o">.</span>
+
+<span class="nt">buildscript</span> <span class="p">{</span>
+    <span class="n">repositories</span> <span class="err">{</span>
+        <span class="n">jcenter</span><span class="p">()</span>
+    <span class="p">}</span>
+    <span class="nt">dependencies</span> <span class="p">{</span>
+        <span class="n">classpath</span> <span class="s1">&#39;com.android.tools.build:gradle:1.1.1&#39;</span>
+
+        <span class="o">//</span> <span class="n">NOTE</span><span class="o">:</span> <span class="n">Do</span> <span class="n">not</span> <span class="n">place</span> <span class="n">your</span> <span class="n">application</span> <span class="n">dependencies</span> <span class="n">here</span><span class="p">;</span> <span class="n">they</span> <span class="n">belong</span>
+        <span class="o">//</span> <span class="n">in</span> <span class="n">the</span> <span class="n">individual</span> <span class="n">module</span> <span class="n">build</span><span class="o">.</span><span class="n">gradle</span> <span class="n">files</span>
+    <span class="p">}</span>
+<span class="err">}</span>
+
+<span class="nt">allprojects</span> <span class="p">{</span>
+    <span class="n">repositories</span> <span class="err">{</span>
+        <span class="n">jcenter</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="err">}</span>
+</pre></div>
+
+
+<p>该文件主要包含两个方面的内容：</p>
+<ol>
+<li>
+<p>jcenter()，这里可以理解为一个新的中央远程仓库，兼容maven中心仓库，但是性能更优。</p>
+</li>
+<li>
+<p>classpath，声明了android gradle plugin的版本，这里的版本，对Idea的版本没有什么特殊要求，我用的是Idea14的版本，完全正常使用，其他的IDE例如Eclipse和Android Studio我就不是很清楚了。</p>
+</li>
+</ol>
+<p>三、 GradleTest/gradle目录
+这个目录下面有个wrapper目录，里面有两个文件，一个是gradle-wrapper.jar，另一个是gradle-wrapper.properties文件，这里我们重点看一下gradle-wrapper.properties文件的内容：</p>
+<div class="highlight"><pre>#Wed Apr 10 15:27:10 PDT 2013
+distributionBase=GRADLE_USER_HOME
+distributionPath=wrapper/dists
+zipStoreBase=GRADLE_USER_HOME
+zipStorePath=wrapper/dists
+distributionUrl=https\://services.gradle.org/distributions/gradle-2.2.1-all.zip
+</pre></div>
+
+
+<p>这里面声明了Gradle的目录、下载路径以及当前项目所使用的Gradle版本，一般情况下保持默认即可，无需更改，不过如果项目报错的话，而且确实是Gradle版本问题的话，我们也可以通过手动修改指定到正确的路径。</p>
+<p>四、 GradleTest/settings.gradle文件</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/F07D6370-2AB6-4DA9-B25B-C765872EE9C9.png" /></p>
+<p>该文件是全局的项目配置文件，内容如下：</p>
+<div class="highlight"><pre>include &#39;:GradleTest&#39;
+</pre></div>
+
+
+<p>这里面主要是生命一些需要加入Gradle的Module，例如我们这里就暂时就只有一个，如果引用了其他的Module，就按照 <code>include ':GradleTest’, ‘extras:额外的Module’</code> 的格式加入进去即可</p>
+<h5>其它问题</h5>
+<p>一、有些同学会和我一样，对Gradle的sync不是很熟悉，嗯，是这样儿的，每次我们修改了build.gradle文件，Gradle项目需要与Idea进行文件同步，点击sync now之后，Idea会根据Gradle文件重新更新.idea目录以及*.iml文件，让Idea可以识别到新引入的资源。</p>
+<p>二、关于Module中的build.gradle文件的buildscript代码其实是可以删除掉的，因为它可以从父项目中继承得来，即，使用GradleTest/build.gradle处的设置</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/9C3B474D-5F50-4DE4-B23C-997022923C8D.png-img.normal" /></p>
+<p>三、关于“Gradle: Error retrieving parent for item: No resources found that matches the given name ‘android:TextAppearance.Material’”的错误</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/B989688C-7432-47C4-BB19-C632B32FBA61.png-img.normal" /></p>
+<p>如果遇到这个错误的话，你就需要检查一下你相应的Module中得dependencies，确保将compile ‘com.android.support:appcompat-v7:22.0.0’的写法修正为’com.android.support:appcompat-v7:19.+’，这里的19指的是SDK版本号，需要跟你的targetSdkVersion保持一致。</p>
+<p>参考链接：<a href="http://stackoverflow.com/questions/24462128/error-retrieving-parent-for-item-android-studio">Error retrieving parent for item - Android Studio</a></p>
+<p>四、Gradle的sync在无网络连接的情况下失效</p>
+<p>这个可以通过设置Gradle的离线工作方式来解决，打开Preferences，在Build, Execution, Deployment下的Build Tools中找到Gradle。</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/D80720AD-4A54-4505-B308-2E8DE19B4891.png-img.normal" /></p>
+<p>勾选Offline work即可。</p>
+<p>关于Gradle的快速入门先写这么多，然后后面会重点记录一下多渠道打包的问题</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/android-develop.html">Android Develop</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/androidkai-fa-zhi-gradlebi-ji-zheng-li-1.html#disqus_thread">comments</a></p>            </article>
+
+
+                <hr  class="gradient"/>
+
+
+        
+
+
+            <article>
                 <a href="http://jeepxiaozi.github.io/mian-app-storefen-fa-iosying-yong.html"><h3 class="article-title">免App Store分发iOS应用</h3></a>
 <h6 class="subheader" title="2015-03-21T00:03:59+08:00">六 21 三月 2015
 </h6>
@@ -58,92 +230,15 @@
 <h5>神马是OTA</h5>
 <p>这个也不用整的那么高大上，就是over the air，即，空中下载（表示我啥也不知道啊，我好像是从某移动哪里翻出来的），嗯，就是一种无线发布方式，可以实现App在线安装，从此无需数据线啊有么有，而且岂止是么有数据线啊，连App Store都一边儿玩儿蛋去了诶（唔，作者今天没次药）</p>
 <h5>如何实现OTA</h5>
-<p>要实现OTA，我们需要准备三个文件：</p>
-<h6>.ipa文件</h6>
-<p>——即我们构建好的ipa安装包，不过这里需要说明一下，这个ipa包是需要签名的：可以是开发证书签名的（99刀的），比如只是给自己公司的产品汪和测试团队用的；也可以是企业证书（299刀的），比如我就是做了一个寨版的App Store</p>
-<h6>.plist文件</h6>
-<p>——这个文件主要用来描述我们的应用的安装信息，主要内容可以参考我们项目源码中的Info.plist文件，只不过从Xcode6开始，即使选择企业方式也没法儿自动生成plist文件了，所以简单的办法是我们可以手写，当然也有一些第三方的工具或者脚本之类的，我懒得找，所以找了个模板然后花了点儿时间自己写了一个，这里打个小广告，嘿嘿 <a href="https://github.com/jeepxiaozi/PlistGenerator">PlistGenerator</a>，当然，这里直接放一个模板，方便大家保存之后手动修改。</p>
-<div class="highlight"><pre>    <span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
-    <span class="cp">&lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;</span>
-    <span class="nt">&lt;plist</span> <span class="na">version=</span><span class="s">&quot;1.0&quot;</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;dict&gt;</span>
-            <span class="nt">&lt;key&gt;</span>items<span class="nt">&lt;/key&gt;</span>
-            <span class="nt">&lt;array&gt;</span>
-                    <span class="nt">&lt;dict&gt;</span>
-                            <span class="nt">&lt;key&gt;</span>assets<span class="nt">&lt;/key&gt;</span>
-                            <span class="nt">&lt;array&gt;</span>
-                                    <span class="nt">&lt;dict&gt;</span>
-                                        <span class="nt">&lt;key&gt;</span>kind<span class="nt">&lt;/key&gt;</span>
-                                        <span class="nt">&lt;string&gt;</span>software-package<span class="nt">&lt;/string&gt;</span>
-                                        <span class="nt">&lt;key&gt;</span>url<span class="nt">&lt;/key&gt;</span>
-                                        <span class="nt">&lt;string&gt;</span>这里填写.ipa文件的下载地址（例如，http://xx.com/xx.ipa）<span class="nt">&lt;/string&gt;</span>
-                                    <span class="nt">&lt;/dict&gt;</span>
-                            <span class="nt">&lt;/array&gt;</span>
-                            <span class="nt">&lt;key&gt;</span>metadata<span class="nt">&lt;/key&gt;</span>
-                            <span class="nt">&lt;dict&gt;</span>
-                                <span class="nt">&lt;key&gt;</span>bundle-identifier<span class="nt">&lt;/key&gt;</span>
-                                <span class="nt">&lt;string&gt;</span>这里填写Bundle ID<span class="nt">&lt;/string&gt;</span>
-                                <span class="nt">&lt;key&gt;</span>bundle-version<span class="nt">&lt;/key&gt;</span>
-                                <span class="nt">&lt;string&gt;</span>这里填写版本号<span class="nt">&lt;/string&gt;</span>
-                                <span class="nt">&lt;key&gt;</span>kind<span class="nt">&lt;/key&gt;</span>
-                                <span class="nt">&lt;string&gt;</span>software<span class="nt">&lt;/string&gt;</span>
-                                <span class="nt">&lt;key&gt;</span>title<span class="nt">&lt;/key&gt;</span>
-                                <span class="nt">&lt;string&gt;</span>这里填写应用标题<span class="nt">&lt;/string&gt;</span>
-                            <span class="nt">&lt;/dict&gt;</span>
-                    <span class="nt">&lt;/dict&gt;</span>
-            <span class="nt">&lt;/array&gt;</span>
-    <span class="nt">&lt;/dict&gt;</span>
-    <span class="nt">&lt;/plist&gt;</span>
-</pre></div>
-
-
-<h6>html文件</h6>
-<p>——不管怎么样儿，最终还是要通过浏览器进行安装的，嗯，对，不管你是用的Safari还是用的QQ、微信的内置浏览器，所以我们要提供一个html页面，在这个html页面上我们需要放置一个按钮，提供一个itms-services协议的链接，用户只需要打开这个链接就可以进行在线安装，这里需要注意的是，这个链接指向的是plist文件地址，例如：</p>
-<div class="highlight"><pre>    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;itms-services://?action=download-manifest&amp;url=https://xx.com/xx.plist&quot;</span><span class="nt">&gt;</span>一键安装<span class="nt">&lt;/a&gt;</span>
-</pre></div>
-
-
-<p>所以说，iOS应用的OTA方式安装的核心就是苹果的itms-services协议，Safari可以通过解析itms-services协议来实现一键安装，在iOS7.1之前plist文件的url地址是没有限制的，但是之后，苹果修改了规则，这个url必须是可信任的https链接，至于其他的例如ipa文件的链接，没有特殊要求。</p>
-<p>那么，https链接该怎么处理呢？主要的几种方法的优缺点对比如下：
-1. 由公司购买https证书
-这个其实没啥好说的，有钱就可以任性。</p>
-<div class="highlight"><pre>优点：最直接最踏实最靠谱儿的方式
-
-缺点：当然，如果说你们的公司是创业小公司，https证书也是一笔可大可小的费用，但是，能省则省嘛，可以考虑例如startssl、instantssl之类的免费证书，只要是主流浏览器都认可的就可以，关于https证书其实是另外一个话题了，这里不作神展开。
-</pre></div>
-
-
-<ol>
-<li>
-<p>单独将plist文件进行托管
-呃，是的，你没听错，单独托管plist文件，将plist托管到可以支持https外链的网盘之类的。dropbox被墙掉了，目前我知道的提供https外链的七牛云存储算一个，嗯，这个算安利，嘿嘿，因为我的github pages的图床也是用的他家的。</p>
-<p>优点：无需自己购买或者配置https证书</p>
-<p>缺点：T_T! 虽然只是托管了plist文件但是基本上是个人都可以看到plist文件及其内容，除非你用啥黑魔法。。你懂得</p>
-</li>
-<li>
-<p>采用自签名证书的方式
-啊，这里你也没看错，对的，自己给自己颁发证书，表示我是可信赖的网站哟，譬如之前某123售票网站给自己也颁发过证书。</p>
-<p>优点：分分钟拿到“可信任”的证书</p>
-<p>缺点：首先，你得需要客户端信任你的证书，是的，你么有看错，你给自己颁发了一个证书，还需要用户选择信任这个证书，如果是小公司的话建议这个可以放弃了，因为一是人家本来就对你不够信任，而是，你不光让人家装你的应用还要人家装你的证书，啊，没啥冒犯的意思但是总觉得这么多东西下来用户估计早就跑没影儿了吧</p>
-</li>
-<li>
-<p>将应用整体托管到第三方平台
-嗯，这里国内也有不少，我知道的也就是像蒲公英iOS内测平台以及fir，他们可以提供全程的服务，并且你的应用可以实现内部分发，即设置访问密码之类的隐私功能。</p>
-<p>优点：方便快捷，自己无需操心，而且这些应用托管平台根据自己的名气来定，也可以作为让用户信任你的应用的佐证</p>
-<p>缺点：有些人可能不太放心把自己的安装包交粗来。。。</p>
-</li>
-</ol>
-<p>OK，大概就是介个样子，配置好了之后，就可以通过OTA方式分发或者安装你的iOS应用了</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/ios-develop.html">iOS Develop</a>
+<p>要实现OTA，我们需要准备三个文件 ...</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/ios-develop.html">iOS Develop</a>
 
 </p>
 
 
 
-<p><a href="http://jeepxiaozi.github.io/mian-app-storefen-fa-iosying-yong.html#disqus_thread">comments</a></p>            </article>
-
-
+<p><a href="http://jeepxiaozi.github.io/mian-app-storefen-fa-iosying-yong.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/mian-app-storefen-fa-iosying-yong.html">Read More</a>
                 <hr  class="gradient"/>
-
+            </article>
 
         
 
