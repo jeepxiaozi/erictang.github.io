@@ -48,6 +48,230 @@
         
 
             <article>
+                <a href="http://jeepxiaozi.github.io/androidkai-fa-zhi-gradlebi-ji-zheng-li-2-gradlechang-yong-ming-ling-ji-umengduo-qu-dao-da-bao-shi-zhan.html"><h3 class="article-title">Android开发之Gradle笔记整理2——Gradle常用命令及UMeng多渠道打包实战</h3></a>
+<h6 class="subheader" title="2015-04-06T21:54:47+08:00">一 06 四月 2015
+</h6>
+
+
+<p>在前一篇博客里我们简单快速的学习了一下Gradle的基本安装和配置，以及解决了其中遇到的一些小的错误，这篇文章里我们来小小的实践一下，本身也是在Android开发中必不可少的技能。</p>
+<h5>修改build.gradle文件</h5>
+<p>接着之前的项目继续看，我们修改一下Module中的build.gradle文件，这里也不做过多讲解了，注释都在文件中，慢慢看，还是比较容易懂的：</p>
+<div class="highlight"><pre>apply plugin: &#39;com.android.application&#39;
+
+repositories {
+    jcenter()
+}
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion &quot;21.1.1&quot;
+
+    defaultConfig {
+        applicationId &quot;com.aiscot.gradle.test&quot;
+        minSdkVersion 9
+        targetSdkVersion 19
+        versionCode 1
+        versionName &quot;1.0&quot;
+
+        // 修改dex 65536的限制
+        multiDexEnabled true
+        // AndroidManifest.xml文件中UMENG_CHANNEL的value为<span class="cp">${</span><span class="n">UMENG_CHANNEL_VALUE</span><span class="cp">}</span>
+        manifestPlaceholders = [UMENG_CHANNEL_VALUE: &quot;channel_name&quot;]
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+    // 签名文件
+    signingConfigs {
+        debug {
+            // debug签名
+            storeFile file(&quot;/path/xx-debug.jks&quot;)
+            storePassword &quot;密码&quot;
+            keyAlias &quot;别名&quot;
+            keyPassword &quot;签名密钥的密码&quot;
+        }
+        release {
+            // relase签名
+            storeFile file(&quot;/path/xx-release.jks&quot;)
+            storePassword &quot;密码&quot;
+            keyAlias &quot;别名&quot;
+            keyPassword &quot;签名密钥的密码&quot;
+        }
+    }
+
+    // 构建类型
+    buildTypes {
+        debug {
+            // debug模式下，显示log
+            buildConfigField(&quot;boolean&quot;, &quot;LOG_DEBUG&quot;, &quot;true&quot;)
+
+            // 版本名前缀
+            versionNameSuffix &quot;-debug&quot;
+            // 不开启混淆
+            minifyEnabled false
+            // 不开启ZipAlign优化
+            zipAlignEnabled false
+            // 不移除无用的resource文件
+            shrinkResources false
+            // 使用debug签名
+            signingConfig signingConfigs.debug
+
+        }
+        release {
+            // release模式下，不显示log
+            buildConfigField(&quot;boolean&quot;, &quot;LOG_DEBUG&quot;, &quot;false&quot;)
+
+            // 版本名前缀
+            versionNameSuffix &quot;-relase&quot;
+            // 开启混淆
+            minifyEnabled true
+            // 开启ZipAlign优化
+            zipAlignEnabled true
+            // 移除无用的resource文件
+            shrinkResources true
+            // 使用release签名
+            signingConfig signingConfigs.release
+            // 混淆文件位置
+            proguardFiles getDefaultProguardFile(&#39;proguard-android.txt&#39;), &#39;proguard-rules.pro&#39;
+        }
+    }
+
+    // 渠道Flavors，配置不同的渠道
+    productFlavors {
+        GooglePaly {}
+        xiaomi {}
+        umeng {}
+        _360 {}
+        wandoujia {}
+        yingyongbao {}
+        whatever {}
+    }
+
+    // 批量配置渠道
+    productFlavors.all {
+        flavor -&gt; flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
+    }
+
+    applicationVariants.all {
+        variant -&gt;
+            variant.outputs.each {
+                output -&gt;
+                    def outputFile = output.outputFile
+                    if (outputFile != null <span class="err">&amp;&amp;</span> outputFile.name.endsWith(&#39;.apk&#39;)) {
+                        def fileName = outputFile.name.replace(&quot;.apk&quot;, &quot;-<span class="cp">${</span><span class="n">defaultConfig</span><span class="o">.</span><span class="n">versionName</span><span class="cp">}</span>.apk&quot;)
+                        output.outputFile = new File(outputFile.parent, fileName)
+                    }
+            }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: &#39;libs&#39;, include: [&#39;*.jar&#39;])
+    compile &#39;com.android.support:appcompat-v7:19.+&#39;
+}
+</pre></div>
+
+
+<p>重点需要讲解的地方：</p>
+<ol>
+<li>
+<p><code>signingConfigs</code>中的debug签名和release签名，都可以写绝对路径，当然，也可以通过指定形如<code>debug{storeFile file("xx-debug.jks")}</code>这样儿的配置，只不过需要注意，如果使用这样儿的方式，签名文件需要放在项目中</p>
+</li>
+<li>
+<p>UMeng官方的多渠道打包集成文档中指定，如果使用Gradle打包的方式的话，需要在build.gradle文件中的dependencies中添加如下的依赖：</p>
+</li>
+</ol>
+<div class="highlight"><pre>    dependencies {
+        compile &#39;com.umeng.analytics:analytics:latest.integration&#39;
+    }
+</pre></div>
+
+
+<p>这里我的想法是，build.grade文件中已经包含了libs目录下所有的jar包了</p>
+<div class="highlight"><pre>    compile fileTree(dir: &#39;libs&#39;, include: [&#39;*.jar&#39;])
+</pre></div>
+
+
+<p>所以我们其实可以直接把UMeng的jar包丢到这个目录下即可（写这篇博客的时候，我并不是很确定，写完了之后，测试完了，是正常的，所以这里应该是没有问题的，暂时没有做进一步的研究）</p>
+<h5>集成UMeng统计</h5>
+<ol>
+<li>配置manifest文件，UMeng的渠道统计需要在manifest文件中添加权限，注意，需要跟应用中已有的全选做下对比，避免重复</li>
+</ol>
+<div class="highlight"><pre>    &lt;!-- UMeng统计所需权限 --&gt;
+    &lt;uses-permission android:name=&quot;android.permission.ACCESS_NETWORK_STATE&quot;/&gt;
+    &lt;uses-permission android:name=&quot;android.permission.ACCESS_WIFI_STATE&quot;/&gt;
+    &lt;uses-permission android:name=&quot;android.permission.INTERNET&quot;/&gt;
+    &lt;uses-permission android:name=&quot;android.permission.READ_PHONE_STATE&quot;/&gt;
+    &lt;!-- UMeng统计所需权限 --&gt;
+</pre></div>
+
+
+<p>同时，还需要加入UMeng的AppKey，和Channel ID，需要注意的是，这里的UMENG_CHANNEL的value需要写成 <code>${UMENG_CHANNEL_VALUE}</code>，因为我们需要在build.gradle文件中对其进行操作，自动替换的</p>
+<div class="highlight"><pre>    <span class="c">&lt;!-- UMeng统计的Key和Channel --&gt;</span>
+    <span class="nt">&lt;meta</span><span class="err">-data</span> <span class="na">android:name=</span><span class="s">“UMENG_APPKEY”</span> <span class="na">android:value=</span><span class="s">&quot;APPKEY&quot;/</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;meta</span><span class="err">-data</span> <span class="na">android:name=</span><span class="s">&quot;UMENG_CHANNEL&quot;</span> <span class="na">android:value=</span><span class="s">&quot;</span><span class="cp">${</span><span class="n">UMENG_CHANNEL_VALUE</span><span class="cp">}</span><span class="s">&quot;/</span><span class="nt">&gt;</span>
+    <span class="c">&lt;!-- UMeng统计的Key和Channel --&gt;</span>
+</pre></div>
+
+
+<p>然后需要在每个Activity的onResume方法中调用MobclickAgent.onResume(Context), onPause方法中调用MobclickAgent.onPause(Context)</p>
+<ol>
+<li>然后看我们在build.gradle文件中的配置：</li>
+</ol>
+<div class="highlight"><pre>    // 渠道Flavors，配置不同的渠道
+    productFlavors {
+        GooglePaly {}
+        xiaomi {}
+        umeng {}
+        _360 {}
+        wandoujia {}
+        yingyongbao {}
+    }
+    // 批量配置渠道
+    productFlavors.all {
+        flavor -&gt; flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
+    }
+</pre></div>
+
+
+<p>然后关于UMeng的多渠道配置就基本完成了，接下来我们需要做的，就是了解Gradle的常用命令，并且进行打包操作了。</p>
+<h5>Gradle自动打包</h5>
+<p>打开终端，cd到Gradle项目所在的目录，啊？等下，我们用的是Idea啊，没必要的啊，来，跟我来，找到Idea项目界面最下方：</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/1D2354BD-9BD1-4AA3-B01B-C05A090593A6.png-img.normal" /></p>
+<p>看到Terminal的字样了么？点它</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/05E21BF8-A0AA-48C9-8683-2DA6171C6B72.png-img.normal" /></p>
+<p>自然就已经在项目的根目录下了</p>
+<p>这时候，我们只需要执行 <code>./gradlew assembleRelease</code> 命令，就可以完成release版本的各渠道的打包工作了，这里需要注意的是，如果是第一次执行该命令的话，会自动去下载Gradle。。额，没错儿，是自动去下载，即使是我们已经下载安装过Gradle了。。所以第一次的话，可能时间稍长，当时我测试的情况是6个渠道包，大概耗时3分35秒左右的样子，后面的话就会快很多了，大概耗时10秒左右。</p>
+<p>其他的命令还有：</p>
+<ol>
+<li>
+<p><code>./gradlew assembleDebug</code> —— 打包debug版本</p>
+</li>
+<li>
+<p><code>./gradlew assembleXiaomiRelease</code> —— 单独打包小米应用市场渠道的release版本</p>
+</li>
+<li>
+<p><code>./gradlew assembleXiaomi</code> —— 单独打包小米应用市场渠道的debug和release版本</p>
+</li>
+</ol>
+<p>关于Gradle多渠道打包的就暂时先写到这里，如果到时候渠道包太多，觉得Gradle速度太慢每次都要构建一次的话，也确实可以参考美团的打包方案，也是可行的。</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/android-develop.html">Android Develop</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/androidkai-fa-zhi-gradlebi-ji-zheng-li-2-gradlechang-yong-ming-ling-ji-umengduo-qu-dao-da-bao-shi-zhan.html#disqus_thread">comments</a></p>            </article>
+
+
+                <hr  class="gradient"/>
+
+
+        
+
+
+            <article>
                 <a href="http://jeepxiaozi.github.io/androidkai-fa-zhi-gradlebi-ji-zheng-li-1.html"><h3 class="article-title">Android开发之Gradle笔记整理1</h3></a>
 <h6 class="subheader" title="2015-04-05T17:55:50+08:00">日 05 四月 2015
 </h6>
@@ -64,157 +288,15 @@
 <p>我们随便新建一个项目，命名为GradleTest，然后我们看一下Gradle的相关配置文件，跟Gradle配置相关的文件主要有：
 一、 GradleTest/GradleTest/build.gradle</p>
 <p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/2E9D9E49-7D82-413D-BDDD-6E16C57191E2.png-img.normal" /></p>
-<p>此处的build.gradle是整个Module的Gradle配置文件，也是主要的Gradle配置文件，然后我们看一下主Gradle配置文件的内容以及注释：</p>
-<div class="highlight"><pre>buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath &#39;com.android.tools.build:gradle:1.1.1&#39;
-    }
-}
-//声明这是Android应用程序
-apply plugin: &#39;com.android.application&#39;
-
-repositories {
-    jcenter()
-}
-
-android {
-        // 编译的SDK版本
-        compileSdkVersion 19
-        // buildTools的版本
-        buildToolsVersion &quot;21.1.1&quot;
-
-    defaultConfig {
-        // 应用包名
-        applicationId &quot;com.aiscot.gradle.test&quot;
-        minSdkVersion 9
-        targetSdkVersion 19
-        versionCode 1
-        versionName &quot;1.0&quot;
-    }
-    // java版本
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
-    }
-    buildTypes {
-        debug {
-            // debug模式
-        }
-        release {
-            // release模式
-            // 是否进行混淆
-            minifyEnabled false
-            // 混淆文件的位置
-            proguardFiles getDefaultProguardFile(&#39;proguard-android.txt&#39;), &#39;proguard-rules.pro&#39;
-        }
-    }
-}
-
-dependencies {
-    // 将项目中libs目录下的所有jar包包含到编译目录中
-    compile fileTree(dir: &#39;libs&#39;, include: [&#39;*.jar&#39;])
-    compile &#39;com.android.support:appcompat-v7:22.0.0&#39;
-}
-</pre></div>
-
-
-<p>几点注意事项：</p>
-<ol>
-<li>
-<p>apply plugin是最新的Gradle版本写法，之前的版本写法是apply plugin: “android”，以前使用过的同学记得改正过来，刚开始用的同学（比如我）算是比较幸运的，可以直接从新的语法开始写起</p>
-</li>
-<li>
-<p>buildToolsVersion需要本地的SDK里安装过的版本才行，这个可以手动更改，或者通过Android SDK Manager下载相对应的版本</p>
-</li>
-<li>
-<p>sourceCompatibility后面的JavaVersion.VERSION_1_X指的是编译项目所需的java版本，Mac系统在10.9之前都是自带JDK1.6的，但是从10.9开始，java就不是Mac系统的一等公民了，不默认安装，这点我想大家在运行Idea或者Eclipse之类的IDE的时候应该已经知道了，运行的时候会提示你当前没有安装JDK，点击更多信息之后会跳转到Apple的Support网站去下载。不过还需要注意一点，最好把JDK1.7或者JDK1.8安装上，因为Android从5.0开始需要JDK1.7才能进行编译</p>
-</li>
-<li>
-<p>创建Gradle Android项目之后，自动生成的是默认基本配置，当然还有很多其他的自定义部分，例如自动打包debug、release、beta等，签名，多渠道打包等。</p>
-</li>
-</ol>
-<p>二、 GradleTest/build.gradle</p>
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/A2D81006-ECEA-441A-8E7F-3053A4669879.png" /></p>
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/8FE1D91D-43CD-49B6-842B-7F9B4029283A.png" /></p>
-<p>Idea中每个Project相当于一个Workspace，而一个Module相当于一个Project，我们的Android项目中肯定有一个是运行的，而其他的Module就是引用的Library，每个Module（不论是运行的工程还是引用的Library）都需要有一个gradle配置文件，语法都是一样的，唯一不同的是开头声明的：运行的工程师开头声明的是“apply plugin:’com.android.application’”，而引用的Library开头声明的则是“apply plugin:’com.android.library'”</p>
-<p>上面这个文件，就是整个Project的gradle基础配置文件，我们来看一下它的内容：</p>
-<div class="highlight"><pre><span class="o">//</span> <span class="nt">Top-level</span> <span class="nt">build</span> <span class="nt">file</span> <span class="nt">where</span> <span class="nt">you</span> <span class="nt">can</span> <span class="nt">add</span> <span class="nt">configuration</span> <span class="nt">options</span> <span class="nt">common</span> <span class="nt">to</span> <span class="nt">all</span> <span class="nt">sub-projects</span><span class="o">/</span><span class="nt">modules</span><span class="o">.</span>
-
-<span class="nt">buildscript</span> <span class="p">{</span>
-    <span class="n">repositories</span> <span class="err">{</span>
-        <span class="n">jcenter</span><span class="p">()</span>
-    <span class="p">}</span>
-    <span class="nt">dependencies</span> <span class="p">{</span>
-        <span class="n">classpath</span> <span class="s1">&#39;com.android.tools.build:gradle:1.1.1&#39;</span>
-
-        <span class="o">//</span> <span class="n">NOTE</span><span class="o">:</span> <span class="n">Do</span> <span class="n">not</span> <span class="n">place</span> <span class="n">your</span> <span class="n">application</span> <span class="n">dependencies</span> <span class="n">here</span><span class="p">;</span> <span class="n">they</span> <span class="n">belong</span>
-        <span class="o">//</span> <span class="n">in</span> <span class="n">the</span> <span class="n">individual</span> <span class="n">module</span> <span class="n">build</span><span class="o">.</span><span class="n">gradle</span> <span class="n">files</span>
-    <span class="p">}</span>
-<span class="err">}</span>
-
-<span class="nt">allprojects</span> <span class="p">{</span>
-    <span class="n">repositories</span> <span class="err">{</span>
-        <span class="n">jcenter</span><span class="p">()</span>
-    <span class="p">}</span>
-<span class="err">}</span>
-</pre></div>
-
-
-<p>该文件主要包含两个方面的内容：</p>
-<ol>
-<li>
-<p>jcenter()，这里可以理解为一个新的中央远程仓库，兼容maven中心仓库，但是性能更优。</p>
-</li>
-<li>
-<p>classpath，声明了android gradle plugin的版本，这里的版本，对Idea的版本没有什么特殊要求，我用的是Idea14的版本，完全正常使用，其他的IDE例如Eclipse和Android Studio我就不是很清楚了。</p>
-</li>
-</ol>
-<p>三、 GradleTest/gradle目录
-这个目录下面有个wrapper目录，里面有两个文件，一个是gradle-wrapper.jar，另一个是gradle-wrapper.properties文件，这里我们重点看一下gradle-wrapper.properties文件的内容：</p>
-<div class="highlight"><pre>#Wed Apr 10 15:27:10 PDT 2013
-distributionBase=GRADLE_USER_HOME
-distributionPath=wrapper/dists
-zipStoreBase=GRADLE_USER_HOME
-zipStorePath=wrapper/dists
-distributionUrl=https\://services.gradle.org/distributions/gradle-2.2.1-all.zip
-</pre></div>
-
-
-<p>这里面声明了Gradle的目录、下载路径以及当前项目所使用的Gradle版本，一般情况下保持默认即可，无需更改，不过如果项目报错的话，而且确实是Gradle版本问题的话，我们也可以通过手动修改指定到正确的路径。</p>
-<p>四、 GradleTest/settings.gradle文件</p>
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/F07D6370-2AB6-4DA9-B25B-C765872EE9C9.png" /></p>
-<p>该文件是全局的项目配置文件，内容如下：</p>
-<div class="highlight"><pre>include &#39;:GradleTest&#39;
-</pre></div>
-
-
-<p>这里面主要是生命一些需要加入Gradle的Module，例如我们这里就暂时就只有一个，如果引用了其他的Module，就按照 <code>include ':GradleTest’, ‘extras:额外的Module’</code> 的格式加入进去即可</p>
-<h5>其它问题</h5>
-<p>一、有些同学会和我一样，对Gradle的sync不是很熟悉，嗯，是这样儿的，每次我们修改了build.gradle文件，Gradle项目需要与Idea进行文件同步，点击sync now之后，Idea会根据Gradle文件重新更新.idea目录以及*.iml文件，让Idea可以识别到新引入的资源。</p>
-<p>二、关于Module中的build.gradle文件的buildscript代码其实是可以删除掉的，因为它可以从父项目中继承得来，即，使用GradleTest/build.gradle处的设置</p>
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/9C3B474D-5F50-4DE4-B23C-997022923C8D.png-img.normal" /></p>
-<p>三、关于“Gradle: Error retrieving parent for item: No resources found that matches the given name ‘android:TextAppearance.Material’”的错误</p>
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/B989688C-7432-47C4-BB19-C632B32FBA61.png-img.normal" /></p>
-<p>如果遇到这个错误的话，你就需要检查一下你相应的Module中得dependencies，确保将compile ‘com.android.support:appcompat-v7:22.0.0’的写法修正为’com.android.support:appcompat-v7:19.+’，这里的19指的是SDK版本号，需要跟你的targetSdkVersion保持一致。</p>
-<p>参考链接：<a href="http://stackoverflow.com/questions/24462128/error-retrieving-parent-for-item-android-studio">Error retrieving parent for item - Android Studio</a></p>
-<p>四、Gradle的sync在无网络连接的情况下失效</p>
-<p>这个可以通过设置Gradle的离线工作方式来解决，打开Preferences，在Build, Execution, Deployment下的Build Tools中找到Gradle。</p>
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/D80720AD-4A54-4505-B308-2E8DE19B4891.png-img.normal" /></p>
-<p>勾选Offline work即可。</p>
-<p>关于Gradle的快速入门先写这么多，然后后面会重点记录一下多渠道打包的问题</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/android-develop.html">Android Develop</a>
+<p>此处的build.gradle是整个Module的Gradle配置文件，也是主要的Gradle配置文件，然后我们看一下主Gradle配置文件的内容以及注释 ...</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/android-develop.html">Android Develop</a>
 
 </p>
 
 
 
-<p><a href="http://jeepxiaozi.github.io/androidkai-fa-zhi-gradlebi-ji-zheng-li-1.html#disqus_thread">comments</a></p>            </article>
-
-
+<p><a href="http://jeepxiaozi.github.io/androidkai-fa-zhi-gradlebi-ji-zheng-li-1.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/androidkai-fa-zhi-gradlebi-ji-zheng-li-1.html">Read More</a>
                 <hr  class="gradient"/>
-
+            </article>
 
         
 
