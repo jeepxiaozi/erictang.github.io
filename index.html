@@ -48,6 +48,35 @@
         
 
             <article>
+                <a href="http://jeepxiaozi.github.io/yi-dian-er-gan-kai-du-cheng-xu-yuan-bi-du-de-zhi-ye-gui-hua-shu.html"><h3 class="article-title">一点儿感慨——读《程序员必读的职业规划书》</h3></a>
+<h6 class="subheader" title="2015-05-17T16:01:16+08:00">日 17 五月 2015
+</h6>
+
+
+<p>其实这篇博客算是交作业，但又不比像上学的时候交作业一样诚惶诚恐，所以今天我就随意写点儿我自己读完之后的看法吧，所以也叫读《程序员必读的职业规划书》有感。</p>
+<p>首先我要坦白一件事情，就是我并不是很熟悉Easy大神（陈理捷陈老师，嗯，陈老师），时至今日，已经无法回忆起当时是如何关注到他的新浪微博的了，当然，后来他做了JobDeer我是知道的，不过也一直没有太在意，直到有天，哎呀，突然陈老师出了一本书，叫做《程序员必读的职业规划书》，嗯，我就有点儿感兴趣了（当然我直到书里肯定不会有啥福利照片）。</p>
+<p>然后机缘巧合，看到陈老师发了个微博，说有送书的名额啥的，嗯，也该我走一回狗屎运了吧，所以就胆战心惊的填写了内容，把自己的CSDN博客和GitHub Pages链接提交了上去，然后就中了，确切的说，是中奖两次（哎呀，运气真好）。</p>
+<p>可能在最开始拿到书的时候，有很多同学像我一样会嘟囔一句，唔，有点儿太薄了，确定不是书籍界的杜X斯咩？但是，不要被它纤薄的外表迷惑了，里面可是大有文章的（看我脸，一脸便秘的表情，不是~一脸神秘的表情！）。</p>
+<p>于是乎，忙里偷闲，花了几天时间把这本书拜读完了，第一评价就是写的很不错，没有恭维或者跪舔的成分，确实是很不错的一本书，我个人的一个感触就是，这本书比较适合的人群，一是应届毕业生，二是刚踏入社会没几年还特别迷茫的开发工程师（当然，其他行业的也可以借鉴，只不过陈老师在书中更多地还是以开发岗位作为实例来讲解的）。</p>
+<p>另外的让我比较感触的地方是，我本人也在实际面试过程中遇到过不少开发工程师，有已经工作几年的开发工程师，也有初出茅庐的应届毕业生，水平其实是参差不齐的，有迷茫的，有踌躇满志的，有自信满满的，也有盛气凌人的，我也会根据每个人的一些情况给予一定的意见，很多都是小Tips，比如做开发也要学好英语啊、开发还是要有自己的技术博客啊、多关注一些IT资讯啊、了解比较新的技术潮流动向啊等等，但远没有陈老师在书中总结的富有逻辑性和条理性，这也就是我觉得这是一本不错的书的最重要的一个原因。</p>
+<p>在这本书中，陈老师还透过现象看本质，扒开求职、跳槽、自我价值等词汇的光鲜的外衣，深入剖析了这些词汇背后所包含的意义，让读者能够更明确地知道，职业规划并不是简简单单的多赚钱而已，当然，私以为多赚钱也是可以的。</p>
+<p>书中最后附上的全栈技能书，大赞！当然，这个并不是说，每个开发工程师一定要立志成为Full-Stack才会受人尊敬、才可以称之为大神，每个人有每个人的追求，只要做好了，专攻，也是可以称之为大神的。</p>
+<p>后续就是这本书我刚看完就基本确定了特别适合我的一个朋友阅读，然后就借花献佛送人了，哈哈哈，有些书还是留个相对来说更需要的人吧。</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo.html">技术生活</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/yi-dian-er-gan-kai-du-cheng-xu-yuan-bi-du-de-zhi-ye-gui-hua-shu.html#disqus_thread">comments</a></p>            </article>
+
+
+                <hr  class="gradient"/>
+
+
+        
+
+
+            <article>
                 <a href="http://jeepxiaozi.github.io/androidkai-fa-zhi-gradlebi-ji-zheng-li-2-gradlechang-yong-ming-ling-ji-umengduo-qu-dao-da-bao-shi-zhan.html"><h3 class="article-title">Android开发之Gradle笔记整理2——Gradle常用命令及UMeng多渠道打包实战</h3></a>
 <h6 class="subheader" title="2015-04-06T21:54:47+08:00">一 06 四月 2015
 </h6>
@@ -76,197 +105,15 @@ android {
         // 修改dex 65536的限制
         multiDexEnabled true
         // AndroidManifest.xml文件中UMENG_CHANNEL的value为<span class="cp">${</span><span class="n">UMENG_CHANNEL_VALUE</span><span class="cp">}</span>
-        manifestPlaceholders = [UMENG_CHANNEL_VALUE: &quot;channel_name&quot;]
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
-    }
-    // 签名文件
-    signingConfigs {
-        debug {
-            // debug签名
-            storeFile file(&quot;/path/xx-debug.jks&quot;)
-            storePassword &quot;密码&quot;
-            keyAlias &quot;别名&quot;
-            keyPassword &quot;签名密钥的密码&quot;
-        }
-        release {
-            // relase签名
-            storeFile file(&quot;/path/xx-release.jks&quot;)
-            storePassword &quot;密码&quot;
-            keyAlias &quot;别名&quot;
-            keyPassword &quot;签名密钥的密码&quot;
-        }
-    }
-
-    // 构建类型
-    buildTypes {
-        debug {
-            // debug模式下，显示log
-            buildConfigField(&quot;boolean&quot;, &quot;LOG_DEBUG&quot;, &quot;true&quot;)
-
-            // 版本名前缀
-            versionNameSuffix &quot;-debug&quot;
-            // 不开启混淆
-            minifyEnabled false
-            // 不开启ZipAlign优化
-            zipAlignEnabled false
-            // 不移除无用的resource文件
-            shrinkResources false
-            // 使用debug签名
-            signingConfig signingConfigs.debug
-
-        }
-        release {
-            // release模式下，不显示log
-            buildConfigField(&quot;boolean&quot;, &quot;LOG_DEBUG&quot;, &quot;false&quot;)
-
-            // 版本名前缀
-            versionNameSuffix &quot;-relase&quot;
-            // 开启混淆
-            minifyEnabled true
-            // 开启ZipAlign优化
-            zipAlignEnabled true
-            // 移除无用的resource文件
-            shrinkResources true
-            // 使用release签名
-            signingConfig signingConfigs.release
-            // 混淆文件位置
-            proguardFiles getDefaultProguardFile(&#39;proguard-android.txt&#39;), &#39;proguard-rules.pro&#39;
-        }
-    }
-
-    // 渠道Flavors，配置不同的渠道
-    productFlavors {
-        GooglePaly {}
-        xiaomi {}
-        umeng {}
-        _360 {}
-        wandoujia {}
-        yingyongbao {}
-        whatever {}
-    }
-
-    // 批量配置渠道
-    productFlavors.all {
-        flavor -&gt; flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
-    }
-
-    applicationVariants.all {
-        variant -&gt;
-            variant.outputs.each {
-                output -&gt;
-                    def outputFile = output.outputFile
-                    if (outputFile != null <span class="err">&amp;&amp;</span> outputFile.name.endsWith(&#39;.apk&#39;)) {
-                        def fileName = outputFile.name.replace(&quot;.apk&quot;, &quot;-<span class="cp">${</span><span class="n">defaultConfig</span><span class="o">.</span><span class="n">versionName</span><span class="cp">}</span>.apk&quot;)
-                        output.outputFile = new File(outputFile.parent, fileName)
-                    }
-            }
-    }
-}
-
-dependencies {
-    compile fileTree(dir: &#39;libs&#39;, include: [&#39;*.jar&#39;])
-    compile &#39;com.android.support:appcompat-v7:19.+&#39;
-}
-</pre></div>
-
-
-<p>重点需要讲解的地方：</p>
-<ol>
-<li>
-<p><code>signingConfigs</code>中的debug签名和release签名，都可以写绝对路径，当然，也可以通过指定形如<code>debug{storeFile file("xx-debug.jks")}</code>这样儿的配置，只不过需要注意，如果使用这样儿的方式，签名文件需要放在项目中</p>
-</li>
-<li>
-<p>UMeng官方的多渠道打包集成文档中指定，如果使用Gradle打包的方式的话，需要在build.gradle文件中的dependencies中添加如下的依赖：</p>
-</li>
-</ol>
-<div class="highlight"><pre>    dependencies {
-        compile &#39;com.umeng.analytics:analytics:latest.integration&#39;
-    }
-</pre></div>
-
-
-<p>这里我的想法是，build.grade文件中已经包含了libs目录下所有的jar包了</p>
-<div class="highlight"><pre>    compile fileTree(dir: &#39;libs&#39;, include: [&#39;*.jar&#39;])
-</pre></div>
-
-
-<p>所以我们其实可以直接把UMeng的jar包丢到这个目录下即可（写这篇博客的时候，我并不是很确定，写完了之后，测试完了，是正常的，所以这里应该是没有问题的，暂时没有做进一步的研究）</p>
-<h5>集成UMeng统计</h5>
-<ol>
-<li>配置manifest文件，UMeng的渠道统计需要在manifest文件中添加权限，注意，需要跟应用中已有的全选做下对比，避免重复</li>
-</ol>
-<div class="highlight"><pre>    &lt;!-- UMeng统计所需权限 --&gt;
-    &lt;uses-permission android:name=&quot;android.permission.ACCESS_NETWORK_STATE&quot;/&gt;
-    &lt;uses-permission android:name=&quot;android.permission.ACCESS_WIFI_STATE&quot;/&gt;
-    &lt;uses-permission android:name=&quot;android.permission.INTERNET&quot;/&gt;
-    &lt;uses-permission android:name=&quot;android.permission.READ_PHONE_STATE&quot;/&gt;
-    &lt;!-- UMeng统计所需权限 --&gt;
-</pre></div>
-
-
-<p>同时，还需要加入UMeng的AppKey，和Channel ID，需要注意的是，这里的UMENG_CHANNEL的value需要写成 <code>${UMENG_CHANNEL_VALUE}</code>，因为我们需要在build.gradle文件中对其进行操作，自动替换的</p>
-<div class="highlight"><pre>    <span class="c">&lt;!-- UMeng统计的Key和Channel --&gt;</span>
-    <span class="nt">&lt;meta</span><span class="err">-data</span> <span class="na">android:name=</span><span class="s">“UMENG_APPKEY”</span> <span class="na">android:value=</span><span class="s">&quot;APPKEY&quot;/</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;meta</span><span class="err">-data</span> <span class="na">android:name=</span><span class="s">&quot;UMENG_CHANNEL&quot;</span> <span class="na">android:value=</span><span class="s">&quot;</span><span class="cp">${</span><span class="n">UMENG_CHANNEL_VALUE</span><span class="cp">}</span><span class="s">&quot;/</span><span class="nt">&gt;</span>
-    <span class="c">&lt;!-- UMeng统计的Key和Channel --&gt;</span>
-</pre></div>
-
-
-<p>然后需要在每个Activity的onResume方法中调用MobclickAgent.onResume(Context), onPause方法中调用MobclickAgent.onPause(Context)</p>
-<ol>
-<li>然后看我们在build.gradle文件中的配置：</li>
-</ol>
-<div class="highlight"><pre>    // 渠道Flavors，配置不同的渠道
-    productFlavors {
-        GooglePaly {}
-        xiaomi {}
-        umeng {}
-        _360 {}
-        wandoujia {}
-        yingyongbao {}
-    }
-    // 批量配置渠道
-    productFlavors.all {
-        flavor -&gt; flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
-    }
-</pre></div>
-
-
-<p>然后关于UMeng的多渠道配置就基本完成了，接下来我们需要做的，就是了解Gradle的常用命令，并且进行打包操作了。</p>
-<h5>Gradle自动打包</h5>
-<p>打开终端，cd到Gradle项目所在的目录，啊？等下，我们用的是Idea啊，没必要的啊，来，跟我来，找到Idea项目界面最下方：</p>
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/1D2354BD-9BD1-4AA3-B01B-C05A090593A6.png-img.normal" /></p>
-<p>看到Terminal的字样了么？点它</p>
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/05E21BF8-A0AA-48C9-8683-2DA6171C6B72.png-img.normal" /></p>
-<p>自然就已经在项目的根目录下了</p>
-<p>这时候，我们只需要执行 <code>./gradlew assembleRelease</code> 命令，就可以完成release版本的各渠道的打包工作了，这里需要注意的是，如果是第一次执行该命令的话，会自动去下载Gradle。。额，没错儿，是自动去下载，即使是我们已经下载安装过Gradle了。。所以第一次的话，可能时间稍长，当时我测试的情况是6个渠道包，大概耗时3分35秒左右的样子，后面的话就会快很多了，大概耗时10秒左右。</p>
-<p>其他的命令还有：</p>
-<ol>
-<li>
-<p><code>./gradlew assembleDebug</code> —— 打包debug版本</p>
-</li>
-<li>
-<p><code>./gradlew assembleXiaomiRelease</code> —— 单独打包小米应用市场渠道的release版本</p>
-</li>
-<li>
-<p><code>./gradlew assembleXiaomi</code> —— 单独打包小米应用市场渠道的debug和release版本</p>
-</li>
-</ol>
-<p>关于Gradle多渠道打包的就暂时先写到这里，如果到时候渠道包太多，觉得Gradle速度太慢每次都要构建一次的话，也确实可以参考美团的打包方案，也是可行的。</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/android-develop.html">Android Develop</a>
+        manifestPlaceholders ...</pre></div><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/android-develop.html">Android Develop</a>
 
 </p>
 
 
 
-<p><a href="http://jeepxiaozi.github.io/androidkai-fa-zhi-gradlebi-ji-zheng-li-2-gradlechang-yong-ming-ling-ji-umengduo-qu-dao-da-bao-shi-zhan.html#disqus_thread">comments</a></p>            </article>
-
-
+<p><a href="http://jeepxiaozi.github.io/androidkai-fa-zhi-gradlebi-ji-zheng-li-2-gradlechang-yong-ming-ling-ji-umengduo-qu-dao-da-bao-shi-zhan.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/androidkai-fa-zhi-gradlebi-ji-zheng-li-2-gradlechang-yong-ming-ling-ji-umengduo-qu-dao-da-bao-shi-zhan.html">Read More</a>
                 <hr  class="gradient"/>
-
+            </article>
 
         
 
@@ -480,31 +327,13 @@ dependencies {
                 <hr  class="gradient"/>
             </article>
 
-        
-
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/guan-yu-zuo-zhe.html"><h3 class="article-title">关于作者</h3></a>
-<h6 class="subheader" title="2015-02-05T00:00:00+08:00">四 05 二月 2015
-</h6>
-
-
-<p>作者是一只擅长打酱油和灌水的老光棍儿，喜欢摇滚，热爱编程，对移动端有兴趣，对硬件也有兴趣，对萌妹纸当然更有兴趣，~(≧▽≦)/~啦啦啦，嗯，暂时就这么多先。。。</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/pages.html">Pages</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/guan-yu-zuo-zhe.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/guan-yu-zuo-zhe.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
-
             <!-- /#posts-list -->
 <div class="pagination-centered">
-<h6 class="subheader">Page 1 of 1</h6>
+<h6 class="subheader">Page 1 of 2</h6>
 
 <p>
 
+        <a href="http://jeepxiaozi.github.io/index2.html">Next &raquo;</a>
 </p>
 </div>
 
