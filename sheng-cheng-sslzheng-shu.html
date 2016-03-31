@@ -59,7 +59,7 @@
 <p>首先，先创建一个文件夹，我们这里取名叫demoCA，然后参考openssl.cfg/openssl.cnf文件，不确定为啥命名是这样儿的，可以打开openssl.cnf看看内容就清楚了，按照自己的需要设置证书要用的目的之类的，当然，这里我们无需自己设置，可以直接使用默认的。然后我们在demoCA目录下，分别创建certs、newcerts文件夹，并且创建一个空白的index.txt文件和一个serial文件，在serial文件中填充任意的16进制数字，如0000，准备工作，基本到这里就结束了，接下来我们开始正式生成SSL证书。</p>
 <h5>开始生成SSL证书</h5>
 <h6>1. 首先，生成服务器端的私钥（key文件）：</h6>
-<div class="highlight"><pre><span class="nv">$openssl</span> genrsa -des3 -out server.key 1024
+<div class="highlight"><pre><span></span><span class="nv">$openssl</span> genrsa -des3 -out server.key 1024
 </pre></div>
 
 
@@ -67,19 +67,19 @@
 <p>如图：</p>
 <p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/generate_ssl_cert_1.jpg" /></p>
 <p>以后每次需要读取该key文件时都要输入密码，如果觉得太麻烦也可以直接去掉，去掉key文件口令的命令是：</p>
-<div class="highlight"><pre><span class="nv">$openssl</span> rsa -in server.key -out server.key
+<div class="highlight"><pre><span></span><span class="nv">$openssl</span> rsa -in server.key -out server.key
 </pre></div>
 
 
 <h6>2. 按照我们的配置文件，生成证书签名请求文件，即CSR文件（Certificate Signing Request），生成的CSR文件交给CA签名形成服务端自己的证书，命令如下：</h6>
-<div class="highlight"><pre><span class="nv">$openssl</span> req -new -key server.key -out server.csr -config openssl.cnf
+<div class="highlight"><pre><span></span><span class="nv">$openssl</span> req -new -key server.key -out server.csr -config openssl.cnf
 </pre></div>
 
 
 <p>填写如图所示的基本信息：</p>
 <p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/generate_ssl_cert_2.jpg" /></p>
 <h6>3. 对客户端也作同样的命令，生成key和CSR文件</h6>
-<div class="highlight"><pre><span class="nv">$openssl</span> genrsa -des3 -out client.key 1024
+<div class="highlight"><pre><span></span><span class="nv">$openssl</span> genrsa -des3 -out client.key 1024
 
 <span class="nv">$openssl</span> req -new -key client.key -out client.csr -config openssl.cnf
 </pre></div>
@@ -88,13 +88,13 @@
 <p>参考服务端的生成方法，填写信息即可。</p>
 <h6>4. CSR文件必须有CA的签名才可以生成证书，这里我们直接自己做CA。</h6>
 <p>在当前目录下执行如下命令：   </p>
-<div class="highlight"><pre><span class="nv">$openssl</span> req -new -x509 -keyout ca.key -out ca.crt -config openssl.cnf
+<div class="highlight"><pre><span></span><span class="nv">$openssl</span> req -new -x509 -keyout ca.key -out ca.crt -config openssl.cnf
 </pre></div>
 
 
 <p>之后会看到在SelfCA目录下生成了一个ca.key和ca.crt文件</p>
 <h6>5. 用刚生成的CA证书为server.csr，client.csr文件签名：</h6>
-<div class="highlight"><pre><span class="nv">$Openssl</span> ca -in server.csr -out server.crt -cert ca.crt -keyfile ca.key -config openssl.cnf
+<div class="highlight"><pre><span></span><span class="nv">$Openssl</span> ca -in server.csr -out server.crt -cert ca.crt -keyfile ca.key -config openssl.cnf
 
 <span class="nv">$Openssl</span> ca -in client.csr -out client.crt -cert ca.crt -keyfile ca.key -config openssl.cnf
 </pre></div>

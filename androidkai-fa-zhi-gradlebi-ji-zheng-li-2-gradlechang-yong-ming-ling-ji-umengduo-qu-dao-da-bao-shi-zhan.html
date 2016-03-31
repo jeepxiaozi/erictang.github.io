@@ -57,7 +57,7 @@
     <p>在前一篇博客里我们简单快速的学习了一下Gradle的基本安装和配置，以及解决了其中遇到的一些小的错误，这篇文章里我们来小小的实践一下，本身也是在Android开发中必不可少的技能。</p>
 <h5>修改build.gradle文件</h5>
 <p>接着之前的项目继续看，我们修改一下Module中的build.gradle文件，这里也不做过多讲解了，注释都在文件中，慢慢看，还是比较容易懂的：</p>
-<div class="highlight"><pre>apply plugin: &#39;com.android.application&#39;
+<div class="highlight"><pre><span></span>apply plugin: &#39;com.android.application&#39;
 
 repositories {
     jcenter()
@@ -184,14 +184,14 @@ dependencies {
 <p>UMeng官方的多渠道打包集成文档中指定，如果使用Gradle打包的方式的话，需要在build.gradle文件中的dependencies中添加如下的依赖：</p>
 </li>
 </ol>
-<div class="highlight"><pre>    dependencies {
+<div class="highlight"><pre><span></span>    dependencies {
         compile &#39;com.umeng.analytics:analytics:latest.integration&#39;
     }
 </pre></div>
 
 
 <p>这里我的想法是，build.grade文件中已经包含了libs目录下所有的jar包了</p>
-<div class="highlight"><pre>    compile fileTree(dir: &#39;libs&#39;, include: [&#39;*.jar&#39;])
+<div class="highlight"><pre><span></span>    compile fileTree(dir: &#39;libs&#39;, include: [&#39;*.jar&#39;])
 </pre></div>
 
 
@@ -200,7 +200,7 @@ dependencies {
 <ol>
 <li>配置manifest文件，UMeng的渠道统计需要在manifest文件中添加权限，注意，需要跟应用中已有的全选做下对比，避免重复</li>
 </ol>
-<div class="highlight"><pre>    &lt;!-- UMeng统计所需权限 --&gt;
+<div class="highlight"><pre><span></span>    &lt;!-- UMeng统计所需权限 --&gt;
     &lt;uses-permission android:name=&quot;android.permission.ACCESS_NETWORK_STATE&quot;/&gt;
     &lt;uses-permission android:name=&quot;android.permission.ACCESS_WIFI_STATE&quot;/&gt;
     &lt;uses-permission android:name=&quot;android.permission.INTERNET&quot;/&gt;
@@ -210,7 +210,7 @@ dependencies {
 
 
 <p>同时，还需要加入UMeng的AppKey，和Channel ID，需要注意的是，这里的UMENG_CHANNEL的value需要写成 <code>${UMENG_CHANNEL_VALUE}</code>，因为我们需要在build.gradle文件中对其进行操作，自动替换的</p>
-<div class="highlight"><pre>    <span class="c">&lt;!-- UMeng统计的Key和Channel --&gt;</span>
+<div class="highlight"><pre><span></span>    <span class="c">&lt;!-- UMeng统计的Key和Channel --&gt;</span>
     <span class="nt">&lt;meta</span><span class="err">-data</span> <span class="na">android:name=</span><span class="s">“UMENG_APPKEY”</span> <span class="na">android:value=</span><span class="s">&quot;APPKEY&quot;/</span><span class="nt">&gt;</span>
     <span class="nt">&lt;meta</span><span class="err">-data</span> <span class="na">android:name=</span><span class="s">&quot;UMENG_CHANNEL&quot;</span> <span class="na">android:value=</span><span class="s">&quot;</span><span class="cp">${</span><span class="n">UMENG_CHANNEL_VALUE</span><span class="cp">}</span><span class="s">&quot;/</span><span class="nt">&gt;</span>
     <span class="c">&lt;!-- UMeng统计的Key和Channel --&gt;</span>
@@ -221,7 +221,7 @@ dependencies {
 <ol>
 <li>然后看我们在build.gradle文件中的配置：</li>
 </ol>
-<div class="highlight"><pre>    // 渠道Flavors，配置不同的渠道
+<div class="highlight"><pre><span></span>    // 渠道Flavors，配置不同的渠道
     productFlavors {
         GooglePaly {}
         xiaomi {}

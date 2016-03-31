@@ -82,7 +82,7 @@
 <p>默认的，omnibus-gitlab会在安装GitLab的时候默认内置了一个Nginx Server，Omnibus-gitlab允许webserver通过gitlab-www分组下的gitlab-www同名用户来访问。要想添加额外的webserver权限到GitLab的话，需要将额外的webserver用户添加到gitlab-www分组里</p>
 <p>想要使用其他的web server例如Apache或者已有的Nginx，你需要做以下的操作步骤：
 - 通过在<em>/etc/gitlab/gitlab.rb</em>文件中指定来禁用内置的Nginx：</p>
-<div class="highlight"><pre><span class="n">nginx</span><span class="o">[</span><span class="s1">&#39;enable&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="kp">false</span>
+<div class="highlight"><pre><span></span><span class="n">nginx</span><span class="o">[</span><span class="s1">&#39;enable&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="kp">false</span>
 
 <span class="c1">#对于GitLab CI，使用如下的：</span>
 <span class="n">ci_nginx</span><span class="o">[</span><span class="s1">&#39;enable&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="kp">false</span>
@@ -114,7 +114,7 @@
 <p>HTML5和CSS3的火爆程度自不必说，很多同学可能说我们不是专门的Web前端工程师呢，所以并不用关心这个，但我觉得吧，做我们开发这行儿的，还是不要用这样儿的借口来为自己开脱的好，至少，我们要为了成为全栈工程师而努力不是？那么这里我们来看一下CSS3里制作动画的几个属性：变形（Transform）、转换（Transition）和动画（Animation）等。今天我们这篇文章主要介绍的是这三个属性中的第一个——变形（Transform）。</p>
 <p>那么所谓Transform，在CSS3中主要包括一下集中：旋转Rotate、扭曲Skew、缩放Scale和移动Translate以及矩阵变形Matrix等。下面我们看下具体如何实现。</p>
 <p>Transform语法：</p>
-<div class="highlight"><pre><span class="nt">transform</span> <span class="o">:</span> <span class="nt">none</span> <span class="o">|</span> <span class="o">&lt;</span><span class="nt">transform-function</span><span class="o">&gt;</span> <span class="o">[</span> <span class="o">&lt;</span><span class="nt">transform-function</span><span class="o">&gt;]*</span>
+<div class="highlight"><pre><span></span><span class="nt">transform</span> <span class="o">:</span> <span class="nt">none</span> <span class="o">|</span> <span class="o">&lt;</span><span class="nt">transform-function</span><span class="o">&gt;</span> <span class="o">[</span> <span class="o">&lt;</span><span class="nt">transform-function</span><span class="o">&gt;]*</span>
 <span class="c">/*也就是*/</span>
 <span class="nt">transform</span><span class="o">:</span> <span class="nt">rotate</span> <span class="o">|</span> <span class="nt">scale</span> <span class="o">|</span> <span class="nt">skew</span> <span class="o">|</span> <span class="nt">translate</span> <span class="o">|</span> <span class="nt">matrix</span><span class="o">;</span>
 </pre></div>
@@ -146,7 +146,7 @@
 <p>首先，先创建一个文件夹，我们这里取名叫demoCA，然后参考openssl.cfg/openssl.cnf文件，不确定为啥命名是这样儿的，可以打开openssl.cnf看看内容就清楚了，按照自己的需要设置证书要用的目的之类的，当然，这里我们无需自己设置，可以直接使用默认的。然后我们在demoCA目录下，分别创建certs、newcerts文件夹，并且创建一个空白的index.txt文件和一个serial文件，在serial文件中填充任意的16进制数字，如0000，准备工作，基本到这里就结束了，接下来我们开始正式生成SSL证书。</p>
 <h5>开始生成SSL证书</h5>
 <h6>1. 首先，生成服务器端的私钥（key文件）：</h6>
-<div class="highlight"><pre><span class="nv">$openssl</span> genrsa -des3 -out server.key 1024
+<div class="highlight"><pre><span></span><span class="nv">$openssl</span> genrsa -des3 -out server.key 1024
 </pre></div>
 
 
@@ -195,7 +195,7 @@
 <p>在前一篇博客里我们简单快速的学习了一下Gradle的基本安装和配置，以及解决了其中遇到的一些小的错误，这篇文章里我们来小小的实践一下，本身也是在Android开发中必不可少的技能。</p>
 <h5>修改build.gradle文件</h5>
 <p>接着之前的项目继续看，我们修改一下Module中的build.gradle文件，这里也不做过多讲解了，注释都在文件中，慢慢看，还是比较容易懂的：</p>
-<div class="highlight"><pre>apply plugin: &#39;com.android.application&#39;
+<div class="highlight"><pre><span></span>apply plugin: &#39;com.android.application&#39;
 
 repositories {
     jcenter()
