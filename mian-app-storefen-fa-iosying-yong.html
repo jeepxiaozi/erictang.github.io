@@ -64,7 +64,7 @@
 <p>——即我们构建好的ipa安装包，不过这里需要说明一下，这个ipa包是需要签名的：可以是开发证书签名的（99刀的），比如只是给自己公司的产品汪和测试团队用的；也可以是企业证书（299刀的），比如我就是做了一个寨版的App Store</p>
 <h6>.plist文件</h6>
 <p>——这个文件主要用来描述我们的应用的安装信息，主要内容可以参考我们项目源码中的Info.plist文件，只不过从Xcode6开始，即使选择企业方式也没法儿自动生成plist文件了，所以简单的办法是我们可以手写，当然也有一些第三方的工具或者脚本之类的，我懒得找，所以找了个模板然后花了点儿时间自己写了一个，这里打个小广告，嘿嘿 <a href="https://github.com/jeepxiaozi/PlistGenerator">PlistGenerator</a>，当然，这里直接放一个模板，方便大家保存之后手动修改。</p>
-<div class="highlight"><pre>    <span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<div class="highlight"><pre><span></span>    <span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
     <span class="cp">&lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;</span>
     <span class="nt">&lt;plist</span> <span class="na">version=</span><span class="s">&quot;1.0&quot;</span><span class="nt">&gt;</span>
     <span class="nt">&lt;dict&gt;</span>
@@ -100,7 +100,7 @@
 
 <h6>html文件</h6>
 <p>——不管怎么样儿，最终还是要通过浏览器进行安装的，嗯，对，不管你是用的Safari还是用的QQ、微信的内置浏览器，所以我们要提供一个html页面，在这个html页面上我们需要放置一个按钮，提供一个itms-services协议的链接，用户只需要打开这个链接就可以进行在线安装，这里需要注意的是，这个链接指向的是plist文件地址，例如：</p>
-<div class="highlight"><pre>    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;itms-services://?action=download-manifest&amp;url=https://xx.com/xx.plist&quot;</span><span class="nt">&gt;</span>一键安装<span class="nt">&lt;/a&gt;</span>
+<div class="highlight"><pre><span></span>    <span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;itms-services://?action=download-manifest&amp;url=https://xx.com/xx.plist&quot;</span><span class="p">&gt;</span>一键安装<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
 </pre></div>
 
 
@@ -108,7 +108,7 @@
 <p>那么，https链接该怎么处理呢？主要的几种方法的优缺点对比如下：
 1. 由公司购买https证书
 这个其实没啥好说的，有钱就可以任性。</p>
-<div class="highlight"><pre>优点：最直接最踏实最靠谱儿的方式
+<div class="highlight"><pre><span></span>优点：最直接最踏实最靠谱儿的方式
 
 缺点：当然，如果说你们的公司是创业小公司，https证书也是一笔可大可小的费用，但是，能省则省嘛，可以考虑例如startssl、instantssl之类的免费证书，只要是主流浏览器都认可的就可以，关于https证书其实是另外一个话题了，这里不作神展开。
 </pre></div>

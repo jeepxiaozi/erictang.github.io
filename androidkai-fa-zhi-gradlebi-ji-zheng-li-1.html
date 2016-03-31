@@ -66,7 +66,7 @@
 一、 GradleTest/GradleTest/build.gradle</p>
 <p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/2E9D9E49-7D82-413D-BDDD-6E16C57191E2.png-img.normal" /></p>
 <p>此处的build.gradle是整个Module的Gradle配置文件，也是主要的Gradle配置文件，然后我们看一下主Gradle配置文件的内容以及注释：</p>
-<div class="highlight"><pre>buildscript {
+<div class="highlight"><pre><span></span>buildscript {
     repositories {
         jcenter()
     }
@@ -142,7 +142,7 @@ dependencies {
 <p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/8FE1D91D-43CD-49B6-842B-7F9B4029283A.png" /></p>
 <p>Idea中每个Project相当于一个Workspace，而一个Module相当于一个Project，我们的Android项目中肯定有一个是运行的，而其他的Module就是引用的Library，每个Module（不论是运行的工程还是引用的Library）都需要有一个gradle配置文件，语法都是一样的，唯一不同的是开头声明的：运行的工程师开头声明的是“apply plugin:’com.android.application’”，而引用的Library开头声明的则是“apply plugin:’com.android.library'”</p>
 <p>上面这个文件，就是整个Project的gradle基础配置文件，我们来看一下它的内容：</p>
-<div class="highlight"><pre><span class="o">//</span> <span class="nt">Top-level</span> <span class="nt">build</span> <span class="nt">file</span> <span class="nt">where</span> <span class="nt">you</span> <span class="nt">can</span> <span class="nt">add</span> <span class="nt">configuration</span> <span class="nt">options</span> <span class="nt">common</span> <span class="nt">to</span> <span class="nt">all</span> <span class="nt">sub-projects</span><span class="o">/</span><span class="nt">modules</span><span class="o">.</span>
+<div class="highlight"><pre><span></span><span class="o">//</span> <span class="nt">Top-level</span> <span class="nt">build</span> <span class="nt">file</span> <span class="nt">where</span> <span class="nt">you</span> <span class="nt">can</span> <span class="nt">add</span> <span class="nt">configuration</span> <span class="nt">options</span> <span class="nt">common</span> <span class="nt">to</span> <span class="nt">all</span> <span class="nt">sub-projects</span><span class="o">/</span><span class="nt">modules</span><span class="o">.</span>
 
 <span class="nt">buildscript</span> <span class="p">{</span>
     <span class="n">repositories</span> <span class="err">{</span>
@@ -175,7 +175,7 @@ dependencies {
 </ol>
 <p>三、 GradleTest/gradle目录
 这个目录下面有个wrapper目录，里面有两个文件，一个是gradle-wrapper.jar，另一个是gradle-wrapper.properties文件，这里我们重点看一下gradle-wrapper.properties文件的内容：</p>
-<div class="highlight"><pre>#Wed Apr 10 15:27:10 PDT 2013
+<div class="highlight"><pre><span></span>#Wed Apr 10 15:27:10 PDT 2013
 distributionBase=GRADLE_USER_HOME
 distributionPath=wrapper/dists
 zipStoreBase=GRADLE_USER_HOME
@@ -188,7 +188,7 @@ distributionUrl=https\://services.gradle.org/distributions/gradle-2.2.1-all.zip
 <p>四、 GradleTest/settings.gradle文件</p>
 <p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/F07D6370-2AB6-4DA9-B25B-C765872EE9C9.png" /></p>
 <p>该文件是全局的项目配置文件，内容如下：</p>
-<div class="highlight"><pre>include &#39;:GradleTest&#39;
+<div class="highlight"><pre><span></span>include &#39;:GradleTest&#39;
 </pre></div>
 
 

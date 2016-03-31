@@ -77,7 +77,7 @@
 <p><strong>通过Homebrew来安装二进制文件</strong></p>
 <p>Homebrew是一个社区主导的包管理工具，并且也是每个黑阔的必备工具包。Homebrew能够自动完成二进制文件的安装、编译和链接，它同时也使得更新和卸载二进制文件变得灰常轻松。</p>
 <p>下面呢就是你应该首先在一台全新的Mac，将下面的代码片段放在 bash 脚本来确保homebrew安装了：</p>
-<div class="highlight"><pre># Check for Homebrew,
+<div class="highlight"><pre><span></span># Check for Homebrew,
 # Install if we don&#39;t have it
 if test ! $(which brew); then
   echo &quot;Installing homebrew...&quot;
@@ -91,7 +91,7 @@ brew update
 
 <p>接下来呢，你就应该首先更新一下你的Mac系统上已有的 unix 工具。自从"<a href="http://goo.gl/zElPKk">Shellshock</a>"漏洞粗线之后，及时打补丁包和更新的必要性越来越大了。</p>
 <p>下面的代码片段会帮你更新这些 unix 工具：</p>
-<div class="highlight"><pre># Install GNU core utilities (those that come with OS X are outdated)
+<div class="highlight"><pre><span></span># Install GNU core utilities (those that come with OS X are outdated)
 brew install coreutils
 
 # Install GNU `find`, `locate`, `updatedb`, and `xargs`, g-prefixed
@@ -107,12 +107,12 @@ brew install homebrew/dupes/grep
 
 
 <p>为了更好的在Mac上使用这些 unix 工具你还需要更新一下你的~/目录下的 .bash_profile 文件：</p>
-<div class="highlight"><pre><span class="p">$</span><span class="nv">PATH</span><span class="x">=</span><span class="p">$(</span><span class="err">brew</span> <span class="err">--prefix</span> <span class="err">coreutils</span><span class="p">)</span><span class="x">/libexec/gnubin:</span><span class="p">$</span><span class="nv">PATH</span><span class="x"></span>
+<div class="highlight"><pre><span></span><span class="p">$</span><span class="nv">PATH</span><span class="x">=</span><span class="p">$(</span><span class="err">brew</span> <span class="err">--prefix</span> <span class="err">coreutils</span><span class="p">)</span><span class="x">/libexec/gnubin:</span><span class="p">$</span><span class="nv">PATH</span><span class="x"></span>
 </pre></div>
 
 
 <p>上面的代码希望可以让你的Mac系统固若金汤（但我们都知道那是不可能滴），但你同时可能还会需要用Homebrew来安装一些其他的工具来提高你的工作效率，下面这个是我的安装列表：</p>
-<div class="highlight"><pre>binaries=(
+<div class="highlight"><pre><span></span>binaries=(
   graphicsmagick
   webkit2png
   rename
@@ -133,24 +133,24 @@ brew install <span class="cp">${</span><span class="n">binaries</span><span clas
 
 
 <p>安装完成之后，你应该清理一下，使用如下命令进行清理:</p>
-<div class="highlight"><pre>brew cleanup
+<div class="highlight"><pre><span></span>brew cleanup
 </pre></div>
 
 
 <p><strong>通过Homebrew Cask来安装应用</strong></p>
 <p><a href="http://caskroom.io/">Homebrew Cask</a>是Homebrew的扩展，它可以帮助你自动安装Mac应用和字体。</p>
 <p>一旦你安装了Homebrew这个利器之后，你可以通过如下命令安装 Homebrew Cask ：</p>
-<div class="highlight"><pre>brew install caskroom/cask/brew-cask
+<div class="highlight"><pre><span></span>brew install caskroom/cask/brew-cask
 </pre></div>
 
 
 <p>目前可以通过Homebrew Cask来安装的应用的数量是灰常庞大的，并且每天都在不停的增长，你可以通过戳<a href="https://github.com/caskroom/homebrew-cask/tree/master/Casks">这个链接</a>看看目前已有的应用，或者你可以自己通过如下的命令在CLI上搜索：</p>
-<div class="highlight"><pre>brew cask search /google-chrome/
+<div class="highlight"><pre><span></span>brew cask search /google-chrome/
 </pre></div>
 
 
 <p>每个人都有自己喜欢的应用，以下的脚本是我的一些常用应用：</p>
-<div class="highlight"><pre><span class="c"># Apps</span>
+<div class="highlight"><pre><span></span><span class="c1"># Apps</span>
 <span class="nv">apps</span><span class="o">=(</span>
   alfred
   dropbox
@@ -186,39 +186,39 @@ brew install <span class="cp">${</span><span class="n">binaries</span><span clas
   skype
   transmission
 <span class="o">)</span>
-<span class="c"># Install apps to /Applications</span>
-<span class="c"># Default is: /Users/$user/Applications</span>
+<span class="c1"># Install apps to /Applications</span>
+<span class="c1"># Default is: /Users/$user/Applications</span>
 <span class="nb">echo</span> <span class="s2">&quot;installing apps...&quot;</span>
 brew cask install --appdir<span class="o">=</span><span class="s2">&quot;/Applications&quot;</span> <span class="si">${</span><span class="nv">apps</span><span class="p">[@]</span><span class="si">}</span>
 </pre></div>
 
 
 <p>如果你希望通过Homebrew Cask来安装beta版本的应用比如“金丝雀版的Chrome”啦又或者是Sublime Text3啦，你只需要使用versions命令：</p>
-<div class="highlight"><pre>brew tap caskroom/versions
+<div class="highlight"><pre><span></span>brew tap caskroom/versions
 </pre></div>
 
 
 <h6>Alfred用户须知</h6>
 <p>但是<a href="http://www.alfredapp.com/">Alfred</a>用户需要当心了，你们无法启动应用了哟，因为应用真正的安装目录不在/Applications下了，而是相应的挪到了/opt/homebrew-cask/Caskroom/下了。</p>
 <p>为了满足你们的需求，你们可以通过如下的命令来解决这个问题:</p>
-<div class="highlight"><pre>brew cask alfred link
+<div class="highlight"><pre><span></span>brew cask alfred link
 </pre></div>
 
 
 <p>哇啦！(T_T!一惊一乍的这是干屁啊。。。)</p>
 <h6>额外的奖励(又不是真人秀)：像Boss一样安装字体(你家Boss天天装字体玩儿么)</h6>
 <p>Cask也能被用来自动下载并安装字体，为了能够成为Boss你需要键入fonts命令：</p>
-<div class="highlight"><pre>brew tap caskroom/fonts
+<div class="highlight"><pre><span></span>brew tap caskroom/fonts
 </pre></div>
 
 
 <p>字体的前缀都是采用了<code>font-*</code>的形式，所以如果你想要下载<a href="http://www.google.com/fonts/specimen/Roboto">Roboto</a>的话，试试搜索<code>font-roboto</code>关键词：</p>
-<div class="highlight"><pre>brew cask search /font-roboto/
+<div class="highlight"><pre><span></span>brew cask search /font-roboto/
 </pre></div>
 
 
 <p>以下是我安装字体的方式：</p>
-<div class="highlight"><pre># fonts
+<div class="highlight"><pre><span></span># fonts
 fonts=(
   font-m-plus
   font-clear-sans
@@ -234,19 +234,19 @@ brew cask install <span class="cp">${</span><span class="n">fonts</span><span cl
 <p><strong>Mackup</strong></p>
 <p><a href="https://github.com/lra/mackup">Mackup</a>是一个社区主导的用来备份系统和应用设置的工具，你可以通过<a href="https://github.com/lra/mackup/tree/master/mackup/applications">lra/mackup</a>的repo查看它支持的应用程序的列表。</p>
 <p>在“用肾买滴”系统上我还没有通过Homebrew把Mackup安装成功，但是通过python的pip来安装也是灰常容易的：</p>
-<div class="highlight"><pre>pip install mackup
+<div class="highlight"><pre><span></span>pip install mackup
 </pre></div>
 
 
 <p>如果pip不可用，那你需要通过brew来安装 <code>brew install python</code>。</p>
 <p>通过默认的mackup可以把你的常用设置保存到你的Dropbox中，所以你可能需要首先设置Dropbox。一旦完成了Dropbox的设置，你的备份就变得灰常容易了：</p>
-<div class="highlight"><pre>mackup backup
+<div class="highlight"><pre><span></span>mackup backup
 </pre></div>
 
 
 <p>这条命令会在你的电脑上检索你安装好的应用的票证并且把配置文件软连接到 ~/Dropbox/Mackup中。</p>
 <p>要想在另一台或者一台全新的Mac系统上恢复设置，只需要运行以下简单的命令：</p>
-<div class="highlight"><pre>mackup restore
+<div class="highlight"><pre><span></span>mackup restore
 </pre></div>
 
 
@@ -258,7 +258,7 @@ brew cask install <span class="cp">${</span><span class="n">fonts</span><span cl
 <p>这个版本的与原脚本相似，只是去除了一些我希望在其他地方处理的提示。</p>
 <p><strong>dots(1)</strong></p>
 <p><a href="https://github.com/matthewmueller/dots">dots(1)</a>是我自己写的一个用来把上述我的想法融合在一起的一个脚本，它理应成为你在你的Mac或者ubuntu服务器上安装的第一个工具。无需任何外部引用，即可直接运行在多个不同的发行版系统上。只需要运行下面的命令即可完成安装：</p>
-<div class="highlight"><pre>(mkdir -p /tmp/dots &amp;&amp; cd /tmp/dots &amp;&amp; curl -L# https://github.com/matthewmueller/dots/archive/master.tar.gz | tar zx --strip 1 &amp;&amp; sh ./install.sh)
+<div class="highlight"><pre><span></span>(mkdir -p /tmp/dots &amp;&amp; cd /tmp/dots &amp;&amp; curl -L# https://github.com/matthewmueller/dots/archive/master.tar.gz | tar zx --strip 1 &amp;&amp; sh ./install.sh)
 </pre></div>
 <p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo.html">技术生活</a>
 
