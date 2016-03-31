@@ -48,6 +48,94 @@
         
 
             <article>
+                <a href="http://jeepxiaozi.github.io/xcode7zai-shang-chuan-iosying-yong-dao-app-storeshi-yu-dao-de-wen-ti.html"><h3 class="article-title">Xcode7在上传iOS应用到App Store时遇到的问题</h3></a>
+<h6 class="subheader" title="2015-10-22T17:40:33+08:00">四 22 十月 2015
+</h6>
+
+
+<p>使用Xcode7上传应用到App Store时遇到的问题汇总</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/ios-develop.html">iOS Develop</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/xcode7zai-shang-chuan-iosying-yong-dao-app-storeshi-yu-dao-de-wen-ti.html#disqus_thread">comments</a></p>            </article>
+
+
+                <hr  class="gradient"/>
+
+
+        
+
+
+            <article>
+                <a href="http://jeepxiaozi.github.io/centosxia-shi-yong-gitlabda-jian-git-server.html"><h3 class="article-title">CentOS下使用GitLab搭建Git Server</h3></a>
+<h6 class="subheader" title="2015-09-23T10:10:33+08:00">三 23 九月 2015
+</h6>
+
+
+<p>记录下在CentOS下使用GitLab搭建Git Server的流程</p>
+<p>按照官方的文档<a href="https://about.gitlab.com/downloads/#centos6">CentOS6安装GitLab</a></p>
+<p>然后参考<a href="http://my.oschina.net/VincentJiang/blog/224993">CentOS6.5配置yum安装Nginx</a>完成了Nginx的安装</p>
+<p>然后参考<a href="https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/doc/settings/nginx.md#using-a-non-bundled-web-server">使用已有的Nginx配置</a>进行配置</p>
+<p>简单的翻译记录一下所需要的配置部分</p>
+<p>默认的，omnibus-gitlab会在安装GitLab的时候默认内置了一个Nginx Server，Omnibus-gitlab允许webserver通过gitlab-www分组下的gitlab-www同名用户来访问。要想添加额外的webserver权限到GitLab的话，需要将额外的webserver用户添加到gitlab-www分组里</p>
+<p>想要使用其他的web server例如Apache或者已有的Nginx，你需要做以下的操作步骤：
+- 通过在<em>/etc/gitlab/gitlab.rb</em>文件中指定来禁用内置的Nginx：</p>
+<div class="highlight"><pre><span class="n">nginx</span><span class="o">[</span><span class="s1">&#39;enable&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="kp">false</span>
+
+<span class="c1">#对于GitLab CI，使用如下的：</span>
+<span class="n">ci_nginx</span><span class="o">[</span><span class="s1">&#39;enable&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="kp">false</span>
+</pre></div>
+
+
+<p>之后一定要记得执行<em>sudo gitlab-ctl reconfigure</em>进行重新配置</p>
+<ul>
+<li>检查非内置的web server的用户名，默认情况下，omnibus-gitlab没有为额外的webserver用户添加默认设置，你必须手动在配置文件中将额外的webserver用户名添加进来，我们假设你的webserver的用户名是nginx，那么，在<em>/etc ...</em></li></ul><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/git.html">Git</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/centosxia-shi-yong-gitlabda-jian-git-server.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/centosxia-shi-yong-gitlabda-jian-git-server.html">Read More</a>
+                <hr  class="gradient"/>
+            </article>
+
+        
+
+
+            <article>
+                <a href="http://jeepxiaozi.github.io/css3zhong-de-transform.html"><h3 class="article-title">CSS3中的Transform</h3></a>
+<h6 class="subheader" title="2015-07-28T16:00:19+08:00">二 28 七月 2015
+</h6>
+
+
+<h1>CSS3中的Transform</h1>
+<p>HTML5和CSS3的火爆程度自不必说，很多同学可能说我们不是专门的Web前端工程师呢，所以并不用关心这个，但我觉得吧，做我们开发这行儿的，还是不要用这样儿的借口来为自己开脱的好，至少，我们要为了成为全栈工程师而努力不是？那么这里我们来看一下CSS3里制作动画的几个属性：变形（Transform）、转换（Transition）和动画（Animation）等。今天我们这篇文章主要介绍的是这三个属性中的第一个——变形（Transform）。</p>
+<p>那么所谓Transform，在CSS3中主要包括一下集中：旋转Rotate、扭曲Skew、缩放Scale和移动Translate以及矩阵变形Matrix等。下面我们看下具体如何实现。</p>
+<p>Transform语法：</p>
+<div class="highlight"><pre><span class="nt">transform</span> <span class="o">:</span> <span class="nt">none</span> <span class="o">|</span> <span class="o">&lt;</span><span class="nt">transform-function</span><span class="o">&gt;</span> <span class="o">[</span> <span class="o">&lt;</span><span class="nt">transform-function</span><span class="o">&gt;]*</span>
+<span class="c">/*也就是*/</span>
+<span class="nt">transform</span><span class="o">:</span> <span class="nt">rotate</span> <span class="o">|</span> <span class="nt">scale</span> <span class="o">|</span> <span class="nt">skew</span> <span class="o">|</span> <span class="nt">translate</span> <span class="o">|</span> <span class="nt">matrix</span><span class="o">;</span>
+</pre></div>
+
+
+<p>解释说明：</p>
+<p>none：表示不进行变换；
+<code>&lt;transform-function&gt;</code>表示一个或多个变换函数，以空格分开；换句话说就是我们同时对一个元素进行transform的多种属性操作，例如rotate、scale、translate三种，但这里需要大家注意，以往我们叠加效果都是用逗号 ...</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo.html">技术生活</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/css3zhong-de-transform.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/css3zhong-de-transform.html">Read More</a>
+                <hr  class="gradient"/>
+            </article>
+
+        
+
+
+            <article>
                 <a href="http://jeepxiaozi.github.io/sheng-cheng-sslzheng-shu.html"><h3 class="article-title">生成SSL证书</h3></a>
 <h6 class="subheader" title="2015-05-22T15:08:42+08:00">五 22 五月 2015
 </h6>
@@ -62,54 +150,15 @@
 </pre></div>
 
 
-<p>之后会提示输入密码，这个密码是用于加密这个key文件的，其中参数des3是加密的算法，也可以选择其它的例如aes算法。</p>
-<p>如图：</p>
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/generate_ssl_cert_1.jpg" /></p>
-<p>以后每次需要读取该key文件时都要输入密码，如果觉得太麻烦也可以直接去掉，去掉key文件口令的命令是：</p>
-<div class="highlight"><pre><span class="nv">$openssl</span> rsa -in server.key -out server.key
-</pre></div>
-
-
-<h6>2. 按照我们的配置文件，生成证书签名请求文件，即CSR文件（Certificate Signing Request），生成的CSR文件交给CA签名形成服务端自己的证书，命令如下：</h6>
-<div class="highlight"><pre><span class="nv">$openssl</span> req -new -key server.key -out server.csr -config openssl.cnf
-</pre></div>
-
-
-<p>填写如图所示的基本信息：</p>
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/generate_ssl_cert_2.jpg" /></p>
-<h6>3. 对客户端也作同样的命令，生成key和CSR文件</h6>
-<div class="highlight"><pre><span class="nv">$openssl</span> genrsa -des3 -out client.key 1024
-
-<span class="nv">$openssl</span> req -new -key client.key -out client.csr -config openssl.cnf
-</pre></div>
-
-
-<p>参考服务端的生成方法，填写信息即可。</p>
-<h6>4. CSR文件必须有CA的签名才可以生成证书，这里我们直接自己做CA。</h6>
-<p>在当前目录下执行如下命令：   </p>
-<div class="highlight"><pre><span class="nv">$openssl</span> req -new -x509 -keyout ca.key -out ca.crt -config openssl.cnf
-</pre></div>
-
-
-<p>之后会看到在SelfCA目录下生成了一个ca.key和ca.crt文件</p>
-<h6>5. 用刚生成的CA证书为server.csr，client.csr文件签名：</h6>
-<div class="highlight"><pre><span class="nv">$Openssl</span> ca -in server.csr -out server.crt -cert ca.crt -keyfile ca.key -config openssl.cnf
-
-<span class="nv">$Openssl</span> ca -in client.csr -out client.crt -cert ca.crt -keyfile ca.key -config openssl.cnf
-</pre></div>
-
-
-<p>之后，我们应该就已经创建了可以使用的证书了，如果在签名的过程中有任何错误，可以先看一下index.txt文件中的信息，然后清空它，重新执行第5步中失败的操作。</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/server-develop.html">Server Develop</a>
+<p>之后会提示输入密码，这个密码是用于加密这个key文件的，其中参数des3是加密的算法，也可以选择其它的例如aes算法 ...</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/server-develop.html">Server Develop</a>
 
 </p>
 
 
 
-<p><a href="http://jeepxiaozi.github.io/sheng-cheng-sslzheng-shu.html#disqus_thread">comments</a></p>            </article>
-
-
+<p><a href="http://jeepxiaozi.github.io/sheng-cheng-sslzheng-shu.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/sheng-cheng-sslzheng-shu.html">Read More</a>
                 <hr  class="gradient"/>
-
+            </article>
 
         
 
@@ -289,84 +338,6 @@ android {
                 <hr  class="gradient"/>
             </article>
 
-        
-
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/wei-zi-ji-de-github-pagestian-jia-yi-ge-tu-chuang.html"><h3 class="article-title">为自己的GitHub Pages添加一个图床</h3></a>
-<h6 class="subheader" title="2015-02-15T00:00:00+08:00">日 15 二月 2015
-</h6>
-
-
-<p>前几天的时候把GitHub Pages弄好之后就一直没怎么正式写博客，主要还是因为图床的问题，因为虽然用Markdown写博客会让人更加专注在文章的内容上，但是如果全篇都是文字的话估计没人愿意看了就，同时呢，GitHub Pages对于存储空间貌似也是有一定的限制的，所以在朋友的推荐下，试用一下七牛云存储作为图床，这里简单记录一下。</p>
-<p>七牛注册之后会赠送一定的存储空间，大概有10个G，作为图床来说的话，应该足够了（又不是放啥高清无码大图），只不过需要注意的是，要创建空间需要先实名认证一哈子，就是简单的填写一下基本信息然后等待审核通过成为标准用户就好了。
-如下图，点击新建一个空间：</p>
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/fda341dfa.jpg-img.normal" /></p>
-<p>创建一个在七牛中唯一用户名的空间，记住如果是作为图床的话一定要设置为公开空间，否则。。。我还没试过设置为私有空间，但是如果你的博客里的配图需要别人输入密码才能访问的话，是不是有点儿太。。。
-总之，创建完成之后，如下：</p>
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/H~GROGRVGY3R455AOE3U.jpg" /></p>
-<p>看，这里，就是我们的图片的外链地址：</p>
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/2NXM5_8$RG$PPM9P66.jpg-img.normal" /></p>
-<p>但是等下。。。好像哪里不对？</p>
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/U~PYTAB03IW8GR2EJD.jpg-img.normal" /></p>
-<p>为啥这图片显示成这样儿了啊，这么大的图是要哪样儿？啊，当然这里说的大是显示出来的尺寸大，而不是体积大。无需担心，七牛云存储还是很强大的，我们来看一下数据处理功能。点击数据处理，选择新建一个图片样式，然后根据你自己的实际情况进行样式添加，比如我这里只是希望可以缩放图片，让它们不要显示的那么大，如下图：</p>
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/6GQ_TB4TN3NMNU0CA2S$F$M.jpg-img.normal" /></p>
-<p>而且 ...</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/markdownxie-zuo.html">Markdown写作</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/wei-zi-ji-de-github-pagestian-jia-yi-ge-tu-chuang.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/wei-zi-ji-de-github-pagestian-jia-yi-ge-tu-chuang.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
-
-        
-
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/zheng-shi-qi-yong-zi-ji-de-github-pageszuo-wei-xin-de-bei-yong-ji-zhu-bo-ke.html"><h3 class="article-title">正式启用自己的GitHub Pages作为新的备用技术博客</h3></a>
-<h6 class="subheader" title="2015-02-06T00:00:00+08:00">五 06 二月 2015
-</h6>
-
-
-<p>经过一番折腾，我自己的GitHub Pages终于搞定，欢迎大家收藏、交换友链啥的</p>
-<p>博客地址：<a href="http://jeepxiaozi.github.io">一把汤勺</a>。</p>
-<p>虽然这篇博客同时会发布在两个地方，自己的CSDN博客和GitHub Pages，但是估计以后首发的时候，还是会选择GitHub Pages了，当然也不是说CSDN不够好，只是最近两天遇到的事儿比较奇葩，可能个人觉得CSDN在这个方面做的还不是很出色吧，在写这篇博客的时候看到CSDN也上线了新版的Markdown编辑器，不过我还是会选择继续使用我目前的工具<strong><a href="http://25.io/mou/">Mou</a></strong>(这么好用的工具应该不算广告的吧)，很简洁轻快的一款Markdown编辑器，支持预览功能，还不错的说，不过就是相对比CSDN的在线Markdown编辑器来说，没有那么多提示功能，所以自己还是需要再深入学习一下Markdown的语法什么的。</p>
-<p>大致说了不少，说下这次下定决心开通GitHub Pages的原因吧，起因就是因为转载小伙伴的关于四轴飞行器的博文，然后呢，在保存博文的时候CSDN提示保存失败，无法保存，但是紧随其次的就是我的CSDN博客也打不开了，并且提示“自定义模块无法识别”之类的错误，最开始我以为是Flash模块导致的，后来把Flash模块删掉，又进行了尝试，果然。。。没好，再次被锁定，跟第一次的时候客服人员的回复一样，博文中有敏感词汇。。。但是再三检查了之后发现难不成是因为里面说到的遥控器的方式有美国手和日本手之类的？但是吧，CSDN客服人员的回复是，我们无法向您透露敏感词汇是啥，墙裂不建议您再次发布该博文 ...</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo.html">技术生活</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/zheng-shi-qi-yong-zi-ji-de-github-pageszuo-wei-xin-de-bei-yong-ji-zhu-bo-ke.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/zheng-shi-qi-yong-zi-ji-de-github-pageszuo-wei-xin-de-bei-yong-ji-zhu-bo-ke.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
-
-        
-
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/bo-ke-dan-sheng-ji.html"><h3 class="article-title">博客诞生记</h3></a>
-<h6 class="subheader" title="2015-02-05T22:56:19+08:00">四 05 二月 2015
-</h6>
-
-
-<p>本来我这么懒惰的人，写博客大多都是在CSDN或者博客园，CSDN更多一些吧，但最近接连两天的被封号让我表示很蛋疼了，起因就是我转载小伙伴的博客，据CSDN客服人员的回复说是因为我的博客里有“敏感词”。。。T_T! 敏感词，好吧，通篇读了好多遍了，没看到一篇关于四轴飞行器的博客到底哪里有敏感词了，唔对，CSDN客服表示说我们没法儿透露敏感词给您。。。然后我说呵呵。。。</p>
-<p>然后我就没招儿了，而且加上老是在CSDN写博客吧，也没啥意思了，受到的限制还多，算了，懒也没有办法啊，还是要学习一下新东西的，加上最近也经常用Markdown写笔记，cold好基友他们也大多用GitHub Pages，所以嘞，干脆用起来好了，这个算是前言，不是重点，简单记录一下博客的诞生吧。</p>
-<p>该博客采用的是Markdown形式编写，由静态博客工具Pelican生成，部署在GitHub Pages上。</p>
-<p>参考链接:<a href="http://www.linuxzen.com/shi-yong-pelicanda-zao-jing-tai-bo-ke.html" title="Title">使用Pelican打造静态博客-cold's wold</a></p>
-<h3>Pelican介绍</h3>
-<p>Pelican是一套使用Python编写的开源静态博客生成工具，它可以让你添加文章和创建页面，可以使用Markdown reStructuredText 和 AsiiDoc 等不同的格式来抒写博客，我个人对Markdown的格式也比较喜欢，它可以让你更专注在博客的内容上，而且本身也特别简洁，嗯 ...</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo.html">技术生活</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/bo-ke-dan-sheng-ji.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/bo-ke-dan-sheng-ji.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
-
             <!-- /#posts-list -->
 <div class="pagination-centered">
 <h6 class="subheader">Page 1 of 2</h6>
@@ -391,6 +362,8 @@ android {
             <ul class="side-nav">
                 <li><a href="http://jeepxiaozi.github.io/category/android-develop.html">Android Develop</a>
                 </li>
+                <li><a href="http://jeepxiaozi.github.io/category/git.html">Git</a>
+                </li>
                 <li><a href="http://jeepxiaozi.github.io/category/ios-develop.html">iOS Develop</a>
                 </li>
                 <li><a href="http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo.html">技术生活</a>
@@ -400,6 +373,8 @@ android {
                 <li><a href="http://jeepxiaozi.github.io/category/multicopter.html">MultiCopter</a>
                 </li>
                 <li><a href="http://jeepxiaozi.github.io/category/pages.html">Pages</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
                 </li>
                 <li><a href="http://jeepxiaozi.github.io/category/server-develop.html">Server Develop</a>
                 </li>

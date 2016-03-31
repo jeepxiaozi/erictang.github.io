@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8" />
+    <!-- Set the viewport width to device width for mobile -->
+    <meta name="viewport" content="width=device-width" />
+
+    <title>一把汤勺 - Tang</title>
+
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/normalize.css" />
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/foundation.min.css" />
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/style.css" />
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/pygments.css" />
+    <script src="http://jeepxiaozi.github.io/theme/js/modernizr.js"></script>
+</head>
+
+<body>
+
+    <!-- Nav Bar -->
+    <nav>
+        <div class="top-bar">
+            <div class="row">
+                <div class="large-9 large-centered columns">
+                    <h1><a href="http://jeepxiaozi.github.io">一把汤勺</a></h1>
+                </div>
+            </div>
+        </div>
+
+        <!-- Show menu items and pages -->
+        <div class="row">
+            <div class="large-9 columns">
+                <ul class="button-group navigation">
+                      <li><a href="http://jeepxiaozi.github.io/pages/guan-yu-zuo-zhe.html" class="button secondary small">关于作者</a>
+                    </li>
+                 </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- End Nav -->
+
+
+    <!-- Main Page Content and Sidebar -->
+    <div class="row">
+
+        <!-- Main Blog Content -->
+        <div class="large-9 columns">
+        
+        
+
+            <article>
+                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji.html"><h3 class="article-title">Yii2学习笔记</h3></a>
+<h6 class="subheader" title="2016-03-31T17:49:15+08:00">四 31 三月 2016
+</h6>
+
+
+<h1>Yii2笔记系列1——Yii介绍和安装</h1>
+<h3>什么是Yii</h3>
+<p>Yii是一个高性能、基于组件的PHP框架，用于快速开发现代Web应用程序，不做过多赘述。</p>
+<h4>Yii最适合做什么</h4>
+<p>Yii是一个通用的Web编程框架，可以用于开发各种Web应用，包括但不限于门户网站、社区、内容管理系统（即CMS）以及电子商务项目和RESTful Web服务等。</p>
+<h3>安装Yii</h3>
+<p>安装Yii可以通过两种方式：使用<a href="https://getcomposer.org/">Composer</a>或者下载一个归档文件。使用前者的好处是只需要执行一条简单的命令就可以安装新的扩展或者更新Yii了。</p>
+<h4>通过Composer安装</h4>
+<p>首选需要安装Composer，可以按照<a href="https://getcomposer.org/download/">https://getcomposer.org/download/</a>中的方法进行安装，在Linux和Mac OS X中可以通过运行如下命令：</p>
+<div class="highlight"><pre>curl -sS https://getcomposer.org/installer <span class="p">|</span> php
+mv composer.phar /usr/local/bin/composer
+<span class="sb">```</span>
+
+在windows下，需要下载并运行<span class="o">[</span>Composer-Setup.exe<span class="o">](</span>https://getcomposer.org/Composer-Setup.exe<span class="o">)</span>
+
+安装完Composer之后，切换到一个可以通过Web访问的目录，执行如下命令即可安装Yii：
+
+<span class="sb">```</span>bash
+composer global require <span class="s2">&quot;fxp/composer-asset-plugin:~1.0.0&quot;</span>
+composer create-project --prefer-dist yiisoft/yii2-app-basic basic
+</pre></div>
+
+
+<p>简单解释一下这两条命令，第一条命令安装<a href="https://github.com/francoispluchino/composer-asset-plugin/">Composer asset plugin</a>，是通过Composer管理bower和npm包所必需的，此命令全局生效，一劳永逸。第二条命令将Yii安装在名为basic的目录中，你也可以选择其他名称。</p>
+<p>Note小技巧：如果想安装Yii的最新开发版本，可以使用以下命令代替，它添加了一个stability选项：</p>
+<div class="highlight"><pre>composer create-project --prefer-dist --stability<span class="o">=</span>dev yiisoft/yii2-app-basic basic
+</pre></div>
+
+
+<p>需要注意的是，Yii的开发版(dev 版)不应该被用于生产环境中，它可能会破坏运行中的代码</p>
+<h4>通过归档文件安装</h4>
+<p>通过归档文件安装Yii包括三个步骤：</p>
+<ol>
+<li>从<a href="http://www.yiiframework.com/download/">yiiframework.com</a>处下载归档文件。</li>
+<li>将下载的文件解压缩到Web目录中。</li>
+<li>修改<code>config/web.php</code>文件，给<code>cookieValidationKey</code>配置添加一个密钥（如果通过Composer安装，则此步骤会自动完成）：</li>
+</ol>
+<div class="highlight"><pre><span class="x">// !!! 在下面插入一段密钥（若为空） - 以供 cookie validation 的需要</span>
+<span class="x">&#39;cookieValidationKey&#39; =&gt; &#39;在此处输入你的密钥&#39;,</span>
+</pre></div>
+
+
+<h4>其他安装方式</h4>
+<ul>
+<li>
+<p>如果你只想安装核心框架，然后从零开始构建整个属于你自己的应用程序模板，可以参考<a href="http://www.yiichina.com/doc/guide/2.0/tutorial-start-from-scratch">从头构建自定义模版</a>一节的介绍</p>
+</li>
+<li>
+<p>如果你要开发一个更复杂的应用，可以更好的适用于团队开发环境的，可以考虑安装高级应用模板</p>
+</li>
+</ul>
+<h4>验证安装结果</h4>
+<p>安装完成后，可以使用浏览器通过如下URL访问刚安装完的Yii应用：</p>
+<div class="highlight"><pre>http://localhost/basic/web/index.php
+</pre></div>
+
+
+<p>当看到如下所示的结果时，表示安装成功：</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/2354DUSNRRFFGNDFJ.jpg-img.normal" /></p>
+<p>(我这里修改了hosts文件，所以可以直接通过域名访问)</p>
+<p>如果没有，你还可以通过以下任意的一种方式，检查当前的PHP环境是否满足Yii最基本的要求：</p>
+<ul>
+<li>通过浏览器访问URL <code>http://localhost/basic/requirements.php</code></li>
+<li>在命令行中执行如下命令:</li>
+</ul>
+<div class="highlight"><pre>php requirements.php
+</pre></div>
+
+
+<p>然后按照提示进行修改即可</p>
+<h4>可能会遇到的错误异常</h4>
+<ol>
+<li>Invalid Parameter - The file or directory to be published does not exist: /path/to/basic/vendor/bower/jquery/dist</li>
+</ol>
+<p>这个问题我纠结了很久，最后在<a href="https://github.com/yiisoft/yii2/issues/10198">https://github.com/yiisoft/yii2/issues/10198</a>处找到了问题，是因为Composer master is broken</p>
+<p>解决的方案是。。。重新安装。。。但是！在重新安装之前，要先对Composer做如下操作：</p>
+<div class="highlight"><pre>composer self-update 1.0.0-alpha11
+composer clear-cache
+</pre></div>
+
+
+<p>然后重新执行<code>composer create-project --prefer-dist yiisoft/yii2-app-basic basic</code>即可，如果这个不能解决你的问题的话可以进行评论，我们再进一步讨论。</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji.html#disqus_thread">comments</a></p>            </article>
+
+<div class="pagination-centered">
+<h6 class="subheader">Page 1 of 1</h6>
+
+<p>
+
+</p>
+</div>
+
+
+
+            <!-- /#posts-list -->
+
+        </div>
+        <!-- End Main Content -->
+
+        <!-- Sidebar -->
+        <aside class="large-3 columns">
+            <h5 class="sidebar-title">Site</h5>
+            <ul class="side-nav">
+                <li><a href="http://jeepxiaozi.github.io/archives.html">Archives</a>
+                    <li><a href="http://jeepxiaozi.github.io/tags.html">Tags</a>              </ul>
+
+            <h5 class="sidebar-title">Categories</h5>
+            <ul class="side-nav">
+                <li><a href="http://jeepxiaozi.github.io/category/android-develop.html">Android Develop</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/git.html">Git</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/ios-develop.html">iOS Develop</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo.html">技术生活</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/markdownxie-zuo.html">Markdown写作</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/multicopter.html">MultiCopter</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/pages.html">Pages</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/server-develop.html">Server Develop</a>
+                </li>
+            </ul>
+             <h5 class="sidebar-title">Links</h5>
+            <ul class="side-nav">
+                <li><a href="http://www.linuxzen.com">cold's world</a>
+                </li>
+                <li><a href="http://www.cnwsjs.cn">城南往事小站</a>
+                </li>
+                <li><a href="http://wellmakers.com">电子匠人</a>
+                </li>
+            </ul>
+             <h5 class="sidebar-title">Social</h5>
+            <ul class="side-nav">
+                <li><a href="https://twitter.com/jeepxiaoxiaozi">twitter</a>
+                </li>
+                <li><a href="https://github.com/jeepxiaozi">GitHub</a>
+                </li>
+            </ul>
+
+        </aside>
+        <!-- End Sidebar -->
+
+    </div>
+    <!-- End Main Content and Sidebar -->
+
+
+    <!-- Footer -->
+    <footer class="row">
+        <div class="large-12 columns">
+            <hr />
+            <div class="row">
+                <div class="large-6 columns">
+                    <p><a href="http://jeepxiaozi.github.io">一把汤勺</a> &copy; EricTang 2015 
+ 
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1254253569'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s95.cnzz.com/z_stat.php%3Fid%3D1254253569%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));</script>
+                 </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

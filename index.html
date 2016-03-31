@@ -48,6 +48,194 @@
         
 
             <article>
+                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji.html"><h3 class="article-title">Yii2学习笔记</h3></a>
+<h6 class="subheader" title="2016-03-31T17:49:15+08:00">四 31 三月 2016
+</h6>
+
+
+<h1>Yii2笔记系列1——Yii介绍和安装</h1>
+<h3>什么是Yii</h3>
+<p>Yii是一个高性能、基于组件的PHP框架，用于快速开发现代Web应用程序，不做过多赘述。</p>
+<h4>Yii最适合做什么</h4>
+<p>Yii是一个通用的Web编程框架，可以用于开发各种Web应用，包括但不限于门户网站、社区、内容管理系统（即CMS）以及电子商务项目和RESTful Web服务等。</p>
+<h3>安装Yii</h3>
+<p>安装Yii可以通过两种方式：使用<a href="https://getcomposer.org/">Composer</a>或者下载一个归档文件。使用前者的好处是只需要执行一条简单的命令就可以安装新的扩展或者更新Yii了。</p>
+<h4>通过Composer安装</h4>
+<p>首选需要安装Composer，可以按照<a href="https://getcomposer.org/download/">https://getcomposer.org/download/</a>中的方法进行安装，在Linux和Mac OS X中可以通过运行如下命令：</p>
+<div class="highlight"><pre>curl -sS https://getcomposer.org/installer <span class="p">|</span> php
+mv composer.phar /usr/local/bin/composer
+<span class="sb">```</span>
+
+在windows下，需要下载并运行<span class="o">[</span>Composer-Setup.exe<span class="o">](</span>https://getcomposer.org/Composer-Setup.exe<span class="o">)</span>
+
+安装完Composer之后，切换到一个可以通过Web访问的目录，执行如下命令即可安装Yii：
+
+<span class="sb">```</span>bash
+composer global require <span class="s2">&quot;fxp/composer-asset-plugin:~1.0.0&quot;</span>
+composer create-project --prefer-dist yiisoft/yii2-app-basic basic
+</pre></div>
+
+
+<p>简单解释一下这两条命令，第一条命令安装<a href="https://github.com/francoispluchino/composer-asset-plugin/">Composer asset plugin</a>，是通过Composer管理bower和npm包所必需的，此命令全局生效，一劳永逸。第二条命令将Yii安装在名为basic的目录中，你也可以选择其他名称。</p>
+<p>Note小技巧：如果想安装Yii的最新开发版本，可以使用以下命令代替，它添加了一个stability选项：</p>
+<div class="highlight"><pre>composer create-project --prefer-dist --stability<span class="o">=</span>dev yiisoft/yii2-app-basic basic
+</pre></div>
+
+
+<p>需要注意的是，Yii的开发版(dev 版)不应该被用于生产环境中，它可能会破坏运行中的代码</p>
+<h4>通过归档文件安装</h4>
+<p>通过归档文件安装Yii包括三个步骤：</p>
+<ol>
+<li>从<a href="http://www.yiiframework.com/download/">yiiframework.com</a>处下载归档文件。</li>
+<li>将下载的文件解压缩到Web目录中。</li>
+<li>修改<code>config/web.php</code>文件，给<code>cookieValidationKey</code>配置添加一个密钥（如果通过Composer安装，则此步骤会自动完成）：</li>
+</ol>
+<div class="highlight"><pre><span class="x">// !!! 在下面插入一段密钥（若为空） - 以供 cookie validation 的需要</span>
+<span class="x">&#39;cookieValidationKey&#39; =&gt; &#39;在此处输入你的密钥&#39;,</span>
+</pre></div>
+
+
+<h4>其他安装方式</h4>
+<ul>
+<li>
+<p>如果你只想安装核心框架，然后从零开始构建整个属于你自己的应用程序模板，可以参考<a href="http://www.yiichina.com/doc/guide/2.0/tutorial-start-from-scratch">从头构建自定义模版</a>一节的介绍</p>
+</li>
+<li>
+<p>如果你要开发一个更复杂的应用，可以更好的适用于团队开发环境的，可以考虑安装高级应用模板</p>
+</li>
+</ul>
+<h4>验证安装结果</h4>
+<p>安装完成后，可以使用浏览器通过如下URL访问刚安装完的Yii应用：</p>
+<div class="highlight"><pre>http://localhost/basic/web/index.php
+</pre></div>
+
+
+<p>当看到如下所示的结果时，表示安装成功：</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/2354DUSNRRFFGNDFJ.jpg-img.normal" /></p>
+<p>(我这里修改了hosts文件，所以可以直接通过域名访问)</p>
+<p>如果没有，你还可以通过以下任意的一种方式，检查当前的PHP环境是否满足Yii最基本的要求：</p>
+<ul>
+<li>通过浏览器访问URL <code>http://localhost/basic/requirements.php</code></li>
+<li>在命令行中执行如下命令:</li>
+</ul>
+<div class="highlight"><pre>php requirements.php
+</pre></div>
+
+
+<p>然后按照提示进行修改即可</p>
+<h4>可能会遇到的错误异常</h4>
+<ol>
+<li>Invalid Parameter - The file or directory to be published does not exist: /path/to/basic/vendor/bower/jquery/dist</li>
+</ol>
+<p>这个问题我纠结了很久，最后在<a href="https://github.com/yiisoft/yii2/issues/10198">https://github.com/yiisoft/yii2/issues/10198</a>处找到了问题，是因为Composer master is broken</p>
+<p>解决的方案是。。。重新安装。。。但是！在重新安装之前，要先对Composer做如下操作：</p>
+<div class="highlight"><pre>composer self-update 1.0.0-alpha11
+composer clear-cache
+</pre></div>
+
+
+<p>然后重新执行<code>composer create-project --prefer-dist yiisoft/yii2-app-basic basic</code>即可，如果这个不能解决你的问题的话可以进行评论，我们再进一步讨论。</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji.html#disqus_thread">comments</a></p>            </article>
+
+
+                <hr  class="gradient"/>
+
+
+        
+
+
+            <article>
+                <a href="http://jeepxiaozi.github.io/xcode7zai-shang-chuan-iosying-yong-dao-app-storeshi-yu-dao-de-wen-ti.html"><h3 class="article-title">Xcode7在上传iOS应用到App Store时遇到的问题</h3></a>
+<h6 class="subheader" title="2015-10-22T17:40:33+08:00">四 22 十月 2015
+</h6>
+
+
+<p>使用Xcode7上传应用到App Store时遇到的问题汇总</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/ios-develop.html">iOS Develop</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/xcode7zai-shang-chuan-iosying-yong-dao-app-storeshi-yu-dao-de-wen-ti.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/xcode7zai-shang-chuan-iosying-yong-dao-app-storeshi-yu-dao-de-wen-ti.html">Read More</a>
+                <hr  class="gradient"/>
+            </article>
+
+        
+
+
+            <article>
+                <a href="http://jeepxiaozi.github.io/centosxia-shi-yong-gitlabda-jian-git-server.html"><h3 class="article-title">CentOS下使用GitLab搭建Git Server</h3></a>
+<h6 class="subheader" title="2015-09-23T10:10:33+08:00">三 23 九月 2015
+</h6>
+
+
+<p>记录下在CentOS下使用GitLab搭建Git Server的流程</p>
+<p>按照官方的文档<a href="https://about.gitlab.com/downloads/#centos6">CentOS6安装GitLab</a></p>
+<p>然后参考<a href="http://my.oschina.net/VincentJiang/blog/224993">CentOS6.5配置yum安装Nginx</a>完成了Nginx的安装</p>
+<p>然后参考<a href="https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/doc/settings/nginx.md#using-a-non-bundled-web-server">使用已有的Nginx配置</a>进行配置</p>
+<p>简单的翻译记录一下所需要的配置部分</p>
+<p>默认的，omnibus-gitlab会在安装GitLab的时候默认内置了一个Nginx Server，Omnibus-gitlab允许webserver通过gitlab-www分组下的gitlab-www同名用户来访问。要想添加额外的webserver权限到GitLab的话，需要将额外的webserver用户添加到gitlab-www分组里</p>
+<p>想要使用其他的web server例如Apache或者已有的Nginx，你需要做以下的操作步骤：
+- 通过在<em>/etc/gitlab/gitlab.rb</em>文件中指定来禁用内置的Nginx：</p>
+<div class="highlight"><pre><span class="n">nginx</span><span class="o">[</span><span class="s1">&#39;enable&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="kp">false</span>
+
+<span class="c1">#对于GitLab CI，使用如下的：</span>
+<span class="n">ci_nginx</span><span class="o">[</span><span class="s1">&#39;enable&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="kp">false</span>
+</pre></div>
+
+
+<p>之后一定要记得执行<em>sudo gitlab-ctl reconfigure</em>进行重新配置</p>
+<ul>
+<li>检查非内置的web server的用户名，默认情况下，omnibus-gitlab没有为额外的webserver用户添加默认设置，你必须手动在配置文件中将额外的webserver用户名添加进来，我们假设你的webserver的用户名是nginx，那么，在<em>/etc ...</em></li></ul><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/git.html">Git</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/centosxia-shi-yong-gitlabda-jian-git-server.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/centosxia-shi-yong-gitlabda-jian-git-server.html">Read More</a>
+                <hr  class="gradient"/>
+            </article>
+
+        
+
+
+            <article>
+                <a href="http://jeepxiaozi.github.io/css3zhong-de-transform.html"><h3 class="article-title">CSS3中的Transform</h3></a>
+<h6 class="subheader" title="2015-07-28T16:00:19+08:00">二 28 七月 2015
+</h6>
+
+
+<h1>CSS3中的Transform</h1>
+<p>HTML5和CSS3的火爆程度自不必说，很多同学可能说我们不是专门的Web前端工程师呢，所以并不用关心这个，但我觉得吧，做我们开发这行儿的，还是不要用这样儿的借口来为自己开脱的好，至少，我们要为了成为全栈工程师而努力不是？那么这里我们来看一下CSS3里制作动画的几个属性：变形（Transform）、转换（Transition）和动画（Animation）等。今天我们这篇文章主要介绍的是这三个属性中的第一个——变形（Transform）。</p>
+<p>那么所谓Transform，在CSS3中主要包括一下集中：旋转Rotate、扭曲Skew、缩放Scale和移动Translate以及矩阵变形Matrix等。下面我们看下具体如何实现。</p>
+<p>Transform语法：</p>
+<div class="highlight"><pre><span class="nt">transform</span> <span class="o">:</span> <span class="nt">none</span> <span class="o">|</span> <span class="o">&lt;</span><span class="nt">transform-function</span><span class="o">&gt;</span> <span class="o">[</span> <span class="o">&lt;</span><span class="nt">transform-function</span><span class="o">&gt;]*</span>
+<span class="c">/*也就是*/</span>
+<span class="nt">transform</span><span class="o">:</span> <span class="nt">rotate</span> <span class="o">|</span> <span class="nt">scale</span> <span class="o">|</span> <span class="nt">skew</span> <span class="o">|</span> <span class="nt">translate</span> <span class="o">|</span> <span class="nt">matrix</span><span class="o">;</span>
+</pre></div>
+
+
+<p>解释说明：</p>
+<p>none：表示不进行变换；
+<code>&lt;transform-function&gt;</code>表示一个或多个变换函数，以空格分开；换句话说就是我们同时对一个元素进行transform的多种属性操作，例如rotate、scale、translate三种，但这里需要大家注意，以往我们叠加效果都是用逗号 ...</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo.html">技术生活</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/css3zhong-de-transform.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/css3zhong-de-transform.html">Read More</a>
+                <hr  class="gradient"/>
+            </article>
+
+        
+
+
+            <article>
                 <a href="http://jeepxiaozi.github.io/sheng-cheng-sslzheng-shu.html"><h3 class="article-title">生成SSL证书</h3></a>
 <h6 class="subheader" title="2015-05-22T15:08:42+08:00">五 22 五月 2015
 </h6>
@@ -62,54 +250,15 @@
 </pre></div>
 
 
-<p>之后会提示输入密码，这个密码是用于加密这个key文件的，其中参数des3是加密的算法，也可以选择其它的例如aes算法。</p>
-<p>如图：</p>
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/generate_ssl_cert_1.jpg" /></p>
-<p>以后每次需要读取该key文件时都要输入密码，如果觉得太麻烦也可以直接去掉，去掉key文件口令的命令是：</p>
-<div class="highlight"><pre><span class="nv">$openssl</span> rsa -in server.key -out server.key
-</pre></div>
-
-
-<h6>2. 按照我们的配置文件，生成证书签名请求文件，即CSR文件（Certificate Signing Request），生成的CSR文件交给CA签名形成服务端自己的证书，命令如下：</h6>
-<div class="highlight"><pre><span class="nv">$openssl</span> req -new -key server.key -out server.csr -config openssl.cnf
-</pre></div>
-
-
-<p>填写如图所示的基本信息：</p>
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/generate_ssl_cert_2.jpg" /></p>
-<h6>3. 对客户端也作同样的命令，生成key和CSR文件</h6>
-<div class="highlight"><pre><span class="nv">$openssl</span> genrsa -des3 -out client.key 1024
-
-<span class="nv">$openssl</span> req -new -key client.key -out client.csr -config openssl.cnf
-</pre></div>
-
-
-<p>参考服务端的生成方法，填写信息即可。</p>
-<h6>4. CSR文件必须有CA的签名才可以生成证书，这里我们直接自己做CA。</h6>
-<p>在当前目录下执行如下命令：   </p>
-<div class="highlight"><pre><span class="nv">$openssl</span> req -new -x509 -keyout ca.key -out ca.crt -config openssl.cnf
-</pre></div>
-
-
-<p>之后会看到在SelfCA目录下生成了一个ca.key和ca.crt文件</p>
-<h6>5. 用刚生成的CA证书为server.csr，client.csr文件签名：</h6>
-<div class="highlight"><pre><span class="nv">$Openssl</span> ca -in server.csr -out server.crt -cert ca.crt -keyfile ca.key -config openssl.cnf
-
-<span class="nv">$Openssl</span> ca -in client.csr -out client.crt -cert ca.crt -keyfile ca.key -config openssl.cnf
-</pre></div>
-
-
-<p>之后，我们应该就已经创建了可以使用的证书了，如果在签名的过程中有任何错误，可以先看一下index.txt文件中的信息，然后清空它，重新执行第5步中失败的操作。</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/server-develop.html">Server Develop</a>
+<p>之后会提示输入密码，这个密码是用于加密这个key文件的，其中参数des3是加密的算法，也可以选择其它的例如aes算法 ...</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/server-develop.html">Server Develop</a>
 
 </p>
 
 
 
-<p><a href="http://jeepxiaozi.github.io/sheng-cheng-sslzheng-shu.html#disqus_thread">comments</a></p>            </article>
-
-
+<p><a href="http://jeepxiaozi.github.io/sheng-cheng-sslzheng-shu.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/sheng-cheng-sslzheng-shu.html">Read More</a>
                 <hr  class="gradient"/>
-
+            </article>
 
         
 
@@ -261,109 +410,6 @@ android {
                 <hr  class="gradient"/>
             </article>
 
-        
-
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/hei-kuo-de-macxi-tong-zhuang-ji-zhi-nan.html"><h3 class="article-title">黑阔的Mac系统装机指南</h3></a>
-<h6 class="subheader" title="2015-02-24T16:42:22+08:00">二 24 二月 2015
-</h6>
-
-
-<h1>黑阔的Mac系统装机指南</h1>
-<p>本文为译文，原文链接：http://lapwinglabs.com/blog/hacker-guide-to-setting-up-your-mac</p>
-<p>嗯，大概就这样儿了，郑重其事的第一篇译作，一定要用心好好翻译。一来是电脑用的时间略长了然后好多东西随便扔随便扔确实打算过阵子不忙的时候重装一下系统了，二来是，之前都是自己看英文文档但是从来没翻译过，所以，嗯，差不多是时候了，翻译的不好，最开始打算是自己拿来看看，参考一下就好，如有翻译的实在令人承受不了的地方欢迎大家斧正，然后就是大家如果参考这篇文章进行重装系统的话，本人就重装系统产生的一些列问题统统都是不负责任的哟，请仔细参考原文下方的评论，可能会对电源管理产生一定的影响，慎重！</p>
-<p><strong>开始正文</strong></p>
-<p>黑阔们大多痴迷于自动化，我们希望让机器来做那些巴拉巴拉（无聊的事儿），这样儿我们就能把精力更加集中在那些有意思的事儿上了。比如，设置你的电脑（安装系统和软件）就是一个很常见的大部分工作都可以自动化但是很多人都么有注意到的地方。</p>
-<p>来，我们今天就来给大家讲解一些技巧，帮助大家伙儿完成自动初始化你的电脑。今天这篇博文的目标，就是为了实现80%的安装都自动化，让你可以轻松在几个小时内搞定你的mac，而不是像以前一样花费好几天。</p>
-<p>先秀秀图。。。
-<img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/terminal.png-img.normal" /></p>
-<p><strong>准备工作</strong>
-俗话说“工欲善其事，必先利其器”，俗话还说 ...</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo.html">技术生活</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/hei-kuo-de-macxi-tong-zhuang-ji-zhi-nan.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/hei-kuo-de-macxi-tong-zhuang-ji-zhi-nan.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
-
-        
-
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/wei-zi-ji-de-github-pagestian-jia-yi-ge-tu-chuang.html"><h3 class="article-title">为自己的GitHub Pages添加一个图床</h3></a>
-<h6 class="subheader" title="2015-02-15T00:00:00+08:00">日 15 二月 2015
-</h6>
-
-
-<p>前几天的时候把GitHub Pages弄好之后就一直没怎么正式写博客，主要还是因为图床的问题，因为虽然用Markdown写博客会让人更加专注在文章的内容上，但是如果全篇都是文字的话估计没人愿意看了就，同时呢，GitHub Pages对于存储空间貌似也是有一定的限制的，所以在朋友的推荐下，试用一下七牛云存储作为图床，这里简单记录一下。</p>
-<p>七牛注册之后会赠送一定的存储空间，大概有10个G，作为图床来说的话，应该足够了（又不是放啥高清无码大图），只不过需要注意的是，要创建空间需要先实名认证一哈子，就是简单的填写一下基本信息然后等待审核通过成为标准用户就好了。
-如下图，点击新建一个空间：</p>
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/fda341dfa.jpg-img.normal" /></p>
-<p>创建一个在七牛中唯一用户名的空间，记住如果是作为图床的话一定要设置为公开空间，否则。。。我还没试过设置为私有空间，但是如果你的博客里的配图需要别人输入密码才能访问的话，是不是有点儿太。。。
-总之，创建完成之后，如下：</p>
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/H~GROGRVGY3R455AOE3U.jpg" /></p>
-<p>看，这里，就是我们的图片的外链地址：</p>
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/2NXM5_8$RG$PPM9P66.jpg-img.normal" /></p>
-<p>但是等下。。。好像哪里不对？</p>
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/U~PYTAB03IW8GR2EJD.jpg-img.normal" /></p>
-<p>为啥这图片显示成这样儿了啊，这么大的图是要哪样儿？啊，当然这里说的大是显示出来的尺寸大，而不是体积大。无需担心，七牛云存储还是很强大的，我们来看一下数据处理功能。点击数据处理，选择新建一个图片样式，然后根据你自己的实际情况进行样式添加，比如我这里只是希望可以缩放图片，让它们不要显示的那么大，如下图：</p>
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/6GQ_TB4TN3NMNU0CA2S$F$M.jpg-img.normal" /></p>
-<p>而且 ...</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/markdownxie-zuo.html">Markdown写作</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/wei-zi-ji-de-github-pagestian-jia-yi-ge-tu-chuang.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/wei-zi-ji-de-github-pagestian-jia-yi-ge-tu-chuang.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
-
-        
-
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/zhuan-zai-kai-pian-cong-ling-zuo-si-zhou-fei-xing-qi-1.html"><h3 class="article-title">[转载]开篇 从零做四轴飞行器(1)</h3></a>
-<h6 class="subheader" title="2015-02-09T23:06:51+08:00">一 09 二月 2015
-</h6>
-
-
-<p>我个人对于四轴飞行器（或者说专业一点儿讲，多旋翼飞行器）的爱好，具体也不记得是从哪天起来的了，但是无疑Ted上的那个四轴的视频给我很大的触动，然后机缘巧合，认识了这篇文章的作者：洋仔，具体的机缘巧合地点在此：<a href="http://www.zhihu.com/question/21775696">如何学习自制四轴飞行器</a>，啊，各位看官如果对我们的基情，啊不是，是纯洁的友情，要进行点上1024个赞的话，欢迎前去围观。</p>
-<p>扯完闲篇儿，聊点儿正经的爱好，四轴飞行器，当然啦，这个目前是很火爆的，国内国外的都有，自不必说，可问题是，咱们是攻城狮诶！高（不）端（折）大（滕）气（不）上（不）档（成）次（活）的攻城狮诶！所以嘞，在四轴飞行器方面我还是个菜鸟菜鸟菜菜鸟，但是洋仔同学已经有较为丰富的折腾经验，并且也是专业算是对口啊，所以他整理了不少博客，详情请戳<a href="http://wellmakers.com/?cat=13">四轴飞行器</a>。</p>
-<p>那么OK，我们顺着洋仔同学的折腾轨迹 ...</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/multicopter.html">MultiCopter</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/zhuan-zai-kai-pian-cong-ling-zuo-si-zhou-fei-xing-qi-1.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/zhuan-zai-kai-pian-cong-ling-zuo-si-zhou-fei-xing-qi-1.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
-
-        
-
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/zheng-shi-qi-yong-zi-ji-de-github-pageszuo-wei-xin-de-bei-yong-ji-zhu-bo-ke.html"><h3 class="article-title">正式启用自己的GitHub Pages作为新的备用技术博客</h3></a>
-<h6 class="subheader" title="2015-02-06T00:00:00+08:00">五 06 二月 2015
-</h6>
-
-
-<p>经过一番折腾，我自己的GitHub Pages终于搞定，欢迎大家收藏、交换友链啥的</p>
-<p>博客地址：<a href="http://jeepxiaozi.github.io">一把汤勺</a>。</p>
-<p>虽然这篇博客同时会发布在两个地方，自己的CSDN博客和GitHub Pages，但是估计以后首发的时候，还是会选择GitHub Pages了，当然也不是说CSDN不够好，只是最近两天遇到的事儿比较奇葩，可能个人觉得CSDN在这个方面做的还不是很出色吧，在写这篇博客的时候看到CSDN也上线了新版的Markdown编辑器，不过我还是会选择继续使用我目前的工具<strong><a href="http://25.io/mou/">Mou</a></strong>(这么好用的工具应该不算广告的吧)，很简洁轻快的一款Markdown编辑器，支持预览功能，还不错的说，不过就是相对比CSDN的在线Markdown编辑器来说，没有那么多提示功能，所以自己还是需要再深入学习一下Markdown的语法什么的。</p>
-<p>大致说了不少，说下这次下定决心开通GitHub Pages的原因吧，起因就是因为转载小伙伴的关于四轴飞行器的博文，然后呢，在保存博文的时候CSDN提示保存失败，无法保存，但是紧随其次的就是我的CSDN博客也打不开了，并且提示“自定义模块无法识别”之类的错误，最开始我以为是Flash模块导致的，后来把Flash模块删掉，又进行了尝试，果然。。。没好，再次被锁定，跟第一次的时候客服人员的回复一样，博文中有敏感词汇。。。但是再三检查了之后发现难不成是因为里面说到的遥控器的方式有美国手和日本手之类的？但是吧，CSDN客服人员的回复是，我们无法向您透露敏感词汇是啥，墙裂不建议您再次发布该博文 ...</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo.html">技术生活</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/zheng-shi-qi-yong-zi-ji-de-github-pageszuo-wei-xin-de-bei-yong-ji-zhu-bo-ke.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/zheng-shi-qi-yong-zi-ji-de-github-pageszuo-wei-xin-de-bei-yong-ji-zhu-bo-ke.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
-
             <!-- /#posts-list -->
 <div class="pagination-centered">
 <h6 class="subheader">Page 1 of 2</h6>
@@ -388,6 +434,8 @@ android {
             <ul class="side-nav">
                 <li><a href="http://jeepxiaozi.github.io/category/android-develop.html">Android Develop</a>
                 </li>
+                <li><a href="http://jeepxiaozi.github.io/category/git.html">Git</a>
+                </li>
                 <li><a href="http://jeepxiaozi.github.io/category/ios-develop.html">iOS Develop</a>
                 </li>
                 <li><a href="http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo.html">技术生活</a>
@@ -397,6 +445,8 @@ android {
                 <li><a href="http://jeepxiaozi.github.io/category/multicopter.html">MultiCopter</a>
                 </li>
                 <li><a href="http://jeepxiaozi.github.io/category/pages.html">Pages</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
                 </li>
                 <li><a href="http://jeepxiaozi.github.io/category/server-develop.html">Server Develop</a>
                 </li>

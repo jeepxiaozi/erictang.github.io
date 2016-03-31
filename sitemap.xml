@@ -5,28 +5,28 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://jeepxiaozi.github.io/</loc>
-<lastmod>2015-05-22T19:52:05-00:00</lastmod>
+<lastmod>2016-03-31T17:54:29-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://jeepxiaozi.github.io/archives.html</loc>
-<lastmod>2015-05-22T19:52:05-00:00</lastmod>
+<lastmod>2016-03-31T17:54:29-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://jeepxiaozi.github.io/tags.html</loc>
-<lastmod>2015-05-22T19:52:05-00:00</lastmod>
+<lastmod>2016-03-31T17:54:29-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://jeepxiaozi.github.io/categories.html</loc>
-<lastmod>2015-05-22T19:52:05-00:00</lastmod>
+<lastmod>2016-03-31T17:54:29-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -36,6 +36,34 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <lastmod>2015-02-05T00:00:00+08:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.3</priority>
+</url>
+
+<url>
+<loc>http://jeepxiaozi.github.io/yii2xue-xi-bi-ji.html</loc>
+<lastmod>2016-03-31T17:49:15+08:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.7</priority>
+</url>
+
+<url>
+<loc>http://jeepxiaozi.github.io/xcode7zai-shang-chuan-iosying-yong-dao-app-storeshi-yu-dao-de-wen-ti.html</loc>
+<lastmod>2015-10-22T17:40:33+08:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.7</priority>
+</url>
+
+<url>
+<loc>http://jeepxiaozi.github.io/centosxia-shi-yong-gitlabda-jian-git-server.html</loc>
+<lastmod>2015-09-23T10:10:33+08:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.7</priority>
+</url>
+
+<url>
+<loc>http://jeepxiaozi.github.io/css3zhong-de-transform.html</loc>
+<lastmod>2015-07-28T16:00:19+08:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.7</priority>
 </url>
 
 <url>
@@ -130,15 +158,22 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://jeepxiaozi.github.io/category/git.html</loc>
+<lastmod>2015-09-23T10:10:33+08:06</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://jeepxiaozi.github.io/category/ios-develop.html</loc>
-<lastmod>2015-03-21T00:03:59+08:06</lastmod>
+<lastmod>2015-10-22T17:40:33+08:06</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo.html</loc>
-<lastmod>2015-05-17T16:01:16+08:06</lastmod>
+<lastmod>2015-07-28T16:00:19+08:06</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -165,6 +200,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://jeepxiaozi.github.io/category/php-develop.html</loc>
+<lastmod>2016-03-31T17:49:15+08:06</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://jeepxiaozi.github.io/category/server-develop.html</loc>
 <lastmod>2015-05-22T15:08:42+08:06</lastmod>
 <changefreq>daily</changefreq>
@@ -173,7 +215,14 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://jeepxiaozi.github.io/author/erictang.html</loc>
-<lastmod>2015-05-22T15:08:42+08:06</lastmod>
+<lastmod>2015-10-22T17:40:33+08:06</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://jeepxiaozi.github.io/author/tang.html</loc>
+<lastmod>2016-03-31T17:49:15+08:06</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>

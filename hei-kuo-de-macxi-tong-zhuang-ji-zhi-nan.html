@@ -150,8 +150,8 @@ brew install <span class="cp">${</span><span class="n">binaries</span><span clas
 
 
 <p>每个人都有自己喜欢的应用，以下的脚本是我的一些常用应用：</p>
-<div class="highlight"><pre># Apps
-apps=(
+<div class="highlight"><pre><span class="c"># Apps</span>
+<span class="nv">apps</span><span class="o">=(</span>
   alfred
   dropbox
   google-chrome
@@ -185,11 +185,11 @@ apps=(
   quicklook-json
   skype
   transmission
-)
-# Install apps to /Applications
-# Default is: /Users/<span class="nv">$user</span>/Applications
-echo &quot;installing apps...&quot;
-brew cask install --appdir=&quot;/Applications&quot; <span class="cp">${</span><span class="n">apps</span><span class="p">[</span><span class="err">@</span><span class="p">]</span><span class="cp">}</span>
+<span class="o">)</span>
+<span class="c"># Install apps to /Applications</span>
+<span class="c"># Default is: /Users/$user/Applications</span>
+<span class="nb">echo</span> <span class="s2">&quot;installing apps...&quot;</span>
+brew cask install --appdir<span class="o">=</span><span class="s2">&quot;/Applications&quot;</span> <span class="si">${</span><span class="nv">apps</span><span class="p">[@]</span><span class="si">}</span>
 </pre></div>
 
 
@@ -296,6 +296,8 @@ brew cask install <span class="cp">${</span><span class="n">fonts</span><span cl
             <ul class="side-nav">
                 <li><a href="http://jeepxiaozi.github.io/category/android-develop.html">Android Develop</a>
                 </li>
+                <li><a href="http://jeepxiaozi.github.io/category/git.html">Git</a>
+                </li>
                 <li><a href="http://jeepxiaozi.github.io/category/ios-develop.html">iOS Develop</a>
                 </li>
                 <li><a href="http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo.html">技术生活</a>
@@ -305,6 +307,8 @@ brew cask install <span class="cp">${</span><span class="n">fonts</span><span cl
                 <li><a href="http://jeepxiaozi.github.io/category/multicopter.html">MultiCopter</a>
                 </li>
                 <li><a href="http://jeepxiaozi.github.io/category/pages.html">Pages</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
                 </li>
                 <li><a href="http://jeepxiaozi.github.io/category/server-develop.html">Server Develop</a>
                 </li>
