@@ -48,6 +48,87 @@
         
 
             <article>
+                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-2-yun-xing-ying-yong.html"><h3 class="article-title">Yii2学习笔记系列2——运行应用</h3></a>
+<h6 class="subheader" title="2016-04-05T01:05:49+08:00">二 05 四月 2016
+</h6>
+
+
+<h1>Yii2笔记系列2——运行应用</h1>
+<p>上一篇笔记中我们完成了Yii的简单介绍和安装，之后我们就有了一个可运行的Yii应用，通过<code>http://hostname/basic/web/index.php</code>或者<code>http://hostname/index.php</code>进行访问。</p>
+<h4>Yii应用包含的功能部分</h4>
+<p>安装完的完整的Yii的基本应用包含四项：</p>
+<ul>
+<li>主页，默认访问<code>http://hostname/</code>时显示的页面</li>
+<li>关于页，<code>http://hostname/web/index.php?r=site%2Fabout</code>，默认只有一行提示文字，你可以自主编辑<code>/path/to/basic/views/site/about.php</code>以展示自定义关于页面内容</li>
+<li>联系页，<code>http://hostname/web/index.php?r=site%2Fcontact</code>，显示一个Form表单允许终端用户通过Email联系你</li>
+<li>登录页，<code>http://hostname/web/index.php?r=site%2Flogin</code>，显示登录页面，默认用户名和密码都是"admin"</li>
+</ul>
+<p>页面最底部可以看到一个工具栏，如下图所示，这是Yii提供的调试工具，可以记录并显示大量有用的调试信息，例如日志信息、响应状态以及数据库查询等等。</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/4XQLBJ6CRAFQFVJ1FE.jpg-img.normal" /></p>
+<h4>Yii应用的结构</h4>
+<p>假设你安装的应用的根目录是<code>basic</code>，那么应用的主要目录和文件的结构大致如下：</p>
+<div class="highlight"><pre><span></span>basic/                  应用根目录
+    assets/             用于存放前端资源包PHP类，这里只需要先大致知道是用于管理CSS、js等前端资源就可以了
+   commands/           包含控制台命令类
+   composer.json       Composer 配置文件, 描述包信息
+   composer.lock         第一次使用composer install或者执行composer update后生成的文件，此文件里定义了当前项目的代码依赖以及这些代码依赖的对应的版本
+   config/             包含应用配置及其它配置
+       console.php     控制台应用配置信息
+       web.php         Web 应用配置信息
+       db.php            数据库配置文件
+       params.php        全局参数配置文件
+   controllers/        包含控制器类
+   mail                  包含与邮件相关的布局文件等
+   models/             包含模型类
+   requirements.php  用于检查当前PHP环境是否满足Yii最基本需求的PHP脚本文件
+   runtime/            包含 Yii 在运行时生成的文件，例如日志和缓存文件
+   tests/                用于存放测试类
+   vendor/             包含已经安装的 Composer 包，包括 Yii 框架自身
+   views/              包含视图文件
+   web/                Web 应用根目录，包含 Web 入口文件
+       assets/         包含 Yii 发布的资源文件（javascript 和 css）
+       index.php       应用入口文件
+   yii                 Yii 控制台命令执行脚本
+   yii.bat              Yii 控制台命令脚本，针对windows系统
+</pre></div>
+
+
+<p>一般来说，Yii应用中的文件可以被划分为两类：在<code>basic/web</code>下的和在其它目录下的。前者可以直接通过HTTP进行访问（例如浏览器），后者不能也不应该被直接访问。</p>
+<p>Yii实现的是常见的MVC设计模式，这点也可以从目录结构中看出。<code>models</code>目录中包含了所有模型类，<code>views</code>目录中包含了所有的视图脚本，<code>controllers</code>目录中包含了所有控制器类。</p>
+<p>下图展示了一个Yii应用的静态结构：</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/HU45379JHDS32HDS.png-img.normal" /></p>
+<p>每个应用都有一个入口脚本<code>web/index.php</code>，这是整个应用中唯一可以访问的PHP脚本。入口脚本的作用在于它接受一个Web请求并创建应用实例去处理它，应用在他的组件（Component）辅助下解析请求，并分派请求至MVC元素，视图则使用小部件（Widget）去创建复杂和动态的用户界面。</p>
+<h4>一个请求的生命周期</h4>
+<p>下图展示了一个应用如何处理请求：</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/JDNSERRFUKHUDNFG7678432.png-img.normal" /></p>
+<ol>
+<li>用户向入口脚本<code>web/index.php</code>发起请求</li>
+<li>入口脚本加载应用配置并创建一个应用实例去处理请求</li>
+<li>应用通过请求组件解析请求的路由</li>
+<li>应用创建一个控制器实例去处理请求</li>
+<li>控制器创建一个操作实例并针对操作执行过滤器</li>
+<li>如果任何一个过滤器返回失败，则操作退出</li>
+<li>如果所有过滤器都通过，操作被执行</li>
+<li>操作会加载一个数据模型，也有可能来自数据库</li>
+<li>操作会渲染一个视图，并把数据模型提供给它</li>
+<li>渲染结果返回给响应组件</li>
+<li>响应组件发送渲染结果给用户浏览器</li>
+</ol><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-2-yun-xing-ying-yong.html#disqus_thread">comments</a></p>            </article>
+
+
+                <hr  class="gradient"/>
+
+
+        
+
+
+            <article>
                 <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-1-yiijie-shao-he-an-zhuang.html"><h3 class="article-title">Yii2学习笔记系列1——Yii介绍和安装</h3></a>
 <h6 class="subheader" title="2016-03-31T17:49:15+08:00">四 31 三月 2016
 </h6>
@@ -66,84 +147,15 @@
 mv composer.phar /usr/local/bin/composer
 <span class="sb">```</span>
 
-在windows下，需要下载并运行<span class="o">[</span>Composer-Setup.exe<span class="o">](</span>https://getcomposer.org/Composer-Setup.exe<span class="o">)</span>
-
-安装完Composer之后，切换到一个可以通过Web访问的目录，执行如下命令即可安装Yii：
-<span class="sb">```</span>bash
-composer global require <span class="s2">&quot;fxp/composer-asset-plugin:~1.0.0&quot;</span>
-composer create-project --prefer-dist yiisoft/yii2-app-basic basic
-</pre></div>
-
-
-<p>简单解释一下这两条命令，第一条命令安装<a href="https://github.com/francoispluchino/composer-asset-plugin/">Composer asset plugin</a>，是通过Composer管理bower和npm包所必需的，此命令全局生效，一劳永逸。第二条命令将Yii安装在名为basic的目录中，你也可以选择其他名称。</p>
-<p>Note小技巧：如果想安装Yii的最新开发版本，可以使用以下命令代替，它添加了一个stability选项：</p>
-<div class="highlight"><pre><span></span>composer create-project --prefer-dist --stability<span class="o">=</span>dev yiisoft/yii2-app-basic basic
-</pre></div>
-
-
-<p>需要注意的是，Yii的开发版(dev 版)不应该被用于生产环境中，它可能会破坏运行中的代码</p>
-<h4>通过归档文件安装</h4>
-<p>通过归档文件安装Yii包括三个步骤：</p>
-<ol>
-<li>从<a href="http://www.yiiframework.com/download/">yiiframework.com</a>处下载归档文件。</li>
-<li>将下载的文件解压缩到Web目录中。</li>
-<li>修改<code>config/web.php</code>文件，给<code>cookieValidationKey</code>配置添加一个密钥（如果通过Composer安装，则此步骤会自动完成）：</li>
-</ol>
-<div class="highlight"><pre><span></span><span class="x">// !!! 在下面插入一段密钥（若为空） - 以供 cookie validation 的需要</span>
-<span class="x">&#39;cookieValidationKey&#39; =&gt; &#39;在此处输入你的密钥&#39;,</span>
-</pre></div>
-
-
-<h4>其他安装方式</h4>
-<ul>
-<li>
-<p>如果你只想安装核心框架，然后从零开始构建整个属于你自己的应用程序模板，可以参考<a href="http://www.yiichina.com/doc/guide/2.0/tutorial-start-from-scratch">从头构建自定义模版</a>一节的介绍</p>
-</li>
-<li>
-<p>如果你要开发一个更复杂的应用，可以更好的适用于团队开发环境的，可以考虑安装高级应用模板</p>
-</li>
-</ul>
-<h4>验证安装结果</h4>
-<p>安装完成后，可以使用浏览器通过如下URL访问刚安装完的Yii应用：</p>
-<div class="highlight"><pre><span></span>http://localhost/basic/web/index.php
-</pre></div>
-
-
-<p>当看到如下所示的结果时，表示安装成功：</p>
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/2354DUSNRRFFGNDFJ.jpg-img.normal" /></p>
-<p>(我这里修改了hosts文件，所以可以直接通过域名访问)</p>
-<p>如果没有，你还可以通过以下任意的一种方式，检查当前的PHP环境是否满足Yii最基本的要求：</p>
-<ul>
-<li>通过浏览器访问URL <code>http://localhost/basic/requirements.php</code></li>
-<li>在命令行中执行如下命令:</li>
-</ul>
-<div class="highlight"><pre><span></span>php requirements.php
-</pre></div>
-
-
-<p>然后按照提示进行修改即可</p>
-<h4>可能会遇到的错误异常</h4>
-<ol>
-<li>Invalid Parameter - The file or directory to be published does not exist: /path/to/basic/vendor/bower/jquery/dist</li>
-</ol>
-<p>这个问题我纠结了很久，最后在<a href="https://github.com/yiisoft/yii2/issues/10198">https://github.com/yiisoft/yii2/issues/10198</a>处找到了问题，是因为Composer master is broken</p>
-<p>解决的方案是。。。重新安装。。。但是！在重新安装之前，要先对Composer做如下操作：</p>
-<div class="highlight"><pre><span></span>composer self-update 1.0.0-alpha11
-composer clear-cache
-</pre></div>
-
-
-<p>然后重新执行<code>composer create-project --prefer-dist yiisoft/yii2-app-basic basic</code>即可，如果这个不能解决你的问题的话可以进行评论，我们再进一步讨论。</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+在windows下，需要下载并运行<span class="o">[</span>Composer-Setup ...</pre></div><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
 
 </p>
 
 
 
-<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-1-yiijie-shao-he-an-zhuang.html#disqus_thread">comments</a></p>            </article>
-
-
+<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-1-yiijie-shao-he-an-zhuang.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-1-yiijie-shao-he-an-zhuang.html">Read More</a>
                 <hr  class="gradient"/>
-
+            </article>
 
         
 
@@ -375,37 +387,6 @@ android {
 
 
 <p><a href="http://jeepxiaozi.github.io/mian-app-storefen-fa-iosying-yong.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/mian-app-storefen-fa-iosying-yong.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
-
-        
-
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/androidxing-neng-fen-xi-gong-ju-traceview.html"><h3 class="article-title">Android性能分析工具——TraceView</h3></a>
-<h6 class="subheader" title="2015-03-05T21:30:58+08:00">四 05 三月 2015
-</h6>
-
-
-<h5>起因</h5>
-<p>最近一直都是在忙活后台的东西，然后突然客户那边儿说你们的App做好了没？唔，好像还没有，然后就赶紧开始调试之前扔掉的Android应用，由于这个App是通过WiFi控制LED灯的，所以并不是由我们独立来做的，首先是由硬件团队做出硬件控制板以及相应的SDK，我们在他们的基础上做上层应用。</p>
-<p>但是一直有个问题，我写的Demo中，只要发现了LED设备，可以进行很快速的操控，十秒钟内基本上可以进行7到8次左右的开关灯操作，但是由我们的Android小伙伴集成到我们之前做好的UI界面中，效果就完全不一样了，卡得要死要死的了，很明显这样儿的产品客户是不会同意的，所以我就准备赶紧解决掉这个问题，避免客户爆豆。。。</p>
-<p>既然要分析性能了，那就肯定要借助工具来了，Android性能分析的工具有很多，而且是内置了也有好多，今天我们这里用到的是TraceView，因为熟悉我的同学也都知道我只是个打酱油的，所以边学边总结。</p>
-<h5>TraceView如何使用</h5>
-<p>TraceView有两种使用方式。</p>
-<h5>一种方式是直接打开DDMS</h5>
-<p>不管你用的是Idea还是Eclipse，都可以，大致如图所示:</p>
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/Q8FPFPHKM9ONGZFFC.jpg-img.normal" /></p>
-<p>等“Start Method Profiling”按钮编程一个黑色的小方块了之后，就表示它正在记录，点击停止之后，你就可以看到如下图所示的效果了:</p>
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/2T4LOFFZFJ3C8YF6]M.jpg-img.normal" /></p>
-<p>然后你就可以好好分析一下为啥各项指标是否达标以及哪里出了问题了，当然需要注意的是这种方式使用起来虽然比较方便但是范围过大，不够精确，如果要实现对一个方法的略为精准的分析的同学可以继续往下看。</p>
-<h5>另一种方式是直接在你个人觉得可能比较耗时的地方写上如下代码，例如，我们现在怀疑onCreate()方法耗时严重 ...</h5><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/android-develop.html">Android Develop</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/androidxing-neng-fen-xi-gong-ju-traceview.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/androidxing-neng-fen-xi-gong-ju-traceview.html">Read More</a>
                 <hr  class="gradient"/>
             </article>
 

@@ -49,6 +49,37 @@
 
 
             <article>
+                <a href="http://jeepxiaozi.github.io/androidxing-neng-fen-xi-gong-ju-traceview.html"><h3 class="article-title">Android性能分析工具——TraceView</h3></a>
+<h6 class="subheader" title="2015-03-05T21:30:58+08:00">四 05 三月 2015
+</h6>
+
+
+<h5>起因</h5>
+<p>最近一直都是在忙活后台的东西，然后突然客户那边儿说你们的App做好了没？唔，好像还没有，然后就赶紧开始调试之前扔掉的Android应用，由于这个App是通过WiFi控制LED灯的，所以并不是由我们独立来做的，首先是由硬件团队做出硬件控制板以及相应的SDK，我们在他们的基础上做上层应用。</p>
+<p>但是一直有个问题，我写的Demo中，只要发现了LED设备，可以进行很快速的操控，十秒钟内基本上可以进行7到8次左右的开关灯操作，但是由我们的Android小伙伴集成到我们之前做好的UI界面中，效果就完全不一样了，卡得要死要死的了，很明显这样儿的产品客户是不会同意的，所以我就准备赶紧解决掉这个问题，避免客户爆豆。。。</p>
+<p>既然要分析性能了，那就肯定要借助工具来了，Android性能分析的工具有很多，而且是内置了也有好多，今天我们这里用到的是TraceView，因为熟悉我的同学也都知道我只是个打酱油的，所以边学边总结。</p>
+<h5>TraceView如何使用</h5>
+<p>TraceView有两种使用方式。</p>
+<h5>一种方式是直接打开DDMS</h5>
+<p>不管你用的是Idea还是Eclipse，都可以，大致如图所示:</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/Q8FPFPHKM9ONGZFFC.jpg-img.normal" /></p>
+<p>等“Start Method Profiling”按钮编程一个黑色的小方块了之后，就表示它正在记录，点击停止之后，你就可以看到如下图所示的效果了:</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/2T4LOFFZFJ3C8YF6]M.jpg-img.normal" /></p>
+<p>然后你就可以好好分析一下为啥各项指标是否达标以及哪里出了问题了，当然需要注意的是这种方式使用起来虽然比较方便但是范围过大，不够精确，如果要实现对一个方法的略为精准的分析的同学可以继续往下看。</p>
+<h5>另一种方式是直接在你个人觉得可能比较耗时的地方写上如下代码，例如，我们现在怀疑onCreate()方法耗时严重 ...</h5><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/android-develop.html">Android Develop</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/androidxing-neng-fen-xi-gong-ju-traceview.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/androidxing-neng-fen-xi-gong-ju-traceview.html">Read More</a>
+                <hr  class="gradient"/>
+            </article>
+
+        
+
+
+            <article>
                 <a href="http://jeepxiaozi.github.io/hei-kuo-de-macxi-tong-zhuang-ji-zhi-nan.html"><h3 class="article-title">黑阔的Mac系统装机指南</h3></a>
 <h6 class="subheader" title="2015-02-24T16:42:22+08:00">二 24 二月 2015
 </h6>
