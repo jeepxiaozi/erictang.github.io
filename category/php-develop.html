@@ -48,6 +48,179 @@
         
 
             <article>
+                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-4-working-with-formsshi-yong-formbiao-dan.html"><h3 class="article-title">Yii2学习笔记系列4——Working With Forms（使用Form表单）</h3></a>
+<h6 class="subheader" title="2016-04-06T10:58:53+08:00">三 06 四月 2016
+</h6>
+
+
+<h1>Yii2笔记系列4——Wroking With Forms（使用Form表单）</h1>
+<p>本章节的主要学习目标是学习如何创建一个可以让用户输入数据并提交的表单页，该页面会显示一个包含姓名输入框和Email输入框的表单，当用户提交这两部分信息后，页面将会显示用户输入的信息。</p>
+<p>为了实现这个目标，我们需要创建一个action、两个视图以及一个模型。</p>
+<h4>创建模型</h4>
+<p>这里我们在<code>basic/models</code>下创建一个名为<code>EntryForm</code>的模型类，代表从用户请求的数据，具体代码如下：</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * Created by PhpStorm.</span>
+<span class="sd"> * User: 赵振棠</span>
+<span class="sd"> * Date: 16/4/6</span>
+<span class="sd"> */</span>
+<span class="k">namespace</span> <span class="nx">app\models</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">yii\base\Model</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">EntryForm</span> <span class="k">extends</span> <span class="nx">Model</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="nv">$user_name</span><span class="p">;</span>
+    <span class="k">public</span> <span class="nv">$user_email</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">rules</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="p">[[</span><span class="s1">&#39;user_name&#39;</span><span class="p">,</span> <span class="s1">&#39;user_email&#39;</span><span class="p">],</span> <span class="s1">&#39;required&#39;</span><span class="p">],</span>
+            <span class="p">[</span><span class="s1">&#39;user_email&#39;</span><span class="p">,</span> <span class="s1">&#39;email&#39;</span><span class="p">],</span>
+        <span class="p">];</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>该类继承自Yii提供的一个基类<code>yii\base\Model</code>，该基类通常用来表示数据。</p>
+<p><code>EntryForm</code>类包含<code>user_name</code>和<code>user_email</code>两个公共成员，用来储存用户输入的数据。它还包含一个名为<code>rules()</code>的方法，用来返回数据验证规则的集合，上面声明的验证规则表示：
+- <code>user_name</code>和<code>user_email</code>这两个的值都是必须的
+- <code>user_email</code>的值必须满足Email规则验证</p>
+<p>如果你有一个处理用户提交数据的<code>EntryForm</code>对象，你可以调用它的<code>yii\base\Model::validate()</code>方法触发数据验证。如果有数据验证失败，将把<code>yii\base\Model::hasErrors</code>属性设置为true，想要知道具体发生什么错误可以调用<code>yii\base\Model::getErrors</code>，具体示例如下：</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$model</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">EntryForm</span><span class="p">();</span>
+<span class="nv">$model</span><span class="o">-&gt;</span><span class="na">user_name</span> <span class="o">=</span> <span class="s1">&#39;aaaa&#39;</span><span class="p">;</span>
+<span class="nv">$model</span><span class="o">-&gt;</span><span class="na">user_email</span> <span class="o">=</span> <span class="s1">&#39;bbbb&#39;</span><span class="p">;</span>
+<span class="k">if</span> <span class="p">(</span><span class="nv">$model</span><span class="o">-&gt;</span><span class="na">validate</span><span class="p">())</span> <span class="p">{</span>
+    <span class="c1">// 通过验证</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="c1">// 验证失败！</span>
+    <span class="c1">// 此处可以使用 $model-&gt;getErrors() 获取错误详情</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h4>创建action</h4>
+<p>接下来我们需要在<code>site</code>控制器中创建一个<code>entry</code>操作用于新建的模型。</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">app\controllers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">app\models\EntryForm</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Yii</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">yii\filters\AccessControl</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">yii\web\Controller</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">yii\filters\VerbFilter</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">app\models\LoginForm</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">app\models\ContactForm</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">SiteController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * @desc 用来测试Form表单</span>
+<span class="sd">     * @return string</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">actionEntry</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$model</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">EntryForm</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$model</span><span class="o">-&gt;</span><span class="na">load</span><span class="p">(</span><span class="nx">Yii</span><span class="o">::</span><span class="nv">$app</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">post</span><span class="p">())</span> <span class="o">&amp;&amp;</span> <span class="nv">$model</span><span class="o">-&gt;</span><span class="na">validate</span><span class="p">())</span> <span class="p">{</span>
+            <span class="c1">// $model收到的数据通过验证</span>
+            <span class="c1">// do something useful</span>
+            <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">render</span><span class="p">(</span><span class="s1">&#39;entry-confirm&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;model&#39;</span> <span class="o">=&gt;</span> <span class="nv">$model</span><span class="p">]);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="c1">// 初始化失败或者数据验证错误</span>
+            <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">render</span><span class="p">(</span><span class="s1">&#39;entry&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;model&#39;</span> <span class="o">=&gt;</span> <span class="nv">$model</span><span class="p">]);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>该操作首先创建了一个<code>EntryForm</code>对象，然后尝试从<code>$_POST</code>中搜集用户提交的数据，由Yii的<code>yii\web\Request::post()</code>方法负责搜集。如果模型被成功的填充了数据（即用户提交了HTML表单），操作将调用<code>yii\base\Model::validate()</code>方法进行验证，确保用户提交的数据有效。</p>
+<p>补充：表达式<code>Yii:$app</code>代表应用实例，它是一个全局可以访问的单例，同事也是一个服务定位器，能够提供<code>request</code>，<code>response</code>，<code>db</code>等特定功能的组件。上面的代码里就是使用<code>request</code>组件来访问应用实例收到的<code>$_POST</code>数据。</p>
+<p>用户提交表单后，action会渲染一个名为<code>entry-confirm</code>的视图，确认用户输入的数据，如果表单项为空，或者提交的数据中包含错误（这里主要指的是email格式不对），则会渲染输出<code>entry</code>视图，连同表单一起输出的还有验证错误的相信信息。</p>
+<p>补充：在实际开发中可以考虑使用<code>yii\web\Controller:refresh()</code>或<code>yii\web\Controller::redirect()</code>来避免表单重复提交的问题。</p>
+<h4>创建视图</h4>
+<p>最后我们还需要创建两个视图文件<code>entry-confirm</code>和<code>entry</code>，这两个视图会被上一步中创建的<code>entry</code> action渲染。</p>
+<p><code>entry-confirm</code>视图用来显示用户提交的<code>user_name</code>和<code>user_email</code>数据，视图文件保存在<code>views/site/entry-confirm.php</code>中。</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * Created by PhpStorm.</span>
+<span class="sd"> * User: 赵振棠</span>
+<span class="sd"> * Date: 16/4/6</span>
+<span class="sd"> */</span>
+<span class="k">use</span> <span class="nx">yii\helpers\Html</span><span class="p">;</span>
+
+<span class="cp">?&gt;</span><span class="x"></span>
+<span class="x">&lt;p&gt;您提交了如下的信息:&lt;/p&gt;</span>
+
+<span class="x">&lt;ul&gt;</span>
+<span class="x">    &lt;li&gt;&lt;label&gt;姓名&lt;/label&gt;:</span><span class="cp">&lt;?</span><span class="o">=</span> <span class="nx">Html</span><span class="o">::</span><span class="na">encode</span><span class="p">(</span><span class="nv">$model</span><span class="o">-&gt;</span><span class="na">user_name</span><span class="p">)</span> <span class="cp">?&gt;</span><span class="x">&lt;/li&gt;</span>
+<span class="x">    &lt;li&gt;&lt;label&gt;Email&lt;/label&gt;:</span><span class="cp">&lt;?</span><span class="o">=</span> <span class="nx">Html</span><span class="o">::</span><span class="na">encode</span><span class="p">(</span><span class="nv">$model</span><span class="o">-&gt;</span><span class="na">user_email</span><span class="p">)</span> <span class="cp">?&gt;</span><span class="x">&lt;/li&gt;</span>
+<span class="x">&lt;/ul&gt;</span>
+</pre></div>
+
+
+<p><code>entry</code>视图显示一个HTML表单，保存在<code>views/site/entry.php</code>中。</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * Created by PhpStorm.</span>
+<span class="sd"> * User: EricTang</span>
+<span class="sd"> * Date: 16/4/6</span>
+<span class="sd"> * Time: 下午1:52</span>
+<span class="sd"> */</span>
+<span class="k">use</span> <span class="nx">yii\helpers\Html</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">yii\widgets\ActiveForm</span><span class="p">;</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+<span class="cp">&lt;?php</span> <span class="nv">$form</span> <span class="o">=</span> <span class="nx">ActiveForm</span><span class="o">::</span><span class="na">begin</span><span class="p">();</span> <span class="cp">?&gt;</span><span class="x"></span>
+<span class="cp">&lt;?</span><span class="o">=</span> <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">field</span><span class="p">(</span><span class="nv">$model</span><span class="p">,</span> <span class="s1">&#39;user_name&#39;</span><span class="p">)</span> <span class="cp">?&gt;</span><span class="x"></span>
+<span class="cp">&lt;?</span><span class="o">=</span> <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">field</span><span class="p">(</span><span class="nv">$model</span><span class="p">,</span> <span class="s1">&#39;user_email&#39;</span><span class="p">)</span> <span class="cp">?&gt;</span><span class="x"></span>
+<span class="x">&lt;div class=&quot;form-group&quot;&gt;</span>
+<span class="x">    </span><span class="cp">&lt;?</span><span class="o">=</span> <span class="nx">Html</span><span class="o">::</span><span class="na">submitButton</span><span class="p">(</span><span class="s1">&#39;提交&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;btn btn-primart&#39;</span><span class="p">])</span> <span class="cp">?&gt;</span><span class="x"></span>
+<span class="x">&lt;/div&gt;</span>
+<span class="cp">&lt;?php</span> <span class="nx">ActiveForm</span><span class="o">::</span><span class="na">end</span><span class="p">();</span> <span class="cp">?&gt;</span><span class="x"></span>
+</pre></div>
+
+
+<p>视图使用了一个功能强大的<a href="http://www.yiiframework.com/doc-2.0/guide-structure-widgets.html">小部件</a> <code>yii\widgets\ActiveForm</code>来生成HTML表单，其中，<code>begin()</code>和<code>end()</code>分别用来渲染表单的开始和关闭标签。在这两个方法之间使用了<code>yii\widgets\ActiveForm::field()</code>方法去创建输入框，第一个输入框用于输入“user_name”，第二个输入框用于输入“user_email”，之后使用<code>yii\helpers\Html::submitButton()</code>方法生成提交按钮。</p>
+<p>完成之后我们通过在浏览器中访问下面的URL查看它是否能够工作：</p>
+<div class="highlight"><pre><span></span>http://hostname/web/index.php?r=site/entry
+</pre></div>
+
+
+<p>你会看到一个包含两个输入框的表单的页面，并且每个输入框前面都有一个label标签指明应该输入的数据类型，如果什么都不填或者填写的Email格式不正确，将会在输入框下方看到相应的错误信息。</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/TL9PGBZA78O%5BC7LICZNU.jpg-img.normal" /></p>
+<p>输入有效的姓名和Email并且点击提交按钮之后，将会看到一个显示你所提交数据的确认页面：</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/W5H6LH9%5D1MUWD8BREKBR.jpg-img.normal" /></p>
+<p>简单说一下Yii的HTML表单验证吧，这里的表单首先会通过js脚本来进行验证，之后才会提交给服务器通过PHP验证，所以才能做到不需要刷新页面就能进行表单数据验证。</p>
+<p>输入框的文字标签是<code>field()</code>方法生成的，内容就是模型中该数据的属性名，我们可以在视图中自定义该标签。</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?</span><span class="o">=</span> <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">field</span><span class="p">(</span><span class="nv">$model</span><span class="p">,</span> <span class="s1">&#39;user_name&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">label</span><span class="p">(</span><span class="s1">&#39;姓名&#39;</span><span class="p">)</span> <span class="cp">?&gt;</span><span class="x"></span>
+<span class="cp">&lt;?</span><span class="o">=</span> <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">field</span><span class="p">(</span><span class="nv">$model</span><span class="p">,</span> <span class="s1">&#39;user_email&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">label</span><span class="p">(</span><span class="s1">&#39;伊妹&#39;</span><span class="p">)</span> <span class="cp">?&gt;</span><span class="x"></span>
+</pre></div>
+
+
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/WFO96VWDBX0ZIUOATU.jpg-img.normal" /></p>
+<p>补充：Yii提供了相当多类似的小部件帮我们生成复杂且动态的视图，在后面我们还会了解到自己写小部件是多么的简单，我们可以把自己的很多视图代码转化成小部件以提高重用，加快开发效率。</p>
+<h4>总结</h4>
+<p>本篇我们接触到了MVC设计模式的每个部分，学习了如何创建一个模型代表用户数据，并且验证它的有效性，以及从用户获取数据并在浏览器上回显给用户，幸亏Yii提供了强大的小部件让它变得如此简单。</p>
+<p>下一篇中我们将会学习如何使用数据库，这个也是很重要的部分，因为几乎每个应用都需要数据库。</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-4-working-with-formsshi-yong-formbiao-dan.html#disqus_thread">comments</a></p>            </article>
+
+
+                <hr  class="gradient"/>
+
+
+        
+
+
+            <article>
                 <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-3-hello-world.html"><h3 class="article-title">Yii2学习笔记系列3——Hello World</h3></a>
 <h6 class="subheader" title="2016-04-05T11:26:37+08:00">二 05 四月 2016
 </h6>
@@ -69,48 +242,15 @@
     <span class="c1">// ...其它代码...</span>
     <span class="k">public</span> <span class="k">function</span> <span class="nf">actionHello</span><span class="p">(</span><span class="nv">$message</span> <span class="o">=</span> <span class="s1">&#39;Hello World&#39;</span><span class="p">)</span>
     <span class="p">{</span>
-        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">render</span><span class="p">(</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;message&#39;</span> <span class="o">=&gt;</span> <span class="nv">$message</span><span class="p">]);</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-
-
-<p>上述的<code>SiteController</code>代码中，hello action被定义为名为<code>actionHello</code>的一个方法，这里需要说明的是，Yii使用<code>action</code>前缀区分普通方法和action，<code>action</code>前缀后面的名称被映射为action的ID。</p>
-<p>在Yii中，当涉及到给action命名时，需要理解Yii如何处理action ID的，action ID总是被以小写处理，如果一个action ID由多个单词组成，单词之间需要由连字符连接（如<code>create-comment</code>）。action ID映射为方法名时除了连字符，将每个单词首字母大写，并加上<code>action</code>前缀，例如action ID <code>create-comment</code> 相当于方法名 <code>actionCreateComment</code>。</p>
-<p>上述代码中的action接受一个参数 <code>$message</code> ，并且它的默认值是“Hello World”（跟设置PHP中其它函数或方法的默认值一样）。当应用接收到请求并确定需要由<code>hello</code> action来响应请求时，应用将从请求的参数中寻找对应值传入进来。换句话说，如果请求中包含一个<code>message</code>参数，它的值是<code>再见</code>，action中的 <code>$message</code> 变量也将会被填充为<code>再见</code>。</p>
-<p>在action中，<code>yii\web\Controller::render()</code>被用来渲染一个名为<code>hello</code>的视图文件，<code>message</code>参数也被传入视图，这样儿就可以在里面使用了。action会返回渲染结果，结果会被应用接收并显示给最终用户的浏览器（作为整页HTML的一部分）。</p>
-<h4>创建视图</h4>
-<p>视图是用来生成响应内容的脚本，为了实现我们的“Hello World”，我们需要创建一个<code>hello</code>视图，以便显示从action中传来的<code>message</code>参数。</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="k">use</span> <span class="nx">yii\helpers\Html</span><span class="p">;</span>
-<span class="cp">?&gt;</span><span class="x"></span>
-<span class="cp">&lt;?</span><span class="o">=</span> <span class="nx">Html</span><span class="o">::</span><span class="na">encode</span><span class="p">(</span><span class="nv">$message</span><span class="p">)</span> <span class="cp">?&gt;</span><span class="x"></span>
-</pre></div>
-
-
-<p><code>hello</code>视图应该保存在<code>views/site/</code>下，当一个action中调用了<code>yii\web\Controller::render()</code>方法时，它将会按照<code>views/控制器ID/视图名.php</code>路径加载PHP文件。</p>
-<p>另外就是以上代码中，<code>message</code>参数在输出之前被<code>yii\web\Controller::render()</code>方法处理过，当参数来自于最终用户时，参数中可能隐含的而已js代码会导致<a href="https://zh.wikipedia.org/wiki/%E8%B7%A8%E7%B6%B2%E7%AB%99%E6%8C%87%E4%BB%A4%E7%A2%BC">跨站脚本（XSS）攻击</a></p>
-<p>完成action和视图的创建之后，你可以通过下面的URL进行访问：</p>
-<div class="highlight"><pre><span></span>http://hostname/web/index.php?r=site/hello&amp;message=Hello+Yii
-</pre></div>
-
-
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/BZ44XB7WZEJPU898CD.jpg-img.normal" /></p>
-<p>这个URL会输出包含“Hello Yii”的页面，页面和应用里的其它页面使用同样的头部和尾部。</p>
-<p>如果省略掉URL中的<code>message</code>参数，则会输出包含“Hello World”的页面，因为<code>$message</code>的默认值是“Hello World”。</p>
-<p>上面URL中的参数r需要重点解释一下，它代表路由，是整个应用级的，指向特定action的独立ID.路由格式是<code>控制器ID/action ID</code>，应用接受请求的时候会检查参数，使用控制器ID去确定哪个控制器应该被用来处理请求，然后相应控制器将使用action ID去确定哪个action将被用来做具体工作。</p>
-<h4>小结</h4>
-<p>本篇简单讲解了MVC设计模式中的控制器和视图部分，创建了一个action用于处理特定请求，然后又创建了一个用于构造响应内容。</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">render</span><span class="p">(</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;message ...</span></pre></div><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
 
 </p>
 
 
 
-<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-3-hello-world.html#disqus_thread">comments</a></p>            </article>
-
-
+<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-3-hello-world.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-3-hello-world.html">Read More</a>
                 <hr  class="gradient"/>
-
+            </article>
 
         
 
