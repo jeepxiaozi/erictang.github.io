@@ -5,7 +5,7 @@
     <!-- Set the viewport width to device width for mobile -->
     <meta name="viewport" content="width=device-width" />
 
-    <title>一把汤勺 - PHP Develop</title>
+    <title>Yii2学习笔记系列5——Working With Database（使用数据库）</title>
 
     <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/normalize.css" />
     <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/foundation.min.css" />
@@ -44,16 +44,17 @@
 
         <!-- Main Blog Content -->
         <div class="large-9 columns">
-        
-        
+<article>
+    <header>
+        <h3 class="article-title"><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-5-working-with-databaseshi-yong-shu-ju-ku.html" rel="bookmark"
+        title="Permalink to Yii2学习笔记系列5——Working With Database（使用数据库）">Yii2学习笔记系列5——Working With Database（使用数据库）</a></h3>
+    </header>
 
-            <article>
-                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-5-working-with-databaseshi-yong-shu-ju-ku.html"><h3 class="article-title">Yii2学习笔记系列5——Working With Database（使用数据库）</h3></a>
 <h6 class="subheader" title="2016-04-08T23:09:45+08:00">五 08 四月 2016
 </h6>
 
 
-<h3>Yii2笔记系列5——Working With Database（使用数据库）</h3>
+    <h3>Yii2笔记系列5——Working With Database（使用数据库）</h3>
 <p>上一篇中我们学习了如何使用Form表单，掌握了Form表单的提交以及在Yii中通过视图展示提交内容的技能，这一篇我们来学习一下如何创建一个从数据表<code>country</code>中读取国家数据并显示出来的页面，为此，我们需要配置一个数据库连接，创建一个<a href="http://www.yiiframework.com/doc-2.0/guide-db-active-record.html">活动记录类</a>，并且创建一个操作和一个视图。</p>
 <p>通过这篇，我们将会学习到的：</p>
 <ul>
@@ -212,161 +213,29 @@
 <li>当你点击按钮2时，会发起一个路由为<code>country\index</code>的新请求，<code>yii\data\Pagination</code>接收到URL中的<code>page</code>参数，把当前的页码设置为2，之后，请求数据库并且以<code>LIMIT 5 OFFSET 5</code>查询并且显示后五条数据。</li>
 </ul>
 <h4>小结</h4>
-<p>本章节中我们学习了如何使用数据库，如何取出数据并使用<code>yii\data\Pagination</code>和<code>yii\widgets\LinkPager</code>显示数据，下一张，我们将会学习如何使用Yii中强大的代码生成器<a href="https://github.com/yiisoft/yii2-gii/blob/master/docs/guide/README.md">Gii</a>，它会帮助我们实现一些常用的功能需求，例如常见的CRUD（即增查改删）等。</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+<p>本章节中我们学习了如何使用数据库，如何取出数据并使用<code>yii\data\Pagination</code>和<code>yii\widgets\LinkPager</code>显示数据，下一张，我们将会学习如何使用Yii中强大的代码生成器<a href="https://github.com/yiisoft/yii2-gii/blob/master/docs/guide/README.md">Gii</a>，它会帮助我们实现一些常用的功能需求，例如常见的CRUD（即增查改删）等。</p>
+<p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
 
 </p>
 
 
 
-<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-5-working-with-databaseshi-yong-shu-ju-ku.html#disqus_thread">comments</a></p>            </article>
 
+	<h4>Comments</h4>
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        var disqus_shortname = 'erictang'
+        var disqus_identifier = "yii2xue-xi-bi-ji-xi-lie-5-working-with-databaseshi-yong-shu-ju-ku.html";
+        var disqus_url = "http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-5-working-with-databaseshi-yong-shu-ju-ku.html";
 
-                <hr  class="gradient"/>
-
-
-        
-
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-4-working-with-formsshi-yong-formbiao-dan.html"><h3 class="article-title">Yii2学习笔记系列4——Working With Forms（使用Form表单）</h3></a>
-<h6 class="subheader" title="2016-04-06T10:58:53+08:00">三 06 四月 2016
-</h6>
-
-
-<h3>Yii2笔记系列4——Wroking With Forms（使用Form表单）</h3>
-<p>本章节的主要学习目标是学习如何创建一个可以让用户输入数据并提交的表单页，该页面会显示一个包含姓名输入框和Email输入框的表单，当用户提交这两部分信息后，页面将会显示用户输入的信息。</p>
-<p>为了实现这个目标，我们需要创建一个action、两个视图以及一个模型。</p>
-<h4>创建模型</h4>
-<p>这里我们在<code>basic/models</code>下创建一个名为<code>EntryForm</code>的模型类，代表从用户请求的数据，具体代码如下：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="sd">/**</span>
-<span class="sd"> * Created by PhpStorm.</span>
-<span class="sd"> * User: 赵振棠</span>
-<span class="sd"> * Date: 16/4/6</span>
-<span class="sd"> */</span>
-<span class="k">namespace</span> <span class="nx">app\models</span><span class="p">;</span>
-
-<span class="k">use</span> <span class="nx">yii\base\Model</span><span class="p">;</span>
-
-<span class="k">class</span> <span class="nc">EntryForm</span> <span class="k">extends</span> <span class="nx">Model</span>
-<span class="p">{</span>
-    <span class="k">public</span> <span class="nv">$user_name</span><span class="p">;</span>
-    <span class="k">public</span> <span class="nv">$user_email</span><span class="p">;</span>
-
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">rules</span><span class="p">()</span>
-    <span class="p">{</span>
-        <span class="k">return ...</span></pre></div><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-4-working-with-formsshi-yong-formbiao-dan.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-4-working-with-formsshi-yong-formbiao-dan.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
-
-        
-
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-3-hello-world.html"><h3 class="article-title">Yii2学习笔记系列3——Hello World</h3></a>
-<h6 class="subheader" title="2016-04-05T11:26:37+08:00">二 05 四月 2016
-</h6>
-
-
-<h3>Yii2笔记系列3——Hello World</h3>
-<p>上一篇笔记中简单介绍了Yii的内建功能、如何组织代码以及一般情况下应用如何处理请求，这一篇我们进入熟悉的实现一个“Hello World”的功能，为了实现这一目标，我们需要创建一个操作和一个视图：</p>
-<ul>
-<li>Yii应用会将页面请求分派给相应的action</li>
-<li>action将会依次渲染视图，呈现“Hello World”给最终用户</li>
-</ul>
-<h4>创建action</h4>
-<p>我们这里直接在<code>controllers/SiteController.php</code>中定义一个名为<code>hello</code>的action，以下是主要的代码：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="k">namespace</span> <span class="nx">app\controllers</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">yii\web\Controller</span><span class="p">;</span>
-<span class="k">class</span> <span class="nc">SiteController</span> <span class="k">extends</span> <span class="nx">Controller</span>
-<span class="p">{</span>
-    <span class="c1">// ...其它代码...</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">actionHello</span><span class="p">(</span><span class="nv">$message</span> <span class="o">=</span> <span class="s1">&#39;Hello World&#39;</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">render</span><span class="p">(</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;message ...</span></pre></div><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-3-hello-world.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-3-hello-world.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
-
-        
-
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-2-yun-xing-ying-yong.html"><h3 class="article-title">Yii2学习笔记系列2——运行应用</h3></a>
-<h6 class="subheader" title="2016-04-05T01:05:49+08:00">二 05 四月 2016
-</h6>
-
-
-<h3>Yii2笔记系列2——运行应用</h3>
-<p>上一篇笔记中我们完成了Yii的简单介绍和安装，之后我们就有了一个可运行的Yii应用，通过<code>http://hostname/basic/web/index.php</code>或者<code>http://hostname/index.php</code>进行访问。</p>
-<h4>Yii应用包含的功能部分</h4>
-<p>安装完的完整的Yii的基本应用包含四项：</p>
-<ul>
-<li>主页，默认访问<code>http://hostname/</code>时显示的页面</li>
-<li>关于页，<code>http://hostname/web/index.php?r=site%2Fabout</code>，默认只有一行提示文字，你可以自主编辑<code>/path/to/basic/views/site/about.php</code>以展示自定义关于页面内容</li>
-<li>联系页，<code>http://hostname/web/index.php?r ...</code></li></ul><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-2-yun-xing-ying-yong.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-2-yun-xing-ying-yong.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
-
-        
-
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-1-yiijie-shao-he-an-zhuang.html"><h3 class="article-title">Yii2学习笔记系列1——Yii介绍和安装</h3></a>
-<h6 class="subheader" title="2016-03-31T17:49:15+08:00">四 31 三月 2016
-</h6>
-
-
-<h3>Yii2笔记系列1——Yii介绍和安装</h3>
-<h3>什么是Yii</h3>
-<p>Yii是一个高性能、基于组件的PHP框架，用于快速开发现代Web应用程序，不做过多赘述。</p>
-<h4>Yii最适合做什么</h4>
-<p>Yii是一个通用的Web编程框架，可以用于开发各种Web应用，包括但不限于门户网站、社区、内容管理系统（即CMS）以及电子商务项目和RESTful Web服务等。</p>
-<h3>安装Yii</h3>
-<p>安装Yii可以通过两种方式：使用<a href="https://getcomposer.org/">Composer</a>或者下载一个归档文件。使用前者的好处是只需要执行一条简单的命令就可以安装新的扩展或者更新Yii了。</p>
-<h4>通过Composer安装</h4>
-<p>首选需要安装Composer，可以按照<a href="https://getcomposer.org/download/">https://getcomposer.org/download/</a>中的方法进行安装，在Linux和Mac OS X中可以通过运行如下命令：</p>
-<div class="highlight"><pre><span></span>curl -sS https://getcomposer.org/installer <span class="p">|</span> php
-mv composer.phar /usr/local/bin/composer
-<span class="sb">```</span>
-
-在windows下，需要下载并运行<span class="o">[</span>Composer-Setup ...</pre></div><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-1-yiijie-shao-he-an-zhuang.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-1-yiijie-shao-he-an-zhuang.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
-
-            <!-- /#posts-list -->
-<div class="pagination-centered">
-<h6 class="subheader">Page 1 of 1</h6>
-
-<p>
-
-</p>
-</div>
-
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</article>
         </div>
         <!-- End Main Content -->
 
