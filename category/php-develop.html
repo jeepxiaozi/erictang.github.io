@@ -64,18 +64,21 @@
 </ul>
 <h4>开启Gii</h4>
 <p>Gii是Yii中的一个模块，可以通过<code>yii\base\Application::modules</code>属性开启它，通常的，在<code>config/web.php</code>文件中会有以下的配置代码：</p>
-<div class="highlight"><pre><span></span><span class="x">if (YII_ENV_DEV) {</span>
-<span class="x">    // configuration adjustments for &#39;dev&#39; environment</span>
-<span class="x">    $config[&#39;bootstrap&#39;][] = &#39;debug&#39;;</span>
-<span class="x">    $config[&#39;modules&#39;][&#39;debug&#39;] = [</span>
-<span class="x">        &#39;class&#39; =&gt; &#39;yii\debug\Module&#39;,</span>
-<span class="x">    ];</span>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
 
-<span class="x">    $config[&#39;bootstrap&#39;][] = &#39;gii&#39;;</span>
-<span class="x">    $config[&#39;modules&#39;][&#39;gii&#39;] = [</span>
-<span class="x">        &#39;class&#39; =&gt; &#39;yii\gii\Module&#39;,</span>
-<span class="x">    ];</span>
-<span class="x">}</span>
+<span class="k">if</span> <span class="p">(</span><span class="nx">YII_ENV_DEV</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// configuration adjustments for &#39;dev&#39; environment</span>
+    <span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;bootstrap&#39;</span><span class="p">][]</span> <span class="o">=</span> <span class="s1">&#39;debug&#39;</span><span class="p">;</span>
+    <span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;modules&#39;</span><span class="p">][</span><span class="s1">&#39;debug&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;yii\debug\Module&#39;</span><span class="p">,</span>
+    <span class="p">];</span>
+
+    <span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;bootstrap&#39;</span><span class="p">][]</span> <span class="o">=</span> <span class="s1">&#39;gii&#39;</span><span class="p">;</span>
+    <span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;modules&#39;</span><span class="p">][</span><span class="s1">&#39;gii&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;yii\gii\Module&#39;</span><span class="p">,</span>
+    <span class="p">];</span>
+<span class="p">}</span>
+<span class="cp">?&gt;</span><span class="x"></span>
 </pre></div>
 
 
