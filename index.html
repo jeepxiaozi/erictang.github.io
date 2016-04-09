@@ -48,6 +48,99 @@
         
 
             <article>
+                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-6-generating-code-with-giishi-yong-giisheng-cheng-dai-ma.html"><h3 class="article-title">Yii2学习笔记系列6——Generating Code With Gii（使用Gii生成代码）</h3></a>
+<h6 class="subheader" title="2016-04-09T15:56:05+08:00">六 09 四月 2016
+</h6>
+
+
+<h3>Yii2笔记系列6——Generating Code With Gii（使用Gii生成代码）</h3>
+<p>在上一篇学习笔记中，我们学习了如何连接数据库以及如何编写查询代码来分页读取数据库记录，这篇我们来学习一下如何通过Gii生成这些功能的代码。使用Gii生成代码非常简单，只要按照Gii页面上的介绍信息输入正确的信息即可。</p>
+<p>本篇中，我们将要学习到的知识点有：</p>
+<ul>
+<li>在应用中开启Gii</li>
+<li>使用Gii生成活动记录类</li>
+<li>使用Gii生成数据表操作的增查删改（CRUD）代码</li>
+<li>自定义Gii生成的代码</li>
+</ul>
+<h4>开启Gii</h4>
+<p>Gii是Yii中的一个模块，可以通过<code>yii\base\Application::modules</code>属性开启它，通常的，在<code>config/web.php</code>文件中会有以下的配置代码：</p>
+<div class="highlight"><pre><span></span><span class="x">if (YII_ENV_DEV) {</span>
+<span class="x">    // configuration adjustments for &#39;dev&#39; environment</span>
+<span class="x">    $config[&#39;bootstrap&#39;][] = &#39;debug&#39;;</span>
+<span class="x">    $config[&#39;modules&#39;][&#39;debug&#39;] = [</span>
+<span class="x">        &#39;class&#39; =&gt; &#39;yii\debug\Module&#39;,</span>
+<span class="x">    ];</span>
+
+<span class="x">    $config[&#39;bootstrap&#39;][] = &#39;gii&#39;;</span>
+<span class="x">    $config[&#39;modules&#39;][&#39;gii&#39;] = [</span>
+<span class="x">        &#39;class&#39; =&gt; &#39;yii\gii\Module&#39;,</span>
+<span class="x">    ];</span>
+<span class="x">}</span>
+</pre></div>
+
+
+<p>这段代码表明，如果当前是开发环境，应用会包含Gii模块，模块类是<code>yii\gii\Module</code>。</p>
+<p>如果你检查应用的入口脚本<code>web/index.php</code>，会看到有以下的代码将<code>YII_ENV</code>设为dev：</p>
+<div class="highlight"><pre><span></span><span class="x">defined(&#39;YII_ENV&#39;) or define(&#39;YII_ENV&#39;, &#39;dev&#39;);</span>
+</pre></div>
+
+
+<p>鉴于这行代码的定义，应用处于开发模式下，按照上面的配置会打开Gii模块，你可以直接通过以下的URL访问Gii：</p>
+<div class="highlight"><pre><span></span>http://hostname/index.php?r=gii
+</pre></div>
+
+
+<p>补充：通过本机以外的机器访问Gii的话，出于安全原因会被禁止，这种情况下可以为Gii配置允许访问的IP地址：</p>
+<div class="highlight"><pre><span></span><span class="x">$config[&#39;modules&#39;][&#39;gii&#39;] = [</span>
+<span class="x">        &#39;class&#39; =&gt; &#39;yii\gii\Module&#39;,</span>
+<span class="x">        &#39;allowedIPs&#39; =&gt; [&#39;127.0.0.1&#39;, &#39;::1&#39;, &#39;192.168.0.*&#39;, &#39;192.168.178.20&#39;], // 按需调整这里</span>
+<span class="x">    ];</span>
+</pre></div>
+
+
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/92ZD4PXFXPZZRMV7FM9.jpg-img.normal" /></p>
+<h4>生成活动记录类</h4>
+<p>选择“Model Generator”，填写表单内容：</p>
+<ul>
+<li>Table Name：<code>country</code></li>
+<li>Model Class：<code>Country</code></li>
+</ul>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/3S3U8YAR2BR9D22W.jpg-img.normal" /></p>
+<p>点击“Preview”按钮，可以看到<code>models/Country.php</code>被列在将要生成的文件列表中，可以点击文件名预览内容。同时，如果你之前已经创建过相同的文件，使用Gii会覆写它，点击文件名旁边的“diff”可以查看已有的文件与即将要生成的文件的内容差异。</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/HSOIMCKTQ12HXC2MFG.jpg-img.normal" /></p>
+<p>如果要覆盖已有的文件，只需要勾选文件名最右侧的“override”，然后点击“Generate”即可。如果是新文件，直接点击“Generate”就好。</p>
+<h4>生成CRUD代码</h4>
+<p>CRUD代表增，查，改，删操作，这是绝大多数Web站点常用的数据处理方式，点击“CRUD Generator”即可，本例中需要这样填写表单：</p>
+<ul>
+<li>Model Class： <code>app\models\Country</code></li>
+<li>Search Class： <code>app\models\CountrySearch</code></li>
+<li>Controller Class： <code>app\controllers\CountryController</code></li>
+</ul>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/YNIONNU8LXGSLRXZ8M.jpg-img.normal" /></p>
+<p>点击“Preview”按钮可以看到本次将要生成的所有文件的列表，因为我们之前创建过<code>controllers/CountryController.php</code>和<code>views/country/index.php</code>，选中全部的文件勾选“override”覆盖掉之前的就可以，因为我们之前编写的文件没有完全支持CRUD。</p>
+<p>试运行：</p>
+<div class="highlight"><pre><span></span>http://hostname/web/index.php?r=country/index
+</pre></div>
+
+
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/MVTRSU5XP7TFO7CN.jpg-img.normal" /></p>
+<p>支持增删查改等各项操作，可以通过”Create Country“按钮生成国家数据，也支持点击标题头进行排序操作。</p>
+<p>这就是通过Gii生成CRUD完整功能代码的示例了，这些就可以算是最基本的Getting Start部分了，从下一篇开始，我们将要Look Ahead，从应用结构开始更深入的学习了解Yii。</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-6-generating-code-with-giishi-yong-giisheng-cheng-dai-ma.html#disqus_thread">comments</a></p>            </article>
+
+
+                <hr  class="gradient"/>
+
+
+        
+
+
+            <article>
                 <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-5-working-with-databaseshi-yong-shu-ju-ku.html"><h3 class="article-title">Yii2学习笔记系列5——Working With Database（使用数据库）</h3></a>
 <h6 class="subheader" title="2016-04-08T23:09:45+08:00">五 08 四月 2016
 </h6>
@@ -67,162 +160,15 @@
 <div class="highlight"><pre><span></span><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="o">`</span><span class="n">country</span><span class="o">`</span> <span class="p">(</span>
   <span class="o">`</span><span class="n">code</span><span class="o">`</span> <span class="nb">CHAR</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
   <span class="o">`</span><span class="n">name</span><span class="o">`</span> <span class="nb">CHAR</span><span class="p">(</span><span class="mi">52</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
-  <span class="o">`</span><span class="n">population</span><span class="o">`</span> <span class="nb">INT</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">DEFAULT</span> <span class="s1">&#39;0&#39;</span>
-<span class="p">)</span> <span class="n">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span> <span class="k">DEFAULT</span> <span class="n">CHARSET</span><span class="o">=</span><span class="n">utf8</span><span class="p">;</span>
-
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="o">`</span><span class="n">country</span><span class="o">`</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">&#39;AU&#39;</span><span class="p">,</span><span class="s1">&#39;澳大利亚&#39;</span><span class="p">,</span><span class="mi">18886000</span><span class="p">);</span>
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="o">`</span><span class="n">country</span><span class="o">`</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">&#39;BR&#39;</span><span class="p">,</span><span class="s1">&#39;巴西&#39;</span><span class="p">,</span><span class="mi">170115000</span><span class="p">);</span>
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="o">`</span><span class="n">country</span><span class="o">`</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">&#39;CA&#39;</span><span class="p">,</span><span class="s1">&#39;加拿大&#39;</span><span class="p">,</span><span class="mi">1147000</span><span class="p">);</span>
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="o">`</span><span class="n">country</span><span class="o">`</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">&#39;CN&#39;</span><span class="p">,</span><span class="s1">&#39;中国&#39;</span><span class="p">,</span><span class="mi">1277558000</span><span class="p">);</span>
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="o">`</span><span class="n">country</span><span class="o">`</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">&#39;DE&#39;</span><span class="p">,</span><span class="s1">&#39;德国&#39;</span><span class="p">,</span><span class="mi">82164700</span><span class="p">);</span>
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="o">`</span><span class="n">country</span><span class="o">`</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">&#39;FR&#39;</span><span class="p">,</span><span class="s1">&#39;法国&#39;</span><span class="p">,</span><span class="mi">59225700</span><span class="p">);</span>
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="o">`</span><span class="n">country</span><span class="o">`</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">&#39;GB&#39;</span><span class="p">,</span><span class="s1">&#39;英国&#39;</span><span class="p">,</span><span class="mi">59623400</span><span class="p">);</span>
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="o">`</span><span class="n">country</span><span class="o">`</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">&#39;IN&#39;</span><span class="p">,</span><span class="s1">&#39;印度&#39;</span><span class="p">,</span><span class="mi">1013662000</span><span class="p">);</span>
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="o">`</span><span class="n">country</span><span class="o">`</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">&#39;RU&#39;</span><span class="p">,</span><span class="s1">&#39;俄罗斯&#39;</span><span class="p">,</span><span class="mi">146934000</span><span class="p">);</span>
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="o">`</span><span class="n">country</span><span class="o">`</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">&#39;US&#39;</span><span class="p">,</span><span class="s1">&#39;美国&#39;</span><span class="p">,</span><span class="mi">278357000</span><span class="p">);</span>
-</pre></div>
-
-
-<h4>配置数据库连接</h4>
-<p>在开始之前，需要首先确保你已经安装了PHP <a href="http://php.net/manual/en/book.pdo.php">PDO</a> 扩展，以及你所使用的数据库的PDO驱动（例如MySQL的话就是pdo_mysql）。</p>
-<p>然后打开<code>config/db.php</code>，修改其中的数据库配置，代码如下：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-
-<span class="k">return</span> <span class="p">[</span>
-    <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;yii\db\Connection&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;dsn&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;mysql:host=localhost;dbname=yii2basic&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;username&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;root&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;password&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;root&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;charset&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;utf8&#39;</span><span class="p">,</span>
-<span class="p">];</span>
-</pre></div>
-
-
-<p><code>config/db.php</code>是一个典型的基于文件的配置工具，这个文件配置了数据库连接<code>yii\db\Connection</code>的创建和初始化参数，应用的SQL查询便基于这个数据库进行操作。</p>
-<p>上面配置的数据库连接可以在应用里通过<code>Yii::$app-&gt;db</code>访问，另外就是Yii2中我们也可以配置多个数据库，当然，在后面我们接触到<a href="http://www.yiiframework.com/doc-2.0/guide-structure-modules.html">模块</a>之后，我们甚至可以为每个模块配置单独的数据库连接，这个是后话，按下不表。</p>
-<h4>创建活动记录</h4>
-<p>创建一个继承自活动记录类的类<code>Country</code>，保存为<code>models/Country.php</code>文件，用来表示读取的<code>country</code>表的数据。</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="sd">/**</span>
-<span class="sd"> * Created by PhpStorm.</span>
-<span class="sd"> * User: 赵振棠</span>
-<span class="sd"> * Date: 16/4/8</span>
-<span class="sd"> * Time: 下午10:21</span>
-<span class="sd"> */</span>
-
-<span class="k">namespace</span> <span class="nx">app\models</span><span class="p">;</span>
-
-<span class="k">use</span> <span class="nx">yii\db\ActiveRecord</span><span class="p">;</span>
-
-<span class="k">class</span> <span class="nc">Country</span> <span class="k">extends</span> <span class="nx">ActiveRecord</span>
-<span class="p">{</span>
-
-<span class="p">}</span>
-</pre></div>
-
-
-<p>这个<code>Country</code>类继承自<code>yii\db\ActiveRecord</code>，我们可以不需要在其中写任何代码，Yii会自动根据类名匹配相对应的数据表名，但如果你的类名和数据表名不能直接对应，可以通过重写<code>yii\db\ActiveRecord::tableName()</code>方法显式指定相关表名。</p>
-<h4>创建操作</h4>
-<p>与之前的直接在site控制器中添加操作不同，我们这里单独为所有和<code>Country</code>有关的数据新建一个控制器更加合理，新控制器名为<code>CountryController</code>，保存在<code>controllers/CountryController.php</code>文件中，并在其中创建一个<code>index</code>操作，代码如下：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="sd">/**</span>
-<span class="sd"> * Created by PhpStorm.</span>
-<span class="sd"> * User: 赵振棠</span>
-<span class="sd"> * Date: 16/4/8</span>
-<span class="sd"> * Time: 下午10:29</span>
-<span class="sd"> */</span>
-
-<span class="k">namespace</span> <span class="nx">app\controllers</span><span class="p">;</span>
-
-<span class="k">use</span> <span class="nx">yii\web\Controller</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">yii\data\Pagination</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">app\models\Country</span><span class="p">;</span>
-
-<span class="k">class</span> <span class="nc">CountryController</span> <span class="k">extends</span> <span class="nx">Controller</span>
-<span class="p">{</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">actionIndex</span><span class="p">()</span>
-    <span class="p">{</span>
-        <span class="nv">$query</span> <span class="o">=</span> <span class="nx">Country</span><span class="o">::</span><span class="na">find</span><span class="p">();</span>
-        <span class="nv">$pagination</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Pagination</span><span class="p">([</span>
-            <span class="s1">&#39;defaultPageSize&#39;</span> <span class="o">=&gt;</span> <span class="mi">5</span><span class="p">,</span>
-            <span class="s1">&#39;totalCount&#39;</span> <span class="o">=&gt;</span> <span class="nv">$query</span><span class="o">-&gt;</span><span class="na">count</span><span class="p">(),</span>
-        <span class="p">]);</span>
-
-        <span class="nv">$countries</span> <span class="o">=</span> <span class="nv">$query</span><span class="o">-&gt;</span><span class="na">orderBy</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span>
-            <span class="o">-&gt;</span><span class="na">offset</span><span class="p">(</span><span class="nv">$pagination</span><span class="o">-&gt;</span><span class="na">offset</span><span class="p">)</span>
-            <span class="o">-&gt;</span><span class="na">limit</span><span class="p">(</span><span class="nv">$pagination</span><span class="o">-&gt;</span><span class="na">limit</span><span class="p">)</span>
-            <span class="o">-&gt;</span><span class="na">all</span><span class="p">();</span>
-
-        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">render</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="p">[</span>
-            <span class="s1">&#39;countries&#39;</span> <span class="o">=&gt;</span> <span class="nv">$countries</span><span class="p">,</span>
-            <span class="s1">&#39;pagination&#39;</span> <span class="o">=&gt;</span> <span class="nv">$pagination</span><span class="p">,</span>
-        <span class="p">]);</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-
-
-<p><code>index</code>操作调用了活动记录<code>Country::find()</code>方法，生成MySQL查询语句并从<code>country</code>表中取回所有数据，为了限定每个请求所返回的国家数量，我们使用<code>yii\data\Pagination</code>对象进行分页。<code>Pagination</code>对象主要有两点用处：
-- 为SQL查询语句设置<code>offset</code>和<code>limit</code>从句，确保每个请求只返回一页数据，例如在当前这个例子中是5条记录。
-- 在视图中显示一个由页面列表组成的分页器，这点会在后面解释。</p>
-<p>在代码的末尾，<code>index</code>操作渲染一个名为<code>index</code>的视图，并传递国家数据和分页信息进去。</p>
-<h4>创建视图</h4>
-<p>在<code>views</code>目录下先创建一个<code>country</code>子目录，这个目录将被用来存储所有由<code>country</code>控制器渲染的视图，在<code>views/country</code>目录下创建一个名为<code>index.php</code>的视图文件，内容如下：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="sd">/**</span>
-<span class="sd"> * Created by PhpStorm.</span>
-<span class="sd"> * User: 赵振棠</span>
-<span class="sd"> * Date: 16/4/8</span>
-<span class="sd"> * Time: 下午10:46</span>
-<span class="sd"> */</span>
-<span class="k">use</span> <span class="nx">yii\helpers\Html</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">yii\widgets\LinkPager</span><span class="p">;</span>
-
-<span class="cp">?&gt;</span><span class="x"></span>
-<span class="x">    &lt;h2&gt;国家列表&lt;/h2&gt;</span>
-<span class="x">    &lt;ul&gt;</span>
-<span class="x">        </span><span class="cp">&lt;?php</span> <span class="k">foreach</span> <span class="p">(</span><span class="nv">$countries</span> <span class="k">as</span> <span class="nv">$country</span><span class="p">)</span><span class="o">:</span> <span class="cp">?&gt;</span><span class="x"></span>
-<span class="x">            &lt;li&gt;</span>
-<span class="x">                </span><span class="cp">&lt;?</span><span class="o">=</span> <span class="nx">Html</span><span class="o">::</span><span class="na">encode</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{</span><span class="nv">$country</span><span class="o">-&gt;</span><span class="na">name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="nv">$country</span><span class="o">-&gt;</span><span class="na">code</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span> <span class="cp">?&gt;</span><span class="x"></span>
-<span class="x">                </span><span class="cp">&lt;?</span><span class="o">=</span> <span class="nv">$country</span><span class="o">-&gt;</span><span class="na">population</span> <span class="cp">?&gt;</span><span class="x"></span>
-<span class="x">            &lt;/li&gt;</span>
-<span class="x">        </span><span class="cp">&lt;?php</span> <span class="k">endforeach</span><span class="p">;</span> <span class="cp">?&gt;</span><span class="x"></span>
-<span class="x">    &lt;/ul&gt;</span>
-
-<span class="cp">&lt;?</span><span class="o">=</span> <span class="nx">LinkPager</span><span class="o">::</span><span class="na">widget</span><span class="p">([</span><span class="s1">&#39;pagination&#39;</span> <span class="o">=&gt;</span> <span class="nv">$pagination</span><span class="p">])</span> <span class="cp">?&gt;</span><span class="x"></span>
-</pre></div>
-
-
-<p>这个视图主要包含两部分用以显示国家数据，第一部分遍历国家数据并以无序HTML列表渲染出来，第二部分使用<code>yii\widgets\LinkPager</code>去渲染从操作中传来的分页信息。小部件<code>LinkPager</code>显示一个分页按钮的列表，点击按钮会跳转到对应的分页。</p>
-<p>接下来我们测试一下，在浏览器中访问下面的URL，看看是否可以工作：</p>
-<div class="highlight"><pre><span></span>http://hostname/web/index.php?r=country
-</pre></div>
-
-
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/RG8N3XUNYP5L6AC2YTS.jpg-img.normal" /></p>
-<p>首先你会看到显示有五个国家的列表页面，同时，下面还能看到一个包含四个按钮的分页器，如果点击按钮2，将会跳转到显示另外五个国家的页面，也就是第二页记录，这时如果你查看一下浏览器的URL会发现变成了</p>
-<div class="highlight"><pre><span></span>http://hostname/web/index.php?r=country%2Findex&amp;page=2
-</pre></div>
-
-
-<p>在这个场景中，<code>yii\data\Pagination</code>提供了为数据结果集分页的功能：</p>
-<ul>
-<li>首先<code>yii\data\Pagination</code>把SELECT的子查询<code>LIMIT 5 OFFSET 0</code>数据表示成第一页，因此会取出开头的五条数据并显示。</li>
-<li>然后小部件<code>yii\widgets\LinkPager</code>使用<code>yii\data\Pagination::createUrl()</code>方法生成的URL去渲染翻页按钮，URL中包含必要参数<code>page</code>才能查询不同的页面编号。</li>
-<li>当你点击按钮2时，会发起一个路由为<code>country\index</code>的新请求，<code>yii\data\Pagination</code>接收到URL中的<code>page</code>参数，把当前的页码设置为2，之后，请求数据库并且以<code>LIMIT 5 OFFSET 5</code>查询并且显示后五条数据。</li>
-</ul>
-<h4>小结</h4>
-<p>本章节中我们学习了如何使用数据库，如何取出数据并使用<code>yii\data\Pagination</code>和<code>yii\widgets\LinkPager</code>显示数据，下一张，我们将会学习如何使用Yii中强大的代码生成器<a href="https://github.com/yiisoft/yii2-gii/blob/master/docs/guide/README.md">Gii</a>，它会帮助我们实现一些常用的功能需求，例如常见的CRUD（即增查改删）等。</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+  <span class="o">`</span><span class="n">population</span><span class="o">`</span> <span class="nb">INT</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">DEFAULT ...</span></pre></div><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
 
 </p>
 
 
 
-<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-5-working-with-databaseshi-yong-shu-ju-ku.html#disqus_thread">comments</a></p>            </article>
-
-
+<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-5-working-with-databaseshi-yong-shu-ju-ku.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-5-working-with-databaseshi-yong-shu-ju-ku.html">Read More</a>
                 <hr  class="gradient"/>
-
+            </article>
 
         
 
@@ -472,32 +418,9 @@ mv composer.phar /usr/local/bin/composer
                 <hr  class="gradient"/>
             </article>
 
-        
-
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/yi-dian-er-gan-kai-du-cheng-xu-yuan-bi-du-de-zhi-ye-gui-hua-shu.html"><h3 class="article-title">一点儿感慨——读《程序员必读的职业规划书》</h3></a>
-<h6 class="subheader" title="2015-05-17T16:01:16+08:00">日 17 五月 2015
-</h6>
-
-
-<p>其实这篇博客算是交作业，但又不比像上学的时候交作业一样诚惶诚恐，所以今天我就随意写点儿我自己读完之后的看法吧，所以也叫读《程序员必读的职业规划书》有感。</p>
-<p>首先我要坦白一件事情，就是我并不是很熟悉Easy大神（陈理捷陈老师，嗯，陈老师），时至今日，已经无法回忆起当时是如何关注到他的新浪微博的了，当然，后来他做了JobDeer我是知道的，不过也一直没有太在意，直到有天，哎呀，突然陈老师出了一本书，叫做《程序员必读的职业规划书》，嗯，我就有点儿感兴趣了（当然我直到书里肯定不会有啥福利照片）。</p>
-<p>然后机缘巧合，看到陈老师发了个微博，说有送书的名额啥的，嗯，也该我走一回狗屎运了吧，所以就胆战心惊的填写了内容，把自己的CSDN博客和GitHub Pages链接提交了上去，然后就中了，确切的说，是中奖两次（哎呀，运气真好）。</p>
-<p>可能在最开始拿到书的时候，有很多同学像我一样会嘟囔一句，唔，有点儿太薄了，确定不是书籍界的杜X斯咩？但是，不要被它纤薄的外表迷惑了，里面可是大有文章的（看我脸，一脸便秘的表情，不是~一脸神秘的表情！）。</p>
-<p>于是乎 ...</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo.html">技术生活</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/yi-dian-er-gan-kai-du-cheng-xu-yuan-bi-du-de-zhi-ye-gui-hua-shu.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yi-dian-er-gan-kai-du-cheng-xu-yuan-bi-du-de-zhi-ye-gui-hua-shu.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
-
             <!-- /#posts-list -->
 <div class="pagination-centered">
-<h6 class="subheader">Page 1 of 2</h6>
+<h6 class="subheader">Page 1 of 3</h6>
 
 <p>
 

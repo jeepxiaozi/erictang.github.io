@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8" />
+    <!-- Set the viewport width to device width for mobile -->
+    <meta name="viewport" content="width=device-width" />
+
+    <title>Yii2学习笔记系列6——Generating Code With Gii（使用Gii生成代码）</title>
+
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/normalize.css" />
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/foundation.min.css" />
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/style.css" />
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/pygments.css" />
+    <script src="http://jeepxiaozi.github.io/theme/js/modernizr.js"></script>
+</head>
+
+<body>
+
+    <!-- Nav Bar -->
+    <nav>
+        <div class="top-bar">
+            <div class="row">
+                <div class="large-9 large-centered columns">
+                    <h1><a href="http://jeepxiaozi.github.io">一把汤勺</a></h1>
+                </div>
+            </div>
+        </div>
+
+        <!-- Show menu items and pages -->
+        <div class="row">
+            <div class="large-9 columns">
+                <ul class="button-group navigation">
+                      <li><a href="http://jeepxiaozi.github.io/pages/guan-yu-zuo-zhe.html" class="button secondary small">关于作者</a>
+                    </li>
+                 </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- End Nav -->
+
+
+    <!-- Main Page Content and Sidebar -->
+    <div class="row">
+
+        <!-- Main Blog Content -->
+        <div class="large-9 columns">
+<article>
+    <header>
+        <h3 class="article-title"><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-6-generating-code-with-giishi-yong-giisheng-cheng-dai-ma.html" rel="bookmark"
+        title="Permalink to Yii2学习笔记系列6——Generating Code With Gii（使用Gii生成代码）">Yii2学习笔记系列6——Generating Code With Gii（使用Gii生成代码）</a></h3>
+    </header>
+
+<h6 class="subheader" title="2016-04-09T15:56:05+08:00">六 09 四月 2016
+</h6>
+
+
+    <h3>Yii2笔记系列6——Generating Code With Gii（使用Gii生成代码）</h3>
+<p>在上一篇学习笔记中，我们学习了如何连接数据库以及如何编写查询代码来分页读取数据库记录，这篇我们来学习一下如何通过Gii生成这些功能的代码。使用Gii生成代码非常简单，只要按照Gii页面上的介绍信息输入正确的信息即可。</p>
+<p>本篇中，我们将要学习到的知识点有：</p>
+<ul>
+<li>在应用中开启Gii</li>
+<li>使用Gii生成活动记录类</li>
+<li>使用Gii生成数据表操作的增查删改（CRUD）代码</li>
+<li>自定义Gii生成的代码</li>
+</ul>
+<h4>开启Gii</h4>
+<p>Gii是Yii中的一个模块，可以通过<code>yii\base\Application::modules</code>属性开启它，通常的，在<code>config/web.php</code>文件中会有以下的配置代码：</p>
+<div class="highlight"><pre><span></span><span class="x">if (YII_ENV_DEV) {</span>
+<span class="x">    // configuration adjustments for &#39;dev&#39; environment</span>
+<span class="x">    $config[&#39;bootstrap&#39;][] = &#39;debug&#39;;</span>
+<span class="x">    $config[&#39;modules&#39;][&#39;debug&#39;] = [</span>
+<span class="x">        &#39;class&#39; =&gt; &#39;yii\debug\Module&#39;,</span>
+<span class="x">    ];</span>
+
+<span class="x">    $config[&#39;bootstrap&#39;][] = &#39;gii&#39;;</span>
+<span class="x">    $config[&#39;modules&#39;][&#39;gii&#39;] = [</span>
+<span class="x">        &#39;class&#39; =&gt; &#39;yii\gii\Module&#39;,</span>
+<span class="x">    ];</span>
+<span class="x">}</span>
+</pre></div>
+
+
+<p>这段代码表明，如果当前是开发环境，应用会包含Gii模块，模块类是<code>yii\gii\Module</code>。</p>
+<p>如果你检查应用的入口脚本<code>web/index.php</code>，会看到有以下的代码将<code>YII_ENV</code>设为dev：</p>
+<div class="highlight"><pre><span></span><span class="x">defined(&#39;YII_ENV&#39;) or define(&#39;YII_ENV&#39;, &#39;dev&#39;);</span>
+</pre></div>
+
+
+<p>鉴于这行代码的定义，应用处于开发模式下，按照上面的配置会打开Gii模块，你可以直接通过以下的URL访问Gii：</p>
+<div class="highlight"><pre><span></span>http://hostname/index.php?r=gii
+</pre></div>
+
+
+<p>补充：通过本机以外的机器访问Gii的话，出于安全原因会被禁止，这种情况下可以为Gii配置允许访问的IP地址：</p>
+<div class="highlight"><pre><span></span><span class="x">$config[&#39;modules&#39;][&#39;gii&#39;] = [</span>
+<span class="x">        &#39;class&#39; =&gt; &#39;yii\gii\Module&#39;,</span>
+<span class="x">        &#39;allowedIPs&#39; =&gt; [&#39;127.0.0.1&#39;, &#39;::1&#39;, &#39;192.168.0.*&#39;, &#39;192.168.178.20&#39;], // 按需调整这里</span>
+<span class="x">    ];</span>
+</pre></div>
+
+
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/92ZD4PXFXPZZRMV7FM9.jpg-img.normal" /></p>
+<h4>生成活动记录类</h4>
+<p>选择“Model Generator”，填写表单内容：</p>
+<ul>
+<li>Table Name：<code>country</code></li>
+<li>Model Class：<code>Country</code></li>
+</ul>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/3S3U8YAR2BR9D22W.jpg-img.normal" /></p>
+<p>点击“Preview”按钮，可以看到<code>models/Country.php</code>被列在将要生成的文件列表中，可以点击文件名预览内容。同时，如果你之前已经创建过相同的文件，使用Gii会覆写它，点击文件名旁边的“diff”可以查看已有的文件与即将要生成的文件的内容差异。</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/HSOIMCKTQ12HXC2MFG.jpg-img.normal" /></p>
+<p>如果要覆盖已有的文件，只需要勾选文件名最右侧的“override”，然后点击“Generate”即可。如果是新文件，直接点击“Generate”就好。</p>
+<h4>生成CRUD代码</h4>
+<p>CRUD代表增，查，改，删操作，这是绝大多数Web站点常用的数据处理方式，点击“CRUD Generator”即可，本例中需要这样填写表单：</p>
+<ul>
+<li>Model Class： <code>app\models\Country</code></li>
+<li>Search Class： <code>app\models\CountrySearch</code></li>
+<li>Controller Class： <code>app\controllers\CountryController</code></li>
+</ul>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/YNIONNU8LXGSLRXZ8M.jpg-img.normal" /></p>
+<p>点击“Preview”按钮可以看到本次将要生成的所有文件的列表，因为我们之前创建过<code>controllers/CountryController.php</code>和<code>views/country/index.php</code>，选中全部的文件勾选“override”覆盖掉之前的就可以，因为我们之前编写的文件没有完全支持CRUD。</p>
+<p>试运行：</p>
+<div class="highlight"><pre><span></span>http://hostname/web/index.php?r=country/index
+</pre></div>
+
+
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/MVTRSU5XP7TFO7CN.jpg-img.normal" /></p>
+<p>支持增删查改等各项操作，可以通过”Create Country“按钮生成国家数据，也支持点击标题头进行排序操作。</p>
+<p>这就是通过Gii生成CRUD完整功能代码的示例了，这些就可以算是最基本的Getting Start部分了，从下一篇开始，我们将要Look Ahead，从应用结构开始更深入的学习了解Yii。</p>
+<p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+
+</p>
+
+
+
+
+	<h4>Comments</h4>
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        var disqus_shortname = 'erictang'
+        var disqus_identifier = "yii2xue-xi-bi-ji-xi-lie-6-generating-code-with-giishi-yong-giisheng-cheng-dai-ma.html";
+        var disqus_url = "http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-6-generating-code-with-giishi-yong-giisheng-cheng-dai-ma.html";
+
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</article>
+        </div>
+        <!-- End Main Content -->
+
+        <!-- Sidebar -->
+        <aside class="large-3 columns">
+            <h5 class="sidebar-title">Site</h5>
+            <ul class="side-nav">
+                <li><a href="http://jeepxiaozi.github.io/archives.html">Archives</a>
+                    <li><a href="http://jeepxiaozi.github.io/tags.html">Tags</a>              </ul>
+
+            <h5 class="sidebar-title">Categories</h5>
+            <ul class="side-nav">
+                <li><a href="http://jeepxiaozi.github.io/category/android-develop.html">Android Develop</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/git.html">Git</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/ios-develop.html">iOS Develop</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo.html">技术生活</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/markdownxie-zuo.html">Markdown写作</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/multicopter.html">MultiCopter</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/pages.html">Pages</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/server-develop.html">Server Develop</a>
+                </li>
+            </ul>
+             <h5 class="sidebar-title">Links</h5>
+            <ul class="side-nav">
+                <li><a href="http://www.linuxzen.com">cold's world</a>
+                </li>
+                <li><a href="http://www.cnwsjs.cn">城南往事小站</a>
+                </li>
+                <li><a href="http://wellmakers.com">电子匠人</a>
+                </li>
+            </ul>
+             <h5 class="sidebar-title">Social</h5>
+            <ul class="side-nav social">
+                <li><a href="https://twitter.com/jeepxiaoxiaozi">twitter</a>
+                </li>
+                <li><a href="https://github.com/jeepxiaozi">GitHub</a>
+                </li>
+                <li><a href="http://weibo.com/u/1375170263/">Weibo</a>
+                </li>
+            </ul>
+
+        </aside>
+        <!-- End Sidebar -->
+
+    </div>
+    <!-- End Main Content and Sidebar -->
+
+
+    <!-- Footer -->
+    <footer class="row">
+        <div class="large-12 columns">
+            <hr />
+            <div class="row">
+                <div class="large-6 columns">
+                    <p><a href="http://jeepxiaozi.github.io">一把汤勺</a> &copy; EricTang 2015 
+ 
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1254253569'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s95.cnzz.com/z_stat.php%3Fid%3D1254253569%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));</script>
+                 </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>
