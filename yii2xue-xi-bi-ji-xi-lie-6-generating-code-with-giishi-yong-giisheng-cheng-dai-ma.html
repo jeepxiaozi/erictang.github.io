@@ -85,7 +85,10 @@
 
 <p>这段代码表明，如果当前是开发环境，应用会包含Gii模块，模块类是<code>yii\gii\Module</code>。</p>
 <p>如果你检查应用的入口脚本<code>web/index.php</code>，会看到有以下的代码将<code>YII_ENV</code>设为dev：</p>
-<div class="highlight"><pre><span></span><span class="x">defined(&#39;YII_ENV&#39;) or define(&#39;YII_ENV&#39;, &#39;dev&#39;);</span>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="nb">defined</span><span class="p">(</span><span class="s1">&#39;YII_ENV&#39;</span><span class="p">)</span> <span class="k">or</span> <span class="nb">define</span><span class="p">(</span><span class="s1">&#39;YII_ENV&#39;</span><span class="p">,</span> <span class="s1">&#39;dev&#39;</span><span class="p">);</span>
+<span class="cp">?&gt;</span><span class="x"></span>
 </pre></div>
 
 
@@ -95,10 +98,13 @@
 
 
 <p>补充：通过本机以外的机器访问Gii的话，出于安全原因会被禁止，这种情况下可以为Gii配置允许访问的IP地址：</p>
-<div class="highlight"><pre><span></span><span class="x">$config[&#39;modules&#39;][&#39;gii&#39;] = [</span>
-<span class="x">        &#39;class&#39; =&gt; &#39;yii\gii\Module&#39;,</span>
-<span class="x">        &#39;allowedIPs&#39; =&gt; [&#39;127.0.0.1&#39;, &#39;::1&#39;, &#39;192.168.0.*&#39;, &#39;192.168.178.20&#39;], // 按需调整这里</span>
-<span class="x">    ];</span>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;modules&#39;</span><span class="p">][</span><span class="s1">&#39;gii&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;yii\gii\Module&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;allowedIPs&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="s1">&#39;::1&#39;</span><span class="p">,</span> <span class="s1">&#39;192.168.0.*&#39;</span><span class="p">,</span> <span class="s1">&#39;192.168.178.20&#39;</span><span class="p">],</span> <span class="c1">// 按需调整这里</span>
+    <span class="p">];</span>
+<span class="cp">?&gt;</span><span class="x"></span>
 </pre></div>
 
 
