@@ -48,6 +48,41 @@
         
 
             <article>
+                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-7-application-structure-overviewying-yong-jie-gou-zhi-zong-lan.html"><h3 class="article-title">Yii2学习笔记系列7——Application Structure-Overview（应用结构之总览）</h3></a>
+<h6 class="subheader" title="2016-04-10T15:19:21+08:00">日 10 四月 2016
+</h6>
+
+
+<h3>Yii2学习笔记系列7——Application Structure-Overview（应用结构之总览）</h3>
+<p>在上一篇中我们学习了如何使用Gii来生成常用的CRUD功能代码，对于入门来说是足够了的，但是远远不能应对开发，为了能够更好的使用Yii进行程序开发，我们需要对Yii应用有足够深入的了解，从这篇开始，我们将会深入学习，了解Yii的应用结构，包括应用的结构组成、入口脚本、组件、控制器、模型、视图等等。</p>
+<h4>总览</h4>
+<p>Yii是通过MVC设计模式来组织的应用，即Model（模型）、View（视图）、Controller（控制器），模型代表数据、业务逻辑和规则；视图展示模型的输出；控制器接受输入并将其转换为模型和视图命令。</p>
+<p>除了模型、视图和控制器之外，Yii应用主要还包括以下部分：</p>
+<ul>
+<li><a href="http://www.yiiframework.com/doc-2.0/guide-structure-entry-scripts.html">入口脚本</a>： 终端用户能够直接访问的PHP脚本，在Yii中指的是<code>web/index.php</code>文件</li>
+<li><a href="http://www.yiiframework.com/doc-2.0/guide-structure-applications.html">应用</a>： 能够在全局范围内被访问的对象，用以管理协调组件来完成请求</li>
+<li><a href="http://www.yiiframework.com/doc-2.0/guide-structure-application-components.html">应用组件</a>： 在应用中注册的对象，提供各种功能来完成请求</li>
+<li><a href="http://www.yiiframework.com/doc-2.0/guide-structure-modules.html">模块</a>： 包含完整MVC结构的独立包，一个应用可以包含N多个模块</li>
+<li><a href="http://www.yiiframework.com/doc-2.0/guide-structure-filters.html">过滤器</a>： 控制器在处理请求之前或之后需要触发执行的代码</li>
+<li><a href="http://www.yiiframework.com/doc-2.0/guide-structure-widgets.html">小部件</a>： 他们是可以被嵌套如视图中的对象，可以包含控制器逻辑以及在不同的视图中被重复使用</li>
+</ul>
+<p>下图展示了Yii应用的结构组成：</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/DHDHIW834ND27HD73.png-img.normal" /></p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-7-application-structure-overviewying-yong-jie-gou-zhi-zong-lan.html#disqus_thread">comments</a></p>            </article>
+
+
+                <hr  class="gradient"/>
+
+
+        
+
+
+            <article>
                 <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-6-generating-code-with-giishi-yong-giisheng-cheng-dai-ma.html"><h3 class="article-title">Yii2学习笔记系列6——Generating Code With Gii（使用Gii生成代码）</h3></a>
 <h6 class="subheader" title="2016-04-09T15:56:05+08:00">六 09 四月 2016
 </h6>
@@ -70,81 +105,15 @@
     <span class="c1">// configuration adjustments for &#39;dev&#39; environment</span>
     <span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;bootstrap&#39;</span><span class="p">][]</span> <span class="o">=</span> <span class="s1">&#39;debug&#39;</span><span class="p">;</span>
     <span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;modules&#39;</span><span class="p">][</span><span class="s1">&#39;debug&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;yii\debug\Module&#39;</span><span class="p">,</span>
-    <span class="p">];</span>
-
-    <span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;bootstrap&#39;</span><span class="p">][]</span> <span class="o">=</span> <span class="s1">&#39;gii&#39;</span><span class="p">;</span>
-    <span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;modules&#39;</span><span class="p">][</span><span class="s1">&#39;gii&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;yii\gii\Module&#39;</span><span class="p">,</span>
-    <span class="p">];</span>
-<span class="p">}</span>
-<span class="cp">?&gt;</span><span class="x"></span>
-</pre></div>
-
-
-<p>这段代码表明，如果当前是开发环境，应用会包含Gii模块，模块类是<code>yii\gii\Module</code>。</p>
-<p>如果你检查应用的入口脚本<code>web/index.php</code>，会看到有以下的代码将<code>YII_ENV</code>设为dev：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-
-<span class="nb">defined</span><span class="p">(</span><span class="s1">&#39;YII_ENV&#39;</span><span class="p">)</span> <span class="k">or</span> <span class="nb">define</span><span class="p">(</span><span class="s1">&#39;YII_ENV&#39;</span><span class="p">,</span> <span class="s1">&#39;dev&#39;</span><span class="p">);</span>
-<span class="cp">?&gt;</span><span class="x"></span>
-</pre></div>
-
-
-<p>鉴于这行代码的定义，应用处于开发模式下，按照上面的配置会打开Gii模块，你可以直接通过以下的URL访问Gii：</p>
-<div class="highlight"><pre><span></span>http://hostname/index.php?r=gii
-</pre></div>
-
-
-<p>补充：通过本机以外的机器访问Gii的话，出于安全原因会被禁止，这种情况下可以为Gii配置允许访问的IP地址：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-
-<span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;modules&#39;</span><span class="p">][</span><span class="s1">&#39;gii&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;yii\gii\Module&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;allowedIPs&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="s1">&#39;::1&#39;</span><span class="p">,</span> <span class="s1">&#39;192.168.0.*&#39;</span><span class="p">,</span> <span class="s1">&#39;192.168.178.20&#39;</span><span class="p">],</span> <span class="c1">// 按需调整这里</span>
-    <span class="p">];</span>
-<span class="cp">?&gt;</span><span class="x"></span>
-</pre></div>
-
-
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/92ZD4PXFXPZZRMV7FM9.jpg-img.normal" /></p>
-<h4>生成活动记录类</h4>
-<p>选择“Model Generator”，填写表单内容：</p>
-<ul>
-<li>Table Name：<code>country</code></li>
-<li>Model Class：<code>Country</code></li>
-</ul>
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/3S3U8YAR2BR9D22W.jpg-img.normal" /></p>
-<p>点击“Preview”按钮，可以看到<code>models/Country.php</code>被列在将要生成的文件列表中，可以点击文件名预览内容。同时，如果你之前已经创建过相同的文件，使用Gii会覆写它，点击文件名旁边的“diff”可以查看已有的文件与即将要生成的文件的内容差异。</p>
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/HSOIMCKTQ12HXC2MFG.jpg-img.normal" /></p>
-<p>如果要覆盖已有的文件，只需要勾选文件名最右侧的“override”，然后点击“Generate”即可。如果是新文件，直接点击“Generate”就好。</p>
-<h4>生成CRUD代码</h4>
-<p>CRUD代表增，查，改，删操作，这是绝大多数Web站点常用的数据处理方式，点击“CRUD Generator”即可，本例中需要这样填写表单：</p>
-<ul>
-<li>Model Class： <code>app\models\Country</code></li>
-<li>Search Class： <code>app\models\CountrySearch</code></li>
-<li>Controller Class： <code>app\controllers\CountryController</code></li>
-</ul>
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/YNIONNU8LXGSLRXZ8M.jpg-img.normal" /></p>
-<p>点击“Preview”按钮可以看到本次将要生成的所有文件的列表，因为我们之前创建过<code>controllers/CountryController.php</code>和<code>views/country/index.php</code>，选中全部的文件勾选“override”覆盖掉之前的就可以，因为我们之前编写的文件没有完全支持CRUD。</p>
-<p>试运行：</p>
-<div class="highlight"><pre><span></span>http://hostname/web/index.php?r=country/index
-</pre></div>
-
-
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/MVTRSU5XP7TFO7CN.jpg-img.normal" /></p>
-<p>支持增删查改等各项操作，可以通过”Create Country“按钮生成国家数据，也支持点击标题头进行排序操作。</p>
-<p>这就是通过Gii生成CRUD完整功能代码的示例了，这些就可以算是最基本的Getting Start部分了，从下一篇开始，我们将要Look Ahead，从应用结构开始更深入的学习了解Yii。</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+        <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;yii\debug ...</span></pre></div><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
 
 </p>
 
 
 
-<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-6-generating-code-with-giishi-yong-giisheng-cheng-dai-ma.html#disqus_thread">comments</a></p>            </article>
-
-
+<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-6-generating-code-with-giishi-yong-giisheng-cheng-dai-ma.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-6-generating-code-with-giishi-yong-giisheng-cheng-dai-ma.html">Read More</a>
                 <hr  class="gradient"/>
-
+            </article>
 
         
 
