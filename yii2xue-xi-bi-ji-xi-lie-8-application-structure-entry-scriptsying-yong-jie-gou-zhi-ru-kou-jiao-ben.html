@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8" />
+    <!-- Set the viewport width to device width for mobile -->
+    <meta name="viewport" content="width=device-width" />
+
+    <title>Yii2学习笔记系列8——Application Structure-Entry Scripts（应用结构之入口脚本）</title>
+
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/normalize.css" />
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/foundation.min.css" />
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/style.css" />
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/pygments.css" />
+    <script src="http://jeepxiaozi.github.io/theme/js/modernizr.js"></script>
+</head>
+
+<body>
+
+    <!-- Nav Bar -->
+    <nav>
+        <div class="top-bar">
+            <div class="row">
+                <div class="large-9 large-centered columns">
+                    <h1><a href="http://jeepxiaozi.github.io">一把汤勺</a></h1>
+                </div>
+            </div>
+        </div>
+
+        <!-- Show menu items and pages -->
+        <div class="row">
+            <div class="large-9 columns">
+                <ul class="button-group navigation">
+                      <li><a href="http://jeepxiaozi.github.io/pages/guan-yu-zuo-zhe.html" class="button secondary small">关于作者</a>
+                    </li>
+                 </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- End Nav -->
+
+
+    <!-- Main Page Content and Sidebar -->
+    <div class="row">
+
+        <!-- Main Blog Content -->
+        <div class="large-9 columns">
+<article>
+    <header>
+        <h3 class="article-title"><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-8-application-structure-entry-scriptsying-yong-jie-gou-zhi-ru-kou-jiao-ben.html" rel="bookmark"
+        title="Permalink to Yii2学习笔记系列8——Application Structure-Entry Scripts（应用结构之入口脚本）">Yii2学习笔记系列8——Application Structure-Entry Scripts（应用结构之入口脚本）</a></h3>
+    </header>
+
+<h6 class="subheader" title="2016-04-11T11:32:29+08:00">一 11 四月 2016
+</h6>
+
+
+    <h3>Yii2学习笔记系列8——Application Structure-Entry Scripts（应用结构之入口脚本）</h3>
+<h4>入口脚本</h4>
+<p>入口脚本是应用启动流程中的第一步，一个应用只有一个入口脚本，终端用户的请求通过入口脚本实例化应用并将请求转发到应用。</p>
+<p>Yii中Web应用的入口脚本存放在终端用户可以访问的目录下，名为<code>index.php</code>，当然，我们也可以使用Web服务器定位到其他名称的文件。</p>
+<p>Yii中Console应用的入口脚本在应用根目录下，名为<code>yii</code>（格式为.php文件），该文件需要有执行权限，这样儿用户就可以通过命令<code>./yii &lt;route&gt; [arguments] [options]</code>来运行Console应用了。</p>
+<p>入口脚本主要用来完成以下的工作：</p>
+<ul>
+<li>定义全局常量；</li>
+<li>注册<a href="https://getcomposer.org/doc/01-basic-usage.md#autoloading">Composer自动加载器</a>；</li>
+<li>包含Yii类文件；</li>
+<li>加载应用配置；</li>
+<li>创建并配置一个应用的实例；</li>
+<li>调用<code>yii\base\Application::run()</code>来处理请求。</li>
+</ul>
+<h4>Web应用</h4>
+<p>以下是基础应用模板入口脚本的代码：</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="c1">// 当部署到生产环境时，注释掉下面的两行</span>
+<span class="nb">defined</span><span class="p">(</span><span class="s1">&#39;YII_DEBUG&#39;</span><span class="p">)</span> <span class="k">or</span> <span class="nb">define</span><span class="p">(</span><span class="s1">&#39;YII_DEBUG&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
+<span class="nb">defined</span><span class="p">(</span><span class="s1">&#39;YII_ENV&#39;</span><span class="p">)</span> <span class="k">or</span> <span class="nb">define</span><span class="p">(</span><span class="s1">&#39;YII_ENV&#39;</span><span class="p">,</span> <span class="s1">&#39;dev&#39;</span><span class="p">);</span>
+
+<span class="k">require</span><span class="p">(</span><span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/../vendor/autoload.php&#39;</span><span class="p">);</span>
+<span class="k">require</span><span class="p">(</span><span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/../vendor/yiisoft/yii2/Yii.php&#39;</span><span class="p">);</span>
+
+<span class="nv">$config</span> <span class="o">=</span> <span class="k">require</span><span class="p">(</span><span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/../config/web.php&#39;</span><span class="p">);</span>
+
+<span class="p">(</span><span class="k">new</span> <span class="nx">yii\web\Application</span><span class="p">(</span><span class="nv">$config</span><span class="p">))</span><span class="o">-&gt;</span><span class="na">run</span><span class="p">();</span>
+</pre></div>
+
+
+<p>Console应用</p>
+<p>以下是Console应用的入口脚本：</p>
+<div class="highlight"><pre><span></span><span class="x">#!/usr/bin/env php</span>
+<span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * Yii console bootstrap file.</span>
+<span class="sd"> *</span>
+<span class="sd"> * @link http://www.yiiframework.com/</span>
+<span class="sd"> * @copyright Copyright (c) 2008 Yii Software LLC</span>
+<span class="sd"> * @license http://www.yiiframework.com/license/</span>
+<span class="sd"> */</span>
+
+<span class="nb">defined</span><span class="p">(</span><span class="s1">&#39;YII_DEBUG&#39;</span><span class="p">)</span> <span class="k">or</span> <span class="nb">define</span><span class="p">(</span><span class="s1">&#39;YII_DEBUG&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
+<span class="nb">defined</span><span class="p">(</span><span class="s1">&#39;YII_ENV&#39;</span><span class="p">)</span> <span class="k">or</span> <span class="nb">define</span><span class="p">(</span><span class="s1">&#39;YII_ENV&#39;</span><span class="p">,</span> <span class="s1">&#39;dev&#39;</span><span class="p">);</span>
+
+<span class="k">require</span><span class="p">(</span><span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/vendor/autoload.php&#39;</span><span class="p">);</span>
+<span class="k">require</span><span class="p">(</span><span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/vendor/yiisoft/yii2/Yii.php&#39;</span><span class="p">);</span>
+
+<span class="nv">$config</span> <span class="o">=</span> <span class="k">require</span><span class="p">(</span><span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/config/console.php&#39;</span><span class="p">);</span>
+
+<span class="nv">$application</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">yii\console\Application</span><span class="p">(</span><span class="nv">$config</span><span class="p">);</span>
+<span class="nv">$exitCode</span> <span class="o">=</span> <span class="nv">$application</span><span class="o">-&gt;</span><span class="na">run</span><span class="p">();</span>
+<span class="k">exit</span><span class="p">(</span><span class="nv">$exitCode</span><span class="p">);</span>
+</pre></div>
+
+
+<h4>定义常量</h4>
+<p>入口脚本是定义全局常量的最好的地方，Yii支持以下三个常量：</p>
+<ul>
+<li><code>YII_DEBUG</code>：标识应用是否运行在调试模式。当处于调试模式下，应用会保留更多的日志信息，如抛出异常，显示详细的错误调用堆栈等等，因此，调试模式主要运用在开发阶段，<code>YII_DEBUG</code>的默认值是false。</li>
+<li><code>YII_ENV</code>： 指定当前应用的运行环境。有关详情请参照<a href="http://www.yiiframework.com/doc-2.0/guide-concept-configurations.html#environment-constants">配置部分</a>，<code>YII_ENV</code>的默认值是'prod'，即线上生产环境。</li>
+<li><code>YII_ENABLE_ERROR_HANDLER</code>：用来标识是否启用Yii提供的错误处理，默认为true。</li>
+</ul>
+<p>当定义一个常量时，通常使用类似如下的代码来定义：</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nb">defined</span><span class="p">(</span><span class="s1">&#39;YII_DEBUG&#39;</span><span class="p">)</span> <span class="k">or</span> <span class="nb">define</span><span class="p">(</span><span class="s1">&#39;YII_DEBUG&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+</pre></div>
+
+
+<p>上面的代码就等同于：</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">defined</span><span class="p">(</span><span class="s1">&#39;YII_DEBUG&#39;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nb">define</span><span class="p">(</span><span class="s1">&#39;YII_DEBUG&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+</pre></div>
+
+
+<p>显然，还是第一段代码更加简洁易懂。常量的定义应该放在入口脚本的最开始部分，这样儿当include其他PHP文件时，常量就可以生效了。</p>
+<p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+
+</p>
+
+
+
+
+	<h4>Comments</h4>
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        var disqus_shortname = 'erictang'
+        var disqus_identifier = "yii2xue-xi-bi-ji-xi-lie-8-application-structure-entry-scriptsying-yong-jie-gou-zhi-ru-kou-jiao-ben.html";
+        var disqus_url = "http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-8-application-structure-entry-scriptsying-yong-jie-gou-zhi-ru-kou-jiao-ben.html";
+
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</article>
+        </div>
+        <!-- End Main Content -->
+
+        <!-- Sidebar -->
+        <aside class="large-3 columns">
+            <h5 class="sidebar-title">Site</h5>
+            <ul class="side-nav">
+                <li><a href="http://jeepxiaozi.github.io/archives.html">Archives</a>
+                    <li><a href="http://jeepxiaozi.github.io/tags.html">Tags</a>              </ul>
+
+            <h5 class="sidebar-title">Categories</h5>
+            <ul class="side-nav">
+                <li><a href="http://jeepxiaozi.github.io/category/android-develop.html">Android Develop</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/git.html">Git</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/ios-develop.html">iOS Develop</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo.html">技术生活</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/markdownxie-zuo.html">Markdown写作</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/multicopter.html">MultiCopter</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/pages.html">Pages</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/server-develop.html">Server Develop</a>
+                </li>
+            </ul>
+             <h5 class="sidebar-title">Links</h5>
+            <ul class="side-nav">
+                <li><a href="http://www.linuxzen.com">cold's world</a>
+                </li>
+                <li><a href="http://www.cnwsjs.cn">城南往事小站</a>
+                </li>
+                <li><a href="http://wellmakers.com">电子匠人</a>
+                </li>
+            </ul>
+             <h5 class="sidebar-title">Social</h5>
+            <ul class="side-nav social">
+                <li><a href="https://twitter.com/jeepxiaoxiaozi">twitter</a>
+                </li>
+                <li><a href="https://github.com/jeepxiaozi">GitHub</a>
+                </li>
+                <li><a href="http://weibo.com/u/1375170263/">Weibo</a>
+                </li>
+            </ul>
+
+        </aside>
+        <!-- End Sidebar -->
+
+    </div>
+    <!-- End Main Content and Sidebar -->
+
+
+    <!-- Footer -->
+    <footer class="row">
+        <div class="large-12 columns">
+            <hr />
+            <div class="row">
+                <div class="large-6 columns">
+                    <p><a href="http://jeepxiaozi.github.io">一把汤勺</a> &copy; EricTang 2015 
+ 
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1254253569'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s95.cnzz.com/z_stat.php%3Fid%3D1254253569%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));</script>
+                 </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

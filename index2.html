@@ -49,6 +49,37 @@
 
 
             <article>
+                <a href="http://jeepxiaozi.github.io/css3zhong-de-transform.html"><h3 class="article-title">CSS3中的Transform</h3></a>
+<h6 class="subheader" title="2015-07-28T16:00:19+08:00">二 28 七月 2015
+</h6>
+
+
+<h1>CSS3中的Transform</h1>
+<p>HTML5和CSS3的火爆程度自不必说，很多同学可能说我们不是专门的Web前端工程师呢，所以并不用关心这个，但我觉得吧，做我们开发这行儿的，还是不要用这样儿的借口来为自己开脱的好，至少，我们要为了成为全栈工程师而努力不是？那么这里我们来看一下CSS3里制作动画的几个属性：变形（Transform）、转换（Transition）和动画（Animation）等。今天我们这篇文章主要介绍的是这三个属性中的第一个——变形（Transform）。</p>
+<p>那么所谓Transform，在CSS3中主要包括一下集中：旋转Rotate、扭曲Skew、缩放Scale和移动Translate以及矩阵变形Matrix等。下面我们看下具体如何实现。</p>
+<p>Transform语法：</p>
+<div class="highlight"><pre><span></span><span class="nt">transform</span> <span class="o">:</span> <span class="nt">none</span> <span class="o">|</span> <span class="o">&lt;</span><span class="nt">transform-function</span><span class="o">&gt;</span> <span class="o">[</span> <span class="o">&lt;</span><span class="nt">transform-function</span><span class="o">&gt;]*</span>
+<span class="c">/*也就是*/</span>
+<span class="nt">transform</span><span class="o">:</span> <span class="nt">rotate</span> <span class="o">|</span> <span class="nt">scale</span> <span class="o">|</span> <span class="nt">skew</span> <span class="o">|</span> <span class="nt">translate</span> <span class="o">|</span> <span class="nt">matrix</span><span class="o">;</span>
+</pre></div>
+
+
+<p>解释说明：</p>
+<p>none：表示不进行变换；
+<code>&lt;transform-function&gt;</code>表示一个或多个变换函数，以空格分开；换句话说就是我们同时对一个元素进行transform的多种属性操作，例如rotate、scale、translate三种，但这里需要大家注意，以往我们叠加效果都是用逗号 ...</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo.html">技术生活</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/css3zhong-de-transform.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/css3zhong-de-transform.html">Read More</a>
+                <hr  class="gradient"/>
+            </article>
+
+        
+
+
+            <article>
                 <a href="http://jeepxiaozi.github.io/sheng-cheng-sslzheng-shu.html"><h3 class="article-title">生成SSL证书</h3></a>
 <h6 class="subheader" title="2015-05-22T15:08:42+08:00">五 22 五月 2015
 </h6>
@@ -301,28 +332,6 @@ android {
 
 
 <p><a href="http://jeepxiaozi.github.io/zhuan-zai-kai-pian-cong-ling-zuo-si-zhou-fei-xing-qi-1.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/zhuan-zai-kai-pian-cong-ling-zuo-si-zhou-fei-xing-qi-1.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
-
-        
-
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/zheng-shi-qi-yong-zi-ji-de-github-pageszuo-wei-xin-de-bei-yong-ji-zhu-bo-ke.html"><h3 class="article-title">正式启用自己的GitHub Pages作为新的备用技术博客</h3></a>
-<h6 class="subheader" title="2015-02-06T00:00:00+08:00">五 06 二月 2015
-</h6>
-
-
-<p>经过一番折腾，我自己的GitHub Pages终于搞定，欢迎大家收藏、交换友链啥的</p>
-<p>博客地址：<a href="http://jeepxiaozi.github.io">一把汤勺</a>。</p>
-<p>虽然这篇博客同时会发布在两个地方，自己的CSDN博客和GitHub Pages，但是估计以后首发的时候，还是会选择GitHub Pages了，当然也不是说CSDN不够好，只是最近两天遇到的事儿比较奇葩，可能个人觉得CSDN在这个方面做的还不是很出色吧，在写这篇博客的时候看到CSDN也上线了新版的Markdown编辑器，不过我还是会选择继续使用我目前的工具<strong><a href="http://25.io/mou/">Mou</a></strong>(这么好用的工具应该不算广告的吧)，很简洁轻快的一款Markdown编辑器，支持预览功能，还不错的说，不过就是相对比CSDN的在线Markdown编辑器来说，没有那么多提示功能，所以自己还是需要再深入学习一下Markdown的语法什么的。</p>
-<p>大致说了不少，说下这次下定决心开通GitHub Pages的原因吧，起因就是因为转载小伙伴的关于四轴飞行器的博文，然后呢，在保存博文的时候CSDN提示保存失败，无法保存，但是紧随其次的就是我的CSDN博客也打不开了，并且提示“自定义模块无法识别”之类的错误，最开始我以为是Flash模块导致的，后来把Flash模块删掉，又进行了尝试，果然。。。没好，再次被锁定，跟第一次的时候客服人员的回复一样，博文中有敏感词汇。。。但是再三检查了之后发现难不成是因为里面说到的遥控器的方式有美国手和日本手之类的？但是吧，CSDN客服人员的回复是，我们无法向您透露敏感词汇是啥，墙裂不建议您再次发布该博文 ...</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo.html">技术生活</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/zheng-shi-qi-yong-zi-ji-de-github-pageszuo-wei-xin-de-bei-yong-ji-zhu-bo-ke.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/zheng-shi-qi-yong-zi-ji-de-github-pageszuo-wei-xin-de-bei-yong-ji-zhu-bo-ke.html">Read More</a>
                 <hr  class="gradient"/>
             </article>
 
