@@ -149,6 +149,40 @@
 
 
             <article>
+                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-9-application-structure-applicationsying-yong-jie-gou-zhi-ying-yong.html"><h3 class="article-title">Yii2学习笔记系列9——Application Structure-Applications（应用结构之应用）</h3></a>
+<h6 class="subheader" title="2016-04-11T11:32:29+08:00">一 11 四月 2016
+</h6>
+
+
+<h3>Yii2学习笔记系列9——Application Structure-Applications（应用结构之应用）</h3>
+<h4>应用主体</h4>
+<p>应用主体是管理Yii应用系统整体结构和声明周期的对象，每个Yii应用系统只能包含一个应用主体，应用主体在入口脚本中创建，并且可以通过表达式<code>\Yii::$app</code>全局范围内访问。</p>
+<p>Yii有两种应用主体：<code>yii\web\Application</code>和<code>yii\console\Application</code>，分别用来处理网页请求和控制台请求。</p>
+<h5>应用主体配置</h5>
+<p>如下所示，当入口脚本创建了一个应用主体，它会加载一个配置文件并传给应用主体。</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">require</span><span class="p">(</span><span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/../vendor/autoload.php&#39;</span><span class="p">);</span>
+<span class="k">require</span><span class="p">(</span><span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/../vendor/yiisoft/yii2/Yii.php&#39;</span><span class="p">);</span>
+
+<span class="c1">// 加载应用主体配置</span>
+<span class="nv">$config</span> <span class="o">=</span> <span class="k">require</span><span class="p">(</span><span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/../config/web.php&#39;</span><span class="p">);</span>
+
+<span class="c1">// 实例化应用主体、配置应用主体</span>
+<span class="p">(</span><span class="k">new</span> <span class="nx">yii\web ...</span></pre></div><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-9-application-structure-applicationsying-yong-jie-gou-zhi-ying-yong.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-9-application-structure-applicationsying-yong-jie-gou-zhi-ying-yong.html">Read More</a>
+                <hr  class="gradient"/>
+            </article>
+
+        
+
+
+            <article>
                 <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-7-application-structure-overviewying-yong-jie-gou-zhi-zong-lan.html"><h3 class="article-title">Yii2学习笔记系列7——Application Structure-Overview（应用结构之总览）</h3></a>
 <h6 class="subheader" title="2016-04-10T15:19:21+08:00">日 10 四月 2016
 </h6>
