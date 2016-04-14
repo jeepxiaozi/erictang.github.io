@@ -48,6 +48,97 @@
         
 
             <article>
+                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-10-application-structure-application-componentsying-yong-jie-gou-zhi-ying-yong-zu-jian.html"><h3 class="article-title">Yii2学习笔记系列10——Application Structure-Application Components（应用结构之应用组件）</h3></a>
+<h6 class="subheader" title="2016-04-14T13:35:13+08:00">四 14 四月 2016
+</h6>
+
+
+<h4>应用组件</h4>
+<p>应用主体都是<a href="http://www.yiiframework.com/doc-2.0/guide-concept-service-locator.html">服务定位器</a>，他们部署一系列的应用组件，用来提供可以处理请求的多个服务，例如，<code>urlManager</code>组件负责处理网页请求路由到对应的控制器，<code>db</code>组件提供数据库相关服务等。</p>
+<p>在一个应用主体中，每个应用组件都包含一个唯一的ID用以区分其他的应用组件。你可以通过如下表达式访问应用组件：</p>
+<div class="highlight"><pre><span></span><span class="x">\Yii::$app-&gt;componentID</span>
+</pre></div>
+
+
+<p>例如你可以通过<code>\Yii::$app-&gt;db</code>获取数据库连接，通过<code>\Yii::$app-&gt;cache</code>获取已经注册到应用的yii\caching\Cache。</p>
+<p>一个应用组件实例会在通过上述表达式第一次访问的时候创建，后续访问的时候将会返回同一个组件实例。</p>
+<p>应用组件可以是任意对象，你可以通过配置应用配置文件中的<code>yii\base\Application::$components</code>属性来注册组件，例如：</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="p">[</span>
+    <span class="s1">&#39;components&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="c1">// 通过类名注册cache组件</span>
+        <span class="s1">&#39;cache&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;yii\caching\ApcCache&#39;</span><span class="p">,</span>
+
+        <span class="c1">//通过配置数组注册db组件</span>
+        <span class="s1">&#39;db&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+            <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;yii\db\Connection&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;dsn&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;mysql:host=localhost;dbname=demo&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;username&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;root&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;password&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="p">],</span>
+
+        <span class="c1">// 通过函数注册search组件</span>
+        <span class="s1">&#39;search&#39;</span> <span class="o">=&gt;</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="nx">app\components\SolrService</span><span class="p">;</span>
+        <span class="p">},</span>
+    <span class="p">],</span>
+<span class="p">]</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+</pre></div>
+
+
+<p>注意，尽管你可以想注册多少应用组件就注册多少，但你应该更谨慎一点儿。应用组件跟全局变量一样，使用的太多的话会增加代码测试和维护的难度。通常情况下，你可以按需创建本地组件。</p>
+<h5>引导启动组件</h5>
+<p>正如我们上面提到的一样，一个应用组件只会在第一次被访问时实例化，如果处理请求的过程中没有访问的话，应用组件就不会被实例化。但有时，尽管一个应用组件不会被访问，我们依然希望在每个请求处理过程中都实例化它，这时我们就可以将该组件的应用ID加入到应用主体的yii\base\Application::bootstrap属性中。例如，如下的应用主体配置保证了<code>log</code>组件会一直被加载。</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="p">[</span>
+    <span class="s1">&#39;bootstrap&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="c1">// 将log组件ID加入引导，始终载入</span>
+        <span class="s1">&#39;log&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="s1">&#39;components&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="s1">&#39;log&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+            <span class="c1">// &quot;log&quot; 组件的配置</span>
+        <span class="p">],</span>
+    <span class="p">],</span>
+<span class="p">]</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+</pre></div>
+
+
+<h5>核心应用组件</h5>
+<p>Yii定义了一组固定ID和默认配置的核心组件，例如yii\web\Application::request组件用来收集用户请求并解析路由；yii\base\Application::db代表一个可以执行数据库操作的数据库连接。在这些组件的帮助下，Yii的应用主体得以处理用户请求。</p>
+<p>下面是Yii预定义的核心应用组件列表，核心组件可以和普通应用组件一样进行配置和自定义。当你配置一个核心组件时，如果不指定它的类名的话就会使用默认指定的类。</p>
+<ul>
+<li>assetManager：管理资源包和资源发布，详情可以参考<a href="http://www.yiiframework.com/doc-2.0/guide-structure-assets.html">资源管理</a>一节。</li>
+<li>db：提供一个可以执行数据库操作的数据库连接，注意配置该组件时必须指定组件类名和其他相关组件属性，如yii\base\Application::dsn，详情可以参考<a href="http://www.yiiframework.com/doc-2.0/guide-db-dao.html">数据库访问对象</a>一节。</li>
+<li>errorHandler：处理PHP错误和异常，详情参考<a href="http://www.yiiframework.com/doc-2.0/guide-runtime-handling-errors.html">错误处理</a>。</li>
+<li>formatter：格式化要展示给用户看的数据。例如数字的分隔符，日期格式等等，详情请参考<a href="http://www.yiiframework.com/doc-2.0/guide-output-formatting.html">格式化输出</a>一节。</li>
+<li>i18n：支持信息翻译和格式化，详情请参考<a href="http://www.yiiframework.com/doc-2.0/guide-tutorial-i18n.html">国际化</a>一节。</li>
+<li>log：管理log对象，详情参考<a href="http://www.yiiframework.com/doc-2.0/guide-runtime-logging.html">日志</a>一节。</li>
+<li>mail：支持邮件的构成和发送，详情参考<a href="http://www.yiiframework.com/doc-2.0/guide-tutorial-mailing.html">邮件</a>一节。</li>
+<li>response：表示返回给终端用户的响应，详情参考<a href="http://www.yiiframework.com/doc-2.0/guide-runtime-responses.html">响应</a>一节。</li>
+<li>request：表示从终端用户接收到的请求，详情参考<a href="http://www.yiiframework.com/doc-2.0/guide-runtime-requests.html">请求</a>一节。</li>
+<li>session：表示session会话信息，该组件只在Web应用（即网页应用）下可用，详情参考<a href="http://www.yiiframework.com/doc-2.0/guide-runtime-sessions-cookies.html">Session会话和Cookies</a>一节</li>
+<li>urlManager：支持URL地址的解析和创建，详情参考<a href="http://www.yiiframework.com/doc-2.0/guide-runtime-routing.html"></a>一节。</li>
+<li>user：表示用户授权信息，该组件只在Web应用下可用，详情参考<a href="http://www.yiiframework.com/doc-2.0/guide-security-authentication.html">应用</a>一节。</li>
+<li>Views：支持视图的渲染，详情参考<a href="http://www.yiiframework.com/doc-2.0/guide-structure-views.html">视图</a>一节。</li>
+</ul><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-10-application-structure-application-componentsying-yong-jie-gou-zhi-ying-yong-zu-jian.html#disqus_thread">comments</a></p>            </article>
+
+
+                <hr  class="gradient"/>
+
+
+        
+
+
+            <article>
                 <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-9-application-structure-applicationsying-yong-jie-gou-zhi-ying-yong.html"><h3 class="article-title">Yii2学习笔记系列9——Application Structure-Applications（应用结构之应用）</h3></a>
 <h6 class="subheader" title="2016-04-13T21:29:17+08:00">三 13 四月 2016
 </h6>
@@ -68,327 +159,15 @@
 <span class="nv">$config</span> <span class="o">=</span> <span class="k">require</span><span class="p">(</span><span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/../config/web.php&#39;</span><span class="p">);</span>
 
 <span class="c1">// 实例化应用主体、配置应用主体</span>
-<span class="p">(</span><span class="k">new</span> <span class="nx">yii\web\Application</span><span class="p">(</span><span class="nv">$config</span><span class="p">))</span><span class="o">-&gt;</span><span class="na">run</span><span class="p">();</span>
-</pre></div>
-
-
-<p>类似其他配置文件，应用主体配置文件标明如何设置应用对象初始属性，由于应用主体配置比较复杂，一般保存在多个类似web.php这样儿的配置文件中。</p>
-<h5>应用主体属性</h5>
-<p>应用主体配置文件中有许多重要的属性需要配置，这些属性指定应用主体的运行环境，例如应用主体需要知道如何加载控制器，临时文件保存到哪儿等等。</p>
-<ul>
-<li>必要属性</li>
-</ul>
-<p>在一个应用中，至少需要配置两个属性：<code>yii\base\Application::id</code>和<code>yii\base\Application::basePath</code>。</p>
-<p><code>yii\base\Application::id</code>属性是用来区分其它应用的唯一标识ID，主要给程序使用，方便协作起见，最好使用数字作为应用主体ID，但不强制要求为数字。</p>
-<p><code>yii\base\Application::basePath</code>属性用来指定该应用的根目录，根目录包含应用系统所有受保护的源代码，在根目录下可以看到对应MVC设计模式的<code>models</code>，<code>views</code>，<code>controllers</code>等子目录。</p>
-<p>可以使用路径或者路径别名来配置<code>yii\base\Application::basePath</code>属性，但不管哪种方式，都要确保对应的目录必须存在，否则系统会抛出异常。系统通过调用<code>realpath()</code>函数来规范化配置的路径。</p>
-<p><code>yii\base\Application::basePath</code>属性经常用于派生一些其他重要路径（如runtime路径），因此，系统预定义<code>@app</code>代表这个路径，派生路径可以通过这个别名组成新的路径（如<code>@app/runtime</code>代表runtime的路径）。</p>
-<ul>
-<li>重要属性</li>
-</ul>
-<p>本小节所描述的属性通常需要设置，因为不同的应用属性不同。</p>
-<p><code>yii\base\Application::aliases</code>属性允许你使用一个数组定义多个别名，数组的key为别名的名字，值为对应的路径，例如：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="p">[</span>
-    <span class="s1">&#39;aliases&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
-        <span class="s1">&#39;@name1&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;path/to/path1&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;@name2&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;path/to/path2&#39;</span><span class="p">,</span>
-    <span class="p">],</span>
-<span class="p">]</span>
-<span class="cp">?&gt;</span><span class="x"></span>
-</pre></div>
-
-
-<p>这个属性用来代替调用Yii::setAlias()方法，实现了通过应用配置项来定义别名。</p>
-<p><code>yii\base\Application::bootstrap</code>属性允许你使用数组来指定启动阶段<code>yii\base\Application::bootstrap()</code>需要运行的组件，比如，如果你希望一个模块自定义URL规则，你可以将模块ID加入到bootstrap数组中。</p>
-<p>属性中的每个组件需要指定以下一项：</p>
-<div class="highlight"><pre><span></span>- 应用组件ID
-- 模块ID
-- 类名
-- 配置数组
-- 创建并返回一个组件的无名称函数
-</pre></div>
-
-
-<p>例如：</p>
-<p>```php &lt;?php
-[
-    'bootstrap' =&gt; [
-        // 应用组件ID或模块ID
-        'demo',</p>
-<div class="highlight"><pre><span></span>    // 类名
-    &#39;app\components\Profiler&#39;,
-
-    // 配置数组
-    [
-        &#39;class&#39; =&gt; &#39;app\components\Profiler&#39;,
-        &#39;level&#39; =&gt; 3,
-    ],
-
-    // 无名称函数
-    function () {
-        return new app\components\Profiler();
-    }
-],
-</pre></div>
-
-
-<p>]
-?&gt;</p>
-<div class="highlight"><pre><span></span><span class="nx">补充</span><span class="err">：</span><span class="nx">如果模块ID和应用组件ID同名</span><span class="err">，</span><span class="nx">优先使用应用组件ID</span><span class="err">，</span><span class="nx">如果你想使用模块ID</span><span class="err">，</span><span class="nx">可以使用如下无名称函数返回模块ID</span><span class="err">，</span>
-
-<span class="sb">```php</span>
-<span class="cp">&lt;?php</span>
-<span class="p">[</span>
-    <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">Yii</span><span class="o">::</span><span class="nv">$app</span><span class="o">-&gt;</span><span class="na">getModule</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">);</span>
-    <span class="p">},</span>
-<span class="p">]</span>
-<span class="cp">?&gt;</span><span class="sb"></span>
-</pre></div>
-
-
-<p>在启动阶段，每个组件都会被实例化。如果组件类实现接口<code>yii\base\BootstrapInterface</code>，也会调用<code>yii\base\BootstrapInterface::bootstrap()</code>方法。</p>
-<p>例如，基础应用模板的应用主体配置中，开发环境下会在启动阶段运行<code>debug</code>和<code>gii</code>模块。</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="k">if</span> <span class="p">(</span><span class="nx">YII_ENV_DEV</span><span class="p">)</span> <span class="p">{</span>
-    <span class="c1">// configuration adjustments for &#39;dev&#39; environment</span>
-    <span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;bootstrap&#39;</span><span class="p">][]</span> <span class="o">=</span> <span class="s1">&#39;debug&#39;</span><span class="p">;</span>
-    <span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;modules&#39;</span><span class="p">][</span><span class="s1">&#39;debug&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;yii\debug\Module&#39;</span><span class="p">;</span>
-
-    <span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;bootstrap&#39;</span><span class="p">][]</span> <span class="o">=</span> <span class="s1">&#39;gii&#39;</span><span class="p">;</span>
-    <span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;modules&#39;</span><span class="p">][</span><span class="s1">&#39;gii&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;yii\gii\Module&#39;</span><span class="p">;</span>
-<span class="p">}</span>
-<span class="cp">?&gt;</span><span class="x"></span>
-</pre></div>
-
-
-<p><code>yii\web\Application::catchAll</code>属性仅<code>yii\web\Application</code>网页应用支持，它指定一个要处理所有用户请求的控制器方法，通常在维护模式下使用，同一个方法处理所有用户请求。</p>
-<p>该配置是一个数组，第一项指定动作的路由，剩下的数组项（key-value成对）指定传递给动作的参数，例如：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="p">[</span>
-    <span class="s1">&#39;catchAll&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
-        <span class="s1">&#39;offline/notice&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;param1&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;value1&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;param2&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;value2&#39;</span><span class="p">,</span>
-    <span class="p">],</span>
-<span class="p">]</span>
-<span class="cp">?&gt;</span><span class="x"></span>
-</pre></div>
-
-
-<p><code>yii\base\Application::components</code>是最重要的属性，它允许你注册多个可以在其它地方使用的应用组件，例如：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="p">[</span>
-    <span class="s1">&#39;components&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
-        <span class="s1">&#39;cache&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
-            <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;yii\caching\FileCache&#39;</span><span class="p">,</span>
-        <span class="p">],</span>
-        <span class="s1">&#39;user&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
-            <span class="s1">&#39;identityClass&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;app\models\User&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;enableAutoLogin&#39;</span> <span class="o">=&gt;</span> <span class="k">true</span><span class="p">,</span>
-        <span class="p">],</span>
-    <span class="p">],</span>
-<span class="p">]</span>
-<span class="cp">?&gt;</span><span class="x"></span>
-</pre></div>
-
-
-<p>每一个应用组件指定一个key-value键值对的数组，key代表组件ID，value代表类名或配置。</p>
-<p>在应用中可以任意注册组件，并可以通过表达式<code>\Yii::$app-&gt;ComponentID</code>全局访问。</p>
-<p>详情请阅读<a href="http://www.yiiframework.com/doc-2.0/guide-structure-application-components.html">应用组件</a>一节。</p>
-<p><code>yii\base\Application::controllerMap</code>属性允许你指定一个控制器ID到任意控制器类。Yii遵循一个默认的规则，指定控制器ID到任意控制器类（如<code>post</code>对应<code>app\controllers\PostController</code>），通过配置这个属性，可以打破这个默认规则，在下面的例子中，<code>account</code>对应到<code>app\controllers\UserController</code>，<code>article</code>对应到<code>app\controllers\PostController</code>。</p>
-<div class="highlight"><pre><span></span><span class="x">[</span>
-<span class="x">    &#39;controllerMap&#39; =&gt; [</span>
-<span class="x">        [</span>
-<span class="x">            &#39;account&#39; =&gt; &#39;app\controllers\UserController&#39;,</span>
-<span class="x">            &#39;article&#39; =&gt; [</span>
-<span class="x">                &#39;class&#39; =&gt; &#39;app\controllers\PostController&#39;,</span>
-<span class="x">                &#39;enableCsrfValidation&#39; =&gt; false,</span>
-<span class="x">            ],</span>
-<span class="x">        ],</span>
-<span class="x">    ],</span>
-<span class="x">]</span>
-</pre></div>
-
-
-<p>数组的键代表控制器ID，数组的值代表对应的类名。</p>
-<p><code>yii\base\Application::controllerNamespace</code>属性指定控制器类默认的命名空间，默认为<code>app\controllers</code>，比如控制器ID为<code>post</code>默认对应<code>PostController</code>（不带命名空间），类全名为<code>app\controllers\PostController</code>。</p>
-<p>要保证全面的合格的控制器类能够被自动载入，并且控制器类的真实命名空间要能够和该属性的值匹配，这点是很重要的，否则当你进入应用时，你将会收到“Page Not Found”错误。如果你想改变上述的规则，可以配置controllerMap属性。</p>
-<p><code>yii\base\Application::language</code>属性指定应用展示给终端用户的语言，默认为<code>en</code>标识英文，如果需要更改为其他语言可以配置该属性。</p>
-<p>该属性影响各种国际化，包括信息翻译、日期格式、数字格式等，例如yii\jui\DatePicker小部件会根据该属性展示对应语言的日历以及日期格式。</p>
-<p>推荐遵循<a href="https://en.wikipedia.org/wiki/IETF_language_tag">IETF language tag</a>来设置语言，例如en代表英文，en-US代表英文（美国）。该属性的更多信息可以参考国际化一节。</p>
-<p><code>yii\base\Application::modules</code>属性指定应用所包含的模块，该属性使用数组包含多个模块类配置，数组的键为模块ID，例如：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="p">[</span>
-    <span class="s1">&#39;modules&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
-        <span class="c1">// &quot;booking&quot; 模块以及对应的类</span>
-        <span class="s1">&#39;booking&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;app\modules\booking\BookingModule&#39;</span><span class="p">,</span>
-
-        <span class="c1">// &quot;comment&quot; 模块以及对应的配置数组</span>
-        <span class="s1">&#39;comment&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
-            <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;app\modules\comment\CommentModule&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;db&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;db&#39;</span><span class="p">,</span>
-        <span class="p">],</span>
-    <span class="p">],</span>
-<span class="p">]</span>
-<span class="cp">?&gt;</span><span class="x"></span>
-</pre></div>
-
-
-<p><code>yii\base\Application::name</code>属性指定你可能想展示给终端用户的应用名称，不同于需要唯一性的yii\base\Application::id属性，该属性可以不唯一。</p>
-<p><code>yii\base\Application::params</code>属性是一个数组，指定可以全局访问的参数，代替程序中硬编码的数字和字符，应用中的参数定义到一个单独的文件中并且保证随时可以访问是一个好习惯，例如，用参数定义缩略图的长宽如下：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="p">[</span>
-    <span class="s1">&#39;params&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
-        <span class="s1">&#39;thumbnail.size&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">],</span>
-    <span class="p">],</span>
-<span class="p">]</span>
-<span class="cp">?&gt;</span><span class="x"></span>
-</pre></div>
-
-
-<p>然后，当你需要使用时，采用如下的方式即可：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="nv">$size</span> <span class="o">=</span> <span class="nx">\Yii</span><span class="o">::</span><span class="nv">$app</span><span class="o">-&gt;</span><span class="na">params</span><span class="p">[</span><span class="s1">&#39;thumbnail.size&#39;</span><span class="p">];</span>
-<span class="nv">$width</span> <span class="o">=</span> <span class="nx">\Yii</span><span class="o">::</span><span class="nv">$app</span><span class="o">-&gt;</span><span class="na">params</span><span class="p">[</span><span class="s1">&#39;thumbnail.size&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">];</span>
-<span class="cp">?&gt;</span><span class="x"></span>
-</pre></div>
-
-
-<p><code>yii\base\Application::sourceLanguage</code>属性允许你修改PHP运行环境中的默认时区，配置该属性本质上就是调用PHP函数<code>date_default_timezone_set()</code>，例如：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="p">[</span>
-    <span class="s1">&#39;timeZone&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;China/Shanghai&#39;</span><span class="p">,</span>
-<span class="p">]</span>
-<span class="cp">?&gt;</span><span class="x"></span>
-</pre></div>
-
-
-<p><code>yii\base\Application::version</code>属性用于指定应用的版本，默认是<code>'1.0'</code>，其他代码不使用的话可以不配置。</p>
-<ul>
-<li>实用属性</li>
-</ul>
-<p>本小节描述的属性不经常设置，通常使用系统默认值。</p>
-<p><code>yii\base\Application::charset</code>属性指定应用所使用的字符集，默认是<code>'UTF-8'</code>，绝大部分应用都在使用，除非已有的系统大量使用非Unicode数据才需要更改该属性。</p>
-<p><code>yii\base\Application::defaultRoute</code>属性指定未经过配置的请求的响应路由规则，路由规则可能包含模块ID，控制器ID，动作ID等，如<code>help</code>，<code>post/create</code>，<code>admin/post/create</code>，如果动作ID没有指定，会使用yii\base\Controller:defaultAction中指定的默认值。</p>
-<p>对于yii\web\Application网页应用，默认值为<code>'site'</code>对应<code>SiteController</code>控制器，并使用默认的动作，因此不带路由的访问应用，默认会显示<code>app\controllers\SiteController::actionIndex()</code>的结果。</p>
-<p>对于yii\console\Application控制台应用，默认值是<code>'help'</code>对应yii\console\controllers\HelpController::actionIndex()，因此，如果执行的命令不带参数的话，默认会显示帮助信息。</p>
-<p><code>yii\base\Application::extensions</code>属性用数组列表指定应用安装和使用的扩展，默认使用<code>@vendor/yiisoft/extensions.php</code>文件返回的数组，当你使用Composer安装扩展时，<code>extensions.php</code>会被自动生成和维护更新，所以大多数情况下不需要配置该属性。</p>
-<p>特殊情况下如果你想手动维护扩展，可以参照如下代码配置该属性：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="p">[</span>
-    <span class="s1">&#39;extensions&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
-        <span class="p">[</span>
-            <span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;extension name&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;version&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;version number&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;bootstrap&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;BootstrapClassName&#39;</span><span class="p">,</span>  <span class="c1">// 可选配，可为配置数组</span>
-            <span class="s1">&#39;alias&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>  <span class="c1">// 可选配</span>
-                <span class="s1">&#39;@alias1&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;to/path1&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;@alias2&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;to/path2&#39;</span><span class="p">,</span>
-            <span class="p">],</span>
-        <span class="p">],</span>
-
-        <span class="c1">// ... 更多像上面的扩展 ...</span>
-
-    <span class="p">],</span>
-<span class="p">]</span>
-<span class="cp">?&gt;</span><span class="x"></span>
-</pre></div>
-
-
-<p>上述代码表示该属性包含一个扩展定义数组，每个扩展为一个包含<code>name</code>和<code>version</code>项的数组，如果该扩展需要在引导启动阶段运行，需要配置<code>bootstrap</code>以及对应的引导启动类名或configuration数组，扩展也可以定义别名。</p>
-<p><code>yii\base\Application::layout</code>属性指定渲染视图默认使用的布局名字，默认值是<code>'main'</code>对应布局路径下的<code>main.php</code>文件，如果布局路径和视图路径都是默认值，默认布局文件可以使用路径别名，如<code>@app/views/layouts/main.php</code>，如果不想设置默认布局文件，可以设置该属性为<code>false</code>，这种做法比较罕见。</p>
-<p><code>yii\base\Application::layoutPath</code>属性指定查找布局文件的路径，默认值是视图路径下的<code>layouts</code>子目录，如果视图路径使用默认值，默认的布局路径别名是<code>@app/views/layouts</code>，该属性需要配置成一个目录或者路径别名。</p>
-<p><code>yii\base\Application::runtimePath</code>属性指定临时文件如日志文件、缓存文件等保存路径，默认值为带别名的<code>@app/runtime</code>，可以配置该属性为一个目录或者路径别名，注意应用运行时需要有对该路径的写入权限，由于该目录下可能包含敏感信息，所以该目录不允许终端用户访问。为了简化访问该路径，Yii预定义别名<code>@runtime</code>代表该路径。</p>
-<p><code>yii\base\Application::viewPath</code>属性指定视图文件的根目录，默认值为带别名的<code>@app/views</code>，可以配置它为一个目录或者路径别名。</p>
-<p><code>yii\base\Application::vendorPath</code>属性指定Composer管理的供应商路径，该路径包含应用使用的包括Yii框架在内的所有第三方库，默认值为带别名的<code>@app/vendor</code>。可以配置它为一个目录或者路径别名，当你修改时，请务必修改对应的Composer配置。为了简化访问该路径，Yii预定义别名<code>@vendor</code>代表该路径。</p>
-<p><code>yii\console\Application::enableCoreCommands</code>属性仅yii\console\Application控制台应用支持，用来指定是否启用Yii中的核心命令，默认值是<code>true</code>。</p>
-<h5>应用事件</h5>
-<p>应用在处理请求的过程中会触发事件，可以在配置文件中配置事件处理代码，如下所示：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="p">[</span>
-    <span class="s1">&#39;on beforeRequest&#39;</span> <span class="o">=&gt;</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$event</span><span class="p">)</span> <span class="p">{</span>
-        <span class="c1">// ...</span>
-    <span class="p">},</span>
-<span class="p">]</span>
-<span class="cp">?&gt;</span><span class="x"></span>
-</pre></div>
-
-
-<p><code>on eventName</code>语法的用法在配置一节中有详细的描述。</p>
-<p>另外，在应用主体实例化后，你可以在引导启动阶段附加事件处理代码，例如：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="nx">\Yii</span><span class="o">::</span><span class="nv">$app</span><span class="o">-&gt;</span><span class="na">on</span><span class="p">(</span><span class="nx">\yii\base\Application</span><span class="o">::</span><span class="na">EVENT_BEFORE_REQUEST</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$event</span><span class="p">)</span> <span class="p">{</span>
-    <span class="c1">// ...</span>
-<span class="p">});</span>
-<span class="cp">?&gt;</span><span class="x"></span>
-</pre></div>
-
-
-<p><code>yii\base\Application::EVENT_BEFORE_REQUEST</code>事件在应用处理请求之前，实际的事件名为<code>beforeRequest</code>。在事件触发钱，应用主体已经实例化并配置好了，所以通过事件机制将你的代码嵌入到请求处理过程中是很不错的选择。例如在事件处理中根据某些参数动态设置yii\base\Application::language语言属性。</p>
-<p><code>yii\base\Application::EVENT_AFTER_REQUEST</code>事件在应用处理请求之后但尚未返回响应之前触发，实际的事件名为<code>afterRequest</code>。该事件触发时，请求已经被处理完，可以做一些请求后处理或者自定义响应。注意：yii\web\Response组件在发送响应给终端用户时也会触发一些事件，这些事件都在本事件之后触发。</p>
-<p><code>yii\base\Application::EVENT_BEFORE_ACTION</code>事件在每个控制器动作运行之前会被触发，实际的事件名为<code>beforeAction</code>。该事件的参数为yii\base\ActionEvent实例，事件处理中可以设置yii\base\ActionEvent::isValid为<code>false</code>停止运行后续动作。例如：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="p">[</span>
-    <span class="s1">&#39;on beforeAction&#39;</span> <span class="o">=&gt;</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$event</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">some</span> <span class="nx">condition</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">isValid</span> <span class="o">=</span> <span class="k">false</span><span class="p">;</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="p">}</span>
-    <span class="p">},</span>
-<span class="p">]</span>
-<span class="cp">?&gt;</span><span class="x"></span>
-</pre></div>
-
-
-<p>注意模块和控制器都会触发<code>beforeAction</code>事件，应用主体对象首先触发该事件，然后模块触发（如果存在模块的话），最后控制器触发。任何一个事件处理中设置yii\base\ActionEvent::isValid设置为<code>false</code>都会停止触发后面的事件。</p>
-<p><code>yii\base\Application::EVENT_AFTER_ACTION</code>事件在每个控制器动作运行之后被触发，实际的事件名为<code>afterAction</code>。该事件的参数为yii\base\ActionEvent实例，通过yii\base\ActionEvent::result属性，事件处理可以访问和修改动作的结果，例如：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="p">[</span>
-    <span class="s1">&#39;on afterAction&#39;</span> <span class="o">=&gt;</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$event</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">some</span> <span class="nx">condition</span><span class="p">)</span> <span class="p">{</span>
-            <span class="c1">// 修改 $event-&gt;result</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-              <span class="c1">// 干点儿别的</span>
-        <span class="p">}</span>
-    <span class="p">},</span>
-<span class="p">]</span>
-<span class="cp">?&gt;</span><span class="x"></span>
-</pre></div>
-
-
-<p>注意模块和控制器都会触发afterAction事件，这些对象的触发顺序和beforeAction相反，也就是说，控制器最先触发，然后是模块（如果有模块的话），最后是应用主体。</p>
-<h5>应用主体生命周期</h5>
-<p>当运行入口脚本处理请求时，应用主体会经历以下生命周期：</p>
-<ol>
-<li>入口脚本加载应用主体配置数组。</li>
-<li>入口脚本创建一个应用主体实例：<ul>
-<li>调用yii\base\Application::preInit()配置几个高级应用主体属性，例如yii\base\Application::basePath。</li>
-<li>注册yii\base\Application::errorHandler错误处理方法。</li>
-<li>配置应用主体属性。</li>
-<li>调用yii\base\Application::init()初始化，该函数会调用yii\base\Application::bootstrap()运行引导启动组件。</li>
-</ul>
-</li>
-<li>入口脚本调用yii\base\Application::run()运行应用主体：<ul>
-<li>触发yii\base\Application::EVENT_BEFORE_REQUEST事件。</li>
-<li>处理请求：解析请求路由和相关参数；创建路由指定的模块、控制器和动作对应的类，并运行动作。</li>
-<li>触发yii\base\Application::EVENT_AFTER_REQUEST事件。</li>
-<li>发送响应到终端用户。</li>
-</ul>
-</li>
-<li>入口脚本接收应用主体传来的退出状态并完成请求的处理。</li>
-</ol><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+<span class="p">(</span><span class="k">new</span> <span class="nx">yii\web ...</span></pre></div><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
 
 </p>
 
 
 
-<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-9-application-structure-applicationsying-yong-jie-gou-zhi-ying-yong.html#disqus_thread">comments</a></p>            </article>
-
-
+<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-9-application-structure-applicationsying-yong-jie-gou-zhi-ying-yong.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-9-application-structure-applicationsying-yong-jie-gou-zhi-ying-yong.html">Read More</a>
                 <hr  class="gradient"/>
-
+            </article>
 
         
 
@@ -657,25 +436,6 @@ mv composer.phar /usr/local/bin/composer
 
 
 <p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-1-yiijie-shao-he-an-zhuang.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-1-yiijie-shao-he-an-zhuang.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
-
-        
-
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/xcode7zai-shang-chuan-iosying-yong-dao-app-storeshi-yu-dao-de-wen-ti.html"><h3 class="article-title">Xcode7在上传iOS应用到App Store时遇到的问题</h3></a>
-<h6 class="subheader" title="2015-10-22T17:40:33+08:00">四 22 十月 2015
-</h6>
-
-
-<p>使用Xcode7上传应用到App Store时遇到的问题汇总</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/ios-develop.html">iOS Develop</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/xcode7zai-shang-chuan-iosying-yong-dao-app-storeshi-yu-dao-de-wen-ti.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/xcode7zai-shang-chuan-iosying-yong-dao-app-storeshi-yu-dao-de-wen-ti.html">Read More</a>
                 <hr  class="gradient"/>
             </article>
 

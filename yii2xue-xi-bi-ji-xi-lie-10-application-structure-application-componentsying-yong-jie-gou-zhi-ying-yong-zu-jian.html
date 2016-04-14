@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8" />
+    <!-- Set the viewport width to device width for mobile -->
+    <meta name="viewport" content="width=device-width" />
+
+    <title>Yii2学习笔记系列10——Application Structure-Application Components（应用结构之应用组件）</title>
+
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/normalize.css" />
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/foundation.min.css" />
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/style.css" />
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/pygments.css" />
+    <script src="http://jeepxiaozi.github.io/theme/js/modernizr.js"></script>
+</head>
+
+<body>
+
+    <!-- Nav Bar -->
+    <nav>
+        <div class="top-bar">
+            <div class="row">
+                <div class="large-9 large-centered columns">
+                    <h1><a href="http://jeepxiaozi.github.io">一把汤勺</a></h1>
+                </div>
+            </div>
+        </div>
+
+        <!-- Show menu items and pages -->
+        <div class="row">
+            <div class="large-9 columns">
+                <ul class="button-group navigation">
+                      <li><a href="http://jeepxiaozi.github.io/pages/guan-yu-zuo-zhe.html" class="button secondary small">关于作者</a>
+                    </li>
+                 </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- End Nav -->
+
+
+    <!-- Main Page Content and Sidebar -->
+    <div class="row">
+
+        <!-- Main Blog Content -->
+        <div class="large-9 columns">
+<article>
+    <header>
+        <h3 class="article-title"><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-10-application-structure-application-componentsying-yong-jie-gou-zhi-ying-yong-zu-jian.html" rel="bookmark"
+        title="Permalink to Yii2学习笔记系列10——Application Structure-Application Components（应用结构之应用组件）">Yii2学习笔记系列10——Application Structure-Application Components（应用结构之应用组件）</a></h3>
+    </header>
+
+<h6 class="subheader" title="2016-04-14T13:35:13+08:00">四 14 四月 2016
+</h6>
+
+
+    <h4>应用组件</h4>
+<p>应用主体都是<a href="http://www.yiiframework.com/doc-2.0/guide-concept-service-locator.html">服务定位器</a>，他们部署一系列的应用组件，用来提供可以处理请求的多个服务，例如，<code>urlManager</code>组件负责处理网页请求路由到对应的控制器，<code>db</code>组件提供数据库相关服务等。</p>
+<p>在一个应用主体中，每个应用组件都包含一个唯一的ID用以区分其他的应用组件。你可以通过如下表达式访问应用组件：</p>
+<div class="highlight"><pre><span></span><span class="x">\Yii::$app-&gt;componentID</span>
+</pre></div>
+
+
+<p>例如你可以通过<code>\Yii::$app-&gt;db</code>获取数据库连接，通过<code>\Yii::$app-&gt;cache</code>获取已经注册到应用的yii\caching\Cache。</p>
+<p>一个应用组件实例会在通过上述表达式第一次访问的时候创建，后续访问的时候将会返回同一个组件实例。</p>
+<p>应用组件可以是任意对象，你可以通过配置应用配置文件中的<code>yii\base\Application::$components</code>属性来注册组件，例如：</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="p">[</span>
+    <span class="s1">&#39;components&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="c1">// 通过类名注册cache组件</span>
+        <span class="s1">&#39;cache&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;yii\caching\ApcCache&#39;</span><span class="p">,</span>
+
+        <span class="c1">//通过配置数组注册db组件</span>
+        <span class="s1">&#39;db&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+            <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;yii\db\Connection&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;dsn&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;mysql:host=localhost;dbname=demo&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;username&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;root&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;password&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="p">],</span>
+
+        <span class="c1">// 通过函数注册search组件</span>
+        <span class="s1">&#39;search&#39;</span> <span class="o">=&gt;</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="nx">app\components\SolrService</span><span class="p">;</span>
+        <span class="p">},</span>
+    <span class="p">],</span>
+<span class="p">]</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+</pre></div>
+
+
+<p>注意，尽管你可以想注册多少应用组件就注册多少，但你应该更谨慎一点儿。应用组件跟全局变量一样，使用的太多的话会增加代码测试和维护的难度。通常情况下，你可以按需创建本地组件。</p>
+<h5>引导启动组件</h5>
+<p>正如我们上面提到的一样，一个应用组件只会在第一次被访问时实例化，如果处理请求的过程中没有访问的话，应用组件就不会被实例化。但有时，尽管一个应用组件不会被访问，我们依然希望在每个请求处理过程中都实例化它，这时我们就可以将该组件的应用ID加入到应用主体的yii\base\Application::bootstrap属性中。例如，如下的应用主体配置保证了<code>log</code>组件会一直被加载。</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="p">[</span>
+    <span class="s1">&#39;bootstrap&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="c1">// 将log组件ID加入引导，始终载入</span>
+        <span class="s1">&#39;log&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="s1">&#39;components&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="s1">&#39;log&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+            <span class="c1">// &quot;log&quot; 组件的配置</span>
+        <span class="p">],</span>
+    <span class="p">],</span>
+<span class="p">]</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+</pre></div>
+
+
+<h5>核心应用组件</h5>
+<p>Yii定义了一组固定ID和默认配置的核心组件，例如yii\web\Application::request组件用来收集用户请求并解析路由；yii\base\Application::db代表一个可以执行数据库操作的数据库连接。在这些组件的帮助下，Yii的应用主体得以处理用户请求。</p>
+<p>下面是Yii预定义的核心应用组件列表，核心组件可以和普通应用组件一样进行配置和自定义。当你配置一个核心组件时，如果不指定它的类名的话就会使用默认指定的类。</p>
+<ul>
+<li>assetManager：管理资源包和资源发布，详情可以参考<a href="http://www.yiiframework.com/doc-2.0/guide-structure-assets.html">资源管理</a>一节。</li>
+<li>db：提供一个可以执行数据库操作的数据库连接，注意配置该组件时必须指定组件类名和其他相关组件属性，如yii\base\Application::dsn，详情可以参考<a href="http://www.yiiframework.com/doc-2.0/guide-db-dao.html">数据库访问对象</a>一节。</li>
+<li>errorHandler：处理PHP错误和异常，详情参考<a href="http://www.yiiframework.com/doc-2.0/guide-runtime-handling-errors.html">错误处理</a>。</li>
+<li>formatter：格式化要展示给用户看的数据。例如数字的分隔符，日期格式等等，详情请参考<a href="http://www.yiiframework.com/doc-2.0/guide-output-formatting.html">格式化输出</a>一节。</li>
+<li>i18n：支持信息翻译和格式化，详情请参考<a href="http://www.yiiframework.com/doc-2.0/guide-tutorial-i18n.html">国际化</a>一节。</li>
+<li>log：管理log对象，详情参考<a href="http://www.yiiframework.com/doc-2.0/guide-runtime-logging.html">日志</a>一节。</li>
+<li>mail：支持邮件的构成和发送，详情参考<a href="http://www.yiiframework.com/doc-2.0/guide-tutorial-mailing.html">邮件</a>一节。</li>
+<li>response：表示返回给终端用户的响应，详情参考<a href="http://www.yiiframework.com/doc-2.0/guide-runtime-responses.html">响应</a>一节。</li>
+<li>request：表示从终端用户接收到的请求，详情参考<a href="http://www.yiiframework.com/doc-2.0/guide-runtime-requests.html">请求</a>一节。</li>
+<li>session：表示session会话信息，该组件只在Web应用（即网页应用）下可用，详情参考<a href="http://www.yiiframework.com/doc-2.0/guide-runtime-sessions-cookies.html">Session会话和Cookies</a>一节</li>
+<li>urlManager：支持URL地址的解析和创建，详情参考<a href="http://www.yiiframework.com/doc-2.0/guide-runtime-routing.html"></a>一节。</li>
+<li>user：表示用户授权信息，该组件只在Web应用下可用，详情参考<a href="http://www.yiiframework.com/doc-2.0/guide-security-authentication.html">应用</a>一节。</li>
+<li>Views：支持视图的渲染，详情参考<a href="http://www.yiiframework.com/doc-2.0/guide-structure-views.html">视图</a>一节。</li>
+</ul>
+<p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+
+</p>
+
+
+
+
+	<h4>Comments</h4>
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        var disqus_shortname = 'erictang'
+        var disqus_identifier = "yii2xue-xi-bi-ji-xi-lie-10-application-structure-application-componentsying-yong-jie-gou-zhi-ying-yong-zu-jian.html";
+        var disqus_url = "http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-10-application-structure-application-componentsying-yong-jie-gou-zhi-ying-yong-zu-jian.html";
+
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</article>
+        </div>
+        <!-- End Main Content -->
+
+        <!-- Sidebar -->
+        <aside class="large-3 columns">
+            <h5 class="sidebar-title">Site</h5>
+            <ul class="side-nav">
+                <li><a href="http://jeepxiaozi.github.io/archives.html">Archives</a>
+                    <li><a href="http://jeepxiaozi.github.io/tags.html">Tags</a>              </ul>
+
+            <h5 class="sidebar-title">Categories</h5>
+            <ul class="side-nav">
+                <li><a href="http://jeepxiaozi.github.io/category/android-develop.html">Android Develop</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/git.html">Git</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/ios-develop.html">iOS Develop</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo.html">技术生活</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/markdownxie-zuo.html">Markdown写作</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/multicopter.html">MultiCopter</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/pages.html">Pages</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/server-develop.html">Server Develop</a>
+                </li>
+            </ul>
+             <h5 class="sidebar-title">Links</h5>
+            <ul class="side-nav">
+                <li><a href="http://www.linuxzen.com">cold's world</a>
+                </li>
+                <li><a href="http://www.cnwsjs.cn">城南往事小站</a>
+                </li>
+                <li><a href="http://wellmakers.com">电子匠人</a>
+                </li>
+            </ul>
+             <h5 class="sidebar-title">Social</h5>
+            <ul class="side-nav social">
+                <li><a href="https://twitter.com/jeepxiaoxiaozi">twitter</a>
+                </li>
+                <li><a href="https://github.com/jeepxiaozi">GitHub</a>
+                </li>
+                <li><a href="http://weibo.com/u/1375170263/">Weibo</a>
+                </li>
+            </ul>
+
+        </aside>
+        <!-- End Sidebar -->
+
+    </div>
+    <!-- End Main Content and Sidebar -->
+
+
+    <!-- Footer -->
+    <footer class="row">
+        <div class="large-12 columns">
+            <hr />
+            <div class="row">
+                <div class="large-6 columns">
+                    <p><a href="http://jeepxiaozi.github.io">一把汤勺</a> &copy; EricTang 2016 
+ 
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1254253569'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s95.cnzz.com/z_stat.php%3Fid%3D1254253569%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));</script>
+                 </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>
