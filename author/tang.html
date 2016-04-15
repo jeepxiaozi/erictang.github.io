@@ -48,6 +48,343 @@
         
 
             <article>
+                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-11-application-structure-controllersying-yong-jie-gou-zhi-kong-zhi-qi.html"><h3 class="article-title">Yii2学习笔记系列11——Application Structure-Controllers（应用结构之控制器）</h3></a>
+<h6 class="subheader" title="2016-04-15T14:37:52+08:00">五 15 四月 2016
+</h6>
+
+
+<h3>控制器</h3>
+<p>控制器是MVC设计模式的一部分，继承自yii\base\Controller并且负责处理请求生成响应。具体的来说，当控制器从应用主体接管控制后会分析请求数据并传送到模型，将模型结果注入到视图中，并且最终生成输出的响应信息。</p>
+<h4>操作</h4>
+<p>“操作”是执行终端用户请求的最基础的单元，一个控制器中可以包含一个或多个操作。</p>
+<p>如下示例展示了一个名为<code>post</code>的控制器，其中包含两个操作：<code>view</code>和<code>create</code>。</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">app\controllers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Yii</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">app\models\Post</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">yii\web\Controller</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">yii\web\NotFoundHttpException</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">PostController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">actionView</span><span class="p">(</span><span class="nv">$id</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$model</span> <span class="o">=</span> <span class="nx">Post</span><span class="o">::</span><span class="na">findOne</span><span class="p">(</span><span class="nv">$id</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$model</span> <span class="o">===</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">NotFoundHttpException</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">render</span><span class="p">(</span><span class="s1">&#39;view&#39;</span><span class="p">,</span> <span class="p">[</span>
+            <span class="s1">&#39;model&#39;</span> <span class="o">=&gt;</span> <span class="nv">$model</span><span class="p">,</span>
+        <span class="p">]);</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">actionCreate</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$model</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Post</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$model</span><span class="o">-&gt;</span><span class="na">load</span><span class="p">(</span><span class="nx">Yii</span><span class="o">::</span><span class="nv">$app</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">post</span><span class="p">())</span> <span class="o">&amp;&amp;</span> <span class="nv">$model</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">())</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">redirect</span><span class="p">([</span><span class="s1">&#39;view&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span> <span class="o">=&gt;</span> <span class="nv">$model</span><span class="o">-&gt;</span><span class="na">id</span><span class="p">]);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">render</span><span class="p">(</span><span class="s1">&#39;create&#39;</span><span class="p">,</span> <span class="p">[</span>
+                <span class="s1">&#39;model&#39;</span> <span class="o">=&gt;</span> <span class="nv">$model</span><span class="p">,</span>
+            <span class="p">]);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+</pre></div>
+
+
+<p>在<code>view</code>操作（定义为<code>actionView()</code>方法）中，代码首先会根据请求的模型ID加载模型，如果加载成功，会使用一个名为<code>view</code>的视图进行展示，否则会抛出一个异常。</p>
+<p>在<code>create</code>操作（定义为<code>actionCreate()</code>方法）中，代码也是一样的。首先它会尝试将请求数据填充到模型中并且保存。如果两个操作都成功了的话会重定向到操作<code>view</code>，并且把新创建的模型的ID作为参数传递过去，否则就重定向到<code>create</code>视图。</p>
+<h4>路由</h4>
+<p>终端用户通过所谓的路由来定位操作，路由就是包含了如下部分的一个字符串：</p>
+<ul>
+<li>模型ID：只有当控制器属于非应用模块时才会存在</li>
+<li>控制器ID：同一个应用（如果是模块下的控制器那就是同一个模块）下可以唯一标识控制器的字符串</li>
+<li>操作ID：同一个控制器下唯一标识操作的字符串</li>
+</ul>
+<p>路由使用如下格式：</p>
+<div class="highlight"><pre><span></span>ControllerID/ActionID
+</pre></div>
+
+
+<p>如果是模块下的控制器，则使用如下格式：</p>
+<div class="highlight"><pre><span></span><span class="n">ModuleID</span><span class="o">/</span><span class="n">ControllerID</span><span class="o">/</span><span class="n">ActionID</span>
+</pre></div>
+
+
+<p>如果用户的请求地址是<code>http://hostname/index.php?r=site/index</code>，会执行<code>site</code>控制器下的<code>index</code>操作，详情请参考<a href="http://www.yiiframework.com/doc-2.0/guide-runtime-routing.html">路由和URL生成器</a>一节。</p>
+<h4>创建控制器</h4>
+<p>在yii\web\Application网页应用中，控制器应该继承yii\web\Controller或它的子类，同理，在yii\console\Application控制台应用中，控制器继承yii\console\Controller或它的子类。如下代码定义了一个<code>site</code>控制器：</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">app\controllers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">yii\web\Controller</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">SiteController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+<span class="p">}</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+</pre></div>
+
+
+<h5>控制器ID</h5>
+<p>通常情况下，控制器用来处理有关的资源类型，因此，控制器ID通常为与资源有关的名词，例如使用<code>article</code>作为处理文章的控制器ID。</p>
+<p>控制器ID应该只包含小写字母、数字、下划线、中横线和斜杠，例如<code>aarticle</code>和<code>post-comment</code>是合法的控制器ID，而<code>article?</code>、<code>PostComment</code>、<code>admin\post</code>则不是。</p>
+<p>控制器ID可以包含子目录前缀，例如<code>admin/article</code>代表yii\base\Application::controllerNamespace控制器命名空间下<code>admin</code>子目录中的<code>article</code>控制器。子目录前缀可以是英文字母、数字、下划线或者斜杠，其中斜杠用来区分多级子目录（如<code>panels/admin</code>）。</p>
+<h5>控制器类命名</h5>
+<p>控制器ID遵循以下的规则衍生控制器类名：</p>
+<ul>
+<li>将用横杠(-)区分的每个单词的首字母转为大写。如果控制器ID包含斜杠，则只将最后的斜杠后的部分中第一个字母转为大写；</li>
+<li>去掉横杠(-)，并且将斜杠替换为反斜杠；</li>
+<li>增加<code>Controller</code>后缀；</li>
+<li>在前面增加yii\base\Application::controllerNamespace控制器命名空间。</li>
+</ul>
+<p>下面是一些控制器以及对应的控制器类命名的示例，假设yii\base\Application::controllerNamespace控制器命名空间为<code>app\controllers</code>：</p>
+<ul>
+<li><code>article</code> 对应 <code>app\controllers\ArticleController</code>；</li>
+<li><code>post-comment</code> 对应 <code>app\controllers\PostCommentController</code>；</li>
+<li><code>admin/post-comment</code> 对应 <code>app\controllers\admin\PostCommentController</code>；</li>
+<li><code>adminPanels/post-comment</code> 对应 <code>app\controllers\adminPanels\PostCommentController</code>；</li>
+</ul>
+<p>控制器类必须能被自动加载，所以在上面的例子中，控制器<code>article</code>类应该在别名为<code>@app/controllers/ArticleController.php</code>的文件中定义，控制器<code>admin/post2-comment</code>应该在<code>@app/controllers/admin/Post2CommentController.php</code>文件中定义。</p>
+<p>注意：在最后一个示例中，<code>admin/post2-comment</code>表示你可以将控制器放在yii\base\Application::controllerNamespace控制器命名空间的子目录下，当你不想用模块的时候，可以采用这种方式给控制器分类。</p>
+<h5>控制器Map</h5>
+<p>我们可以通过配置<a href="http://www.yiiframework.com/doc-2.0/yii-base-module.html#$controllerMap-detail">控制器Map</a>来突破上述的控制器ID和类名的对应限制，通常情况下，当我们使用了第三方类库并且我们无法控制他们的类命名时，这种方式就很有用了。</p>
+<p>你可以在<a href="http://www.yiiframework.com/doc-2.0/guide-structure-applications.html#application-configurations">应用程序配置文件</a>中配置控制器Map：</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="p">[</span>
+    <span class="s1">&#39;controllerMap&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="c1">// 使用类名来声明“account”控制器</span>
+        <span class="s1">&#39;account&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;app\controllers\UserController&#39;</span><span class="p">,</span>
+
+        <span class="c1">// 通过数组来声明“article”控制器</span>
+        <span class="s1">&#39;article&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+            <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;app\controllers\PostController&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;enableCsrfValidation&#39;</span> <span class="o">=&gt;</span> <span class="k">false</span><span class="p">,</span>
+        <span class="p">],</span>
+    <span class="p">],</span>
+<span class="p">]</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+</pre></div>
+
+
+<h5>默认控制器</h5>
+<p>每个应用都包含一个由yii\base\Application::defaultRoute属性指定的默认控制器，当一个请求没有指定路由时，那么该属性值就会作为路由来使用。对于yii\web\Application网页应用来说，它的值是<code>site</code>，对于yii\console\Application控制台应用来说，它的值是<code>'help'</code>，所以URL<code>http://hostname/index.php</code>将会交由<code>site</code>控制器来处理。</p>
+<p>我们可以修改<a href="http://www.yiiframework.com/doc-2.0/guide-structure-applications.html#application-configurations">配置文件</a>中的值来修改默认的控制器：</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="p">[</span>
+    <span class="s1">&#39;defaultRoute&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;main&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+</pre></div>
+
+
+<h4>创建操作</h4>
+<p>创建操作可以像在控制器类中定义所谓的操作方法一样简单，一个操作方法必须是以<code>action</code>为开头而命名的公有方法。操作方法的返回值会作为响应数据发送给终端用户，如下代码定义了两个操作<code>index</code>和<code>hello-world</code>：</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">app\controllers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">yii\web\Controller</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">SiteController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">actionIndex</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">render</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">actionHelloWorld</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="s1">&#39;Hello World&#39;</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+</pre></div>
+
+
+<h5>操作ID</h5>
+<p>操作通常用来执行资源的特定操作，因此，操作ID通常是动词，如<code>view</code>、<code>update</code>等。</p>
+<p>操作ID应该仅包含英文小写字母、数字、下划线和横杠，操作ID中的横杠用来分隔单词，例如<code>view</code>、<code>update2</code>、<code>comment-post</code>是合法的操作ID，而<code>view?</code>、<code>Update</code>则不是。</p>
+<p>我们可以通过两种方式来创建操作：内联操作和独立操作，内联操作在控制器类中被定义为方法，而独立操作则是继承yii\base\Action或者其子类的类。内联操作容易创建，在无需重用的情况可以优先使用；独立操作相反，主要用于多个控制器重用，或者重构为扩展。</p>
+<h6>内联操作</h6>
+<p>内联操作方法的名字根据操作ID遵循如下规则衍生：</p>
+<ul>
+<li>将每个单词的第一个字母转为大写；</li>
+<li>去掉横杠；</li>
+<li>增加<code>action</code>前缀</li>
+</ul>
+<p>例如<code>index</code>转成<code>actionIndex</code>，<code>hello-world</code>转成<code>actionHelloWorld</code>。</p>
+<p>注意：操作方法的名字大小写敏感，如果方法名称为<code>ActionIndex</code>则不会被认为是操作方法，所以请求<code>index</code>操作会返回一个异常，同时还要注意操作方法必须是公有的，私有或者受保护的方法不能定义成内联操作。</p>
+<h6>独立操作</h6>
+<p>要使用独立操作，需要通过控制器中覆盖yii\base\Controller::actions()方法在action map中声明，如下是示例代码：</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">actions</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="c1">// 用类来声明“error”操作</span>
+        <span class="s1">&#39;error&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;yii\web\ErrorAction&#39;</span><span class="p">,</span>
+
+        <span class="c1">// 用配置数组声明“view”操作</span>
+        <span class="s1">&#39;view&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+            <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;yii\web\ViewAction&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;viewPrefix&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="p">],</span>
+    <span class="p">];</span>
+<span class="p">}</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+</pre></div>
+
+
+<p><code>actions()</code>方法返回一个数组，其中key是操作的ID，对应的值是相应的操作类名，跟内联操作不同的是，独立操作ID可以包含任意字符，只要在<code>actions()</code>方法中声明即可。</p>
+<p>为创建一个独立操作，需要继承yii\base\Action或它的子类，并实现公有的名称为<code>run()</code>的方法，<code>run()</code>方法的角色和操作方法类似，例如：</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">app\components</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">yii\base\Action</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">HelloWorldAction</span> <span class="k">extends</span> <span class="nx">Action</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">run</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="s2">&quot;Hello World&quot;</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+</pre></div>
+
+
+<h6>操作结果</h6>
+<p>操作方法或者独立操作的<code>run()</code>方法的返回值非常重要，它表示对应操作的结果。返回值可以是响应对象，作为响应信息发送给终端用户。</p>
+<ul>
+<li>对于yii\web\Application网页应用，返回值可以为任何数据，它赋值给yii\web\Response::data， 最终转换为字符串来展示响应内容</li>
+<li>对于yii\console\Console控制台应用，返回值可以是整数，表示命令行下执行的yii\console\Response::exitStatus退出状态</li>
+</ul>
+<p>在上面的例子中，操作结果都是字符串，作为响应数据发送给终端用户，下面的这个例子显示一个操作通过返回响应对象（yii\web\Controller::redirect()方法返回一个响应对象）可以将用户引导跳转至新的URL。</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">actionForward</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="c1">// 用户浏览器重定向到 http://example.com</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">redirect</span><span class="p">(</span><span class="s1">&#39;http://example.com&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h6>操作参数</h6>
+<p>内联操作和独立操作的<code>run()</code>方法都可以带参数，称为操作参数。参数值从请求中获取，对于yii\web\Application网页应用，每个操作参数的值从<code>$_GET</code>中获得，参数名作为键；对于yii\console\Application控制台应用，操作参数对应命令行参数。</p>
+<p>如下例，操作<code>view</code>（内联操作）声明了两个参数<code>$id</code>和<code>$version</code>。</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">app\controllers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">yii\web\Controller</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">PostController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">actionView</span><span class="p">(</span><span class="nv">$id</span><span class="p">,</span> <span class="nv">$version</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// ...</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>操作参数会被不同的请求填入不同的值，如下所示：</p>
+<ul>
+<li><code>http://hostname/index.php?r=post/view&amp;id=123</code>：<code>$id</code>参数会被填入'123'，<code>$version</code>仍为null因为没有获取到<code>$version</code>参数；</li>
+<li><code>http://hostname/index.php?r=post/view&amp;id=123&amp;version=2</code>：<code>$id</code>和<code>$version</code>会分别被填入'123'和'2'；</li>
+<li><code>http://hostname/index.php?r=post/view</code>：会抛出yii\web\BadRequestHttpException异常，因为该请求没有提供足够的参数赋值给必填参数<code>$id</code>；</li>
+<li><code>http://hostname/index.php?r=post/view&amp;id[]=123</code>：会抛出yii\web\BadRequestHttpException异常，因为<code>$id</code>参数收到的值不是字符串而是数组</li>
+</ul>
+<p>如果想让操作参数接收数组，需要指定<code>$id</code>为<code>array</code>，如下所示：</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">actionView</span><span class="p">(</span><span class="k">array</span> <span class="nv">$id</span><span class="p">,</span> <span class="nv">$version</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// ...</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>现在如果请求为 http://hostname/index.php?r=post/view&amp;id[]=123, 参数 $id 会使用数组值['123']， 如果请求为 http://hostname/index.php?r=post/view&amp;id=123， 参数 $id 会获取相同数组值，因为无类型的'123'会自动转成数组。</p>
+<p>上述例子主要描述网页应用的操作参数，对于控制台应用，详情参考<a href="http://www.yiiframework.com/doc-2.0/guide-tutorial-console.html">控制台命令</a>。</p>
+<h6>默认操作</h6>
+<p>每个控制器都有一个由yii\base\Controller::defaultAction属性指定的默认操作，当路由只包含控制器ID，这表示请求了指定控制器的默认操作。</p>
+<p>默认操作默认为<code>index</code>，如果想要修改默认操作，只需简单的在控制器类中覆盖这个属性即可，如下所示：</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">app\controllers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">yii\web\Controller</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">SiteController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="nv">$defaultAction</span> <span class="o">=</span> <span class="s1">&#39;home&#39;</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">actionHome</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">render</span><span class="p">(</span><span class="s1">&#39;home&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h6>控制器生命周期</h6>
+<p>处理一个请求时，应用主体会根据请求路由创建一个控制器，控制器经历以下的生命周期来完成请求：</p>
+<ol>
+<li>在控制器创建和配置后，yii\base\Controller::init()方法会被调用。</li>
+<li>
+<p>控制器根据请求操作ID创建一个操作对象:</p>
+<ul>
+<li>如果操作ID没有指定，会使用yii\base\Controller::defaultAction默认操作ID；</li>
+<li>如果在yii\base\Controller::actions()找到操作ID，会创建一个独立操作；</li>
+<li>如果操作ID对应操作方法，会创建一个内联操作；否则会抛出yii\base\InvalidRouteException异常。</li>
+</ul>
+</li>
+<li>
+<p>控制器按顺序调用应用主体、模块（如果控制器属于模块）、控制器的 beforeAction() 方法；</p>
+<ul>
+<li>如果任意一个调用返回false，后面未调用的beforeAction()会跳过并且操作执行会被取消；</li>
+<li>默认情况下每个 beforeAction() 方法会触发一个 beforeAction 事件，在事件中你可以追加事件处理操作；</li>
+</ul>
+</li>
+<li>
+<p>控制器执行操作:</p>
+<ul>
+<li>请求数据解析和填入到操作参数；</li>
+</ul>
+</li>
+<li>
+<p>控制器按顺序调用控制器、模块（如果控制器属于模块）、应用主体的 afterAction() 方法；
+默认情况下每个 afterAction() 方法会触发一个 afterAction 事件，在事件中你可以追加事件处理操作；</p>
+</li>
+<li>应用主体获取操作结果并赋值给响应.</li>
+</ol>
+<h6>最佳实践</h6>
+<p>在设计良好的应用中，控制器很精练，包含的操作代码简短； 如果你的控制器很复杂，通常意味着需要重构，转移一些代码到其他类中。</p>
+<p>总的来说，控制器：</p>
+<ul>
+<li>可访问请求数据；</li>
+<li>可根据请求数据调用模型的方法和其他服务组件；</li>
+<li>可使用视图构造响应；</li>
+<li>不应处理应被模型处理的请求数据；</li>
+<li>应避免嵌入HTML或其他展示代码，这些代码最好在视图中处理。</li>
+</ul><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-11-application-structure-controllersying-yong-jie-gou-zhi-kong-zhi-qi.html#disqus_thread">comments</a></p>            </article>
+
+
+                <hr  class="gradient"/>
+
+
+        
+
+
+            <article>
                 <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-10-application-structure-application-componentsying-yong-jie-gou-zhi-ying-yong-zu-jian.html"><h3 class="article-title">Yii2学习笔记系列10——Application Structure-Application Components（应用结构之应用组件）</h3></a>
 <h6 class="subheader" title="2016-04-14T13:35:13+08:00">四 14 四月 2016
 </h6>
@@ -71,69 +408,15 @@
 
         <span class="c1">//通过配置数组注册db组件</span>
         <span class="s1">&#39;db&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
-            <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;yii\db\Connection&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;dsn&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;mysql:host=localhost;dbname=demo&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;username&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;root&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;password&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
-        <span class="p">],</span>
-
-        <span class="c1">// 通过函数注册search组件</span>
-        <span class="s1">&#39;search&#39;</span> <span class="o">=&gt;</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="k">new</span> <span class="nx">app\components\SolrService</span><span class="p">;</span>
-        <span class="p">},</span>
-    <span class="p">],</span>
-<span class="p">]</span>
-<span class="cp">?&gt;</span><span class="x"></span>
-</pre></div>
-
-
-<p>注意，尽管你可以想注册多少应用组件就注册多少，但你应该更谨慎一点儿。应用组件跟全局变量一样，使用的太多的话会增加代码测试和维护的难度。通常情况下，你可以按需创建本地组件。</p>
-<h5>引导启动组件</h5>
-<p>正如我们上面提到的一样，一个应用组件只会在第一次被访问时实例化，如果处理请求的过程中没有访问的话，应用组件就不会被实例化。但有时，尽管一个应用组件不会被访问，我们依然希望在每个请求处理过程中都实例化它，这时我们就可以将该组件的应用ID加入到应用主体的yii\base\Application::bootstrap属性中。例如，如下的应用主体配置保证了<code>log</code>组件会一直被加载。</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="p">[</span>
-    <span class="s1">&#39;bootstrap&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
-        <span class="c1">// 将log组件ID加入引导，始终载入</span>
-        <span class="s1">&#39;log&#39;</span><span class="p">,</span>
-    <span class="p">],</span>
-    <span class="s1">&#39;components&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
-        <span class="s1">&#39;log&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
-            <span class="c1">// &quot;log&quot; 组件的配置</span>
-        <span class="p">],</span>
-    <span class="p">],</span>
-<span class="p">]</span>
-<span class="cp">?&gt;</span><span class="x"></span>
-</pre></div>
-
-
-<h5>核心应用组件</h5>
-<p>Yii定义了一组固定ID和默认配置的核心组件，例如yii\web\Application::request组件用来收集用户请求并解析路由；yii\base\Application::db代表一个可以执行数据库操作的数据库连接。在这些组件的帮助下，Yii的应用主体得以处理用户请求。</p>
-<p>下面是Yii预定义的核心应用组件列表，核心组件可以和普通应用组件一样进行配置和自定义。当你配置一个核心组件时，如果不指定它的类名的话就会使用默认指定的类。</p>
-<ul>
-<li>assetManager：管理资源包和资源发布，详情可以参考<a href="http://www.yiiframework.com/doc-2.0/guide-structure-assets.html">资源管理</a>一节。</li>
-<li>db：提供一个可以执行数据库操作的数据库连接，注意配置该组件时必须指定组件类名和其他相关组件属性，如yii\base\Application::dsn，详情可以参考<a href="http://www.yiiframework.com/doc-2.0/guide-db-dao.html">数据库访问对象</a>一节。</li>
-<li>errorHandler：处理PHP错误和异常，详情参考<a href="http://www.yiiframework.com/doc-2.0/guide-runtime-handling-errors.html">错误处理</a>。</li>
-<li>formatter：格式化要展示给用户看的数据。例如数字的分隔符，日期格式等等，详情请参考<a href="http://www.yiiframework.com/doc-2.0/guide-output-formatting.html">格式化输出</a>一节。</li>
-<li>i18n：支持信息翻译和格式化，详情请参考<a href="http://www.yiiframework.com/doc-2.0/guide-tutorial-i18n.html">国际化</a>一节。</li>
-<li>log：管理log对象，详情参考<a href="http://www.yiiframework.com/doc-2.0/guide-runtime-logging.html">日志</a>一节。</li>
-<li>mail：支持邮件的构成和发送，详情参考<a href="http://www.yiiframework.com/doc-2.0/guide-tutorial-mailing.html">邮件</a>一节。</li>
-<li>response：表示返回给终端用户的响应，详情参考<a href="http://www.yiiframework.com/doc-2.0/guide-runtime-responses.html">响应</a>一节。</li>
-<li>request：表示从终端用户接收到的请求，详情参考<a href="http://www.yiiframework.com/doc-2.0/guide-runtime-requests.html">请求</a>一节。</li>
-<li>session：表示session会话信息，该组件只在Web应用（即网页应用）下可用，详情参考<a href="http://www.yiiframework.com/doc-2.0/guide-runtime-sessions-cookies.html">Session会话和Cookies</a>一节</li>
-<li>urlManager：支持URL地址的解析和创建，详情参考<a href="http://www.yiiframework.com/doc-2.0/guide-runtime-routing.html"></a>一节。</li>
-<li>user：表示用户授权信息，该组件只在Web应用下可用，详情参考<a href="http://www.yiiframework.com/doc-2.0/guide-security-authentication.html">应用</a>一节。</li>
-<li>Views：支持视图的渲染，详情参考<a href="http://www.yiiframework.com/doc-2.0/guide-structure-views.html">视图</a>一节。</li>
-</ul><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+            <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;yii\db ...</span></pre></div><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
 
 </p>
 
 
 
-<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-10-application-structure-application-componentsying-yong-jie-gou-zhi-ying-yong-zu-jian.html#disqus_thread">comments</a></p>            </article>
-
-
+<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-10-application-structure-application-componentsying-yong-jie-gou-zhi-ying-yong-zu-jian.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-10-application-structure-application-componentsying-yong-jie-gou-zhi-ying-yong-zu-jian.html">Read More</a>
                 <hr  class="gradient"/>
-
+            </article>
 
         
 
@@ -407,44 +690,13 @@
                 <hr  class="gradient"/>
             </article>
 
-        
-
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-1-yiijie-shao-he-an-zhuang.html"><h3 class="article-title">Yii2学习笔记系列1——Yii介绍和安装</h3></a>
-<h6 class="subheader" title="2016-03-31T17:49:15+08:00">四 31 三月 2016
-</h6>
-
-
-<h3>Yii2笔记系列1——Yii介绍和安装</h3>
-<h3>什么是Yii</h3>
-<p>Yii是一个高性能、基于组件的PHP框架，用于快速开发现代Web应用程序，不做过多赘述。</p>
-<h4>Yii最适合做什么</h4>
-<p>Yii是一个通用的Web编程框架，可以用于开发各种Web应用，包括但不限于门户网站、社区、内容管理系统（即CMS）以及电子商务项目和RESTful Web服务等。</p>
-<h3>安装Yii</h3>
-<p>安装Yii可以通过两种方式：使用<a href="https://getcomposer.org/">Composer</a>或者下载一个归档文件。使用前者的好处是只需要执行一条简单的命令就可以安装新的扩展或者更新Yii了。</p>
-<h4>通过Composer安装</h4>
-<p>首选需要安装Composer，可以按照<a href="https://getcomposer.org/download/">https://getcomposer.org/download/</a>中的方法进行安装，在Linux和Mac OS X中可以通过运行如下命令：</p>
-<div class="highlight"><pre><span></span>curl -sS https://getcomposer.org/installer <span class="p">|</span> php
-mv composer.phar /usr/local/bin/composer
-<span class="sb">```</span>
-
-在windows下，需要下载并运行<span class="o">[</span>Composer-Setup ...</pre></div><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-1-yiijie-shao-he-an-zhuang.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-1-yiijie-shao-he-an-zhuang.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
-
             <!-- /#posts-list -->
 <div class="pagination-centered">
-<h6 class="subheader">Page 1 of 1</h6>
+<h6 class="subheader">Page 1 of 2</h6>
 
 <p>
 
+        <a href="http://jeepxiaozi.github.io/author/tang2.html">Next &raquo;</a>
 </p>
 </div>
 
