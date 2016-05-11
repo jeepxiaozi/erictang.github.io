@@ -49,6 +49,41 @@
 
 
             <article>
+                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-3-hello-world.html"><h3 class="article-title">Yii2学习笔记系列3——Hello World</h3></a>
+<h6 class="subheader" title="2016-04-05T11:26:37+08:00">二 05 四月 2016
+</h6>
+
+
+<h3>Yii2笔记系列3——Hello World</h3>
+<p>上一篇笔记中简单介绍了Yii的内建功能、如何组织代码以及一般情况下应用如何处理请求，这一篇我们进入熟悉的实现一个“Hello World”的功能，为了实现这一目标，我们需要创建一个操作和一个视图：</p>
+<ul>
+<li>Yii应用会将页面请求分派给相应的action</li>
+<li>action将会依次渲染视图，呈现“Hello World”给最终用户</li>
+</ul>
+<h4>创建action</h4>
+<p>我们这里直接在<code>controllers/SiteController.php</code>中定义一个名为<code>hello</code>的action，以下是主要的代码：</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">app\controllers</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">yii\web\Controller</span><span class="p">;</span>
+<span class="k">class</span> <span class="nc">SiteController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="c1">// ...其它代码...</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">actionHello</span><span class="p">(</span><span class="nv">$message</span> <span class="o">=</span> <span class="s1">&#39;Hello World&#39;</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">render</span><span class="p">(</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;message ...</span></pre></div><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-3-hello-world.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-3-hello-world.html">Read More</a>
+                <hr  class="gradient"/>
+            </article>
+
+        
+
+
+            <article>
                 <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-2-yun-xing-ying-yong.html"><h3 class="article-title">Yii2学习笔记系列2——运行应用</h3></a>
 <h6 class="subheader" title="2016-04-05T01:05:49+08:00">二 05 四月 2016
 </h6>

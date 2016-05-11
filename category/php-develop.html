@@ -48,6 +48,500 @@
         
 
             <article>
+                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-13-application-structure-viewsying-yong-jie-gou-zhi-shi-tu.html"><h3 class="article-title">Yii2学习笔记系列13——Application Structure-Views（应用结构之视图）</h3></a>
+<h6 class="subheader" title="2016-05-10T09:32:11+08:00">二 10 五月 2016
+</h6>
+
+
+<h3>视图</h3>
+<p>视图是MVC设计模式的一部分，它是负责向终端用户展示数据的代码。在一个Web应用程序中，通常需要根据视图模板来创建视图，视图模板是包含HTML代码和展示类的PHP代码的PHP脚本文件。它通过yii\web\View应用组件来管理，该组件主要提供通用方法帮助视图构造和渲染，简单起见，我们称视图模板或者视图模板文件为视图。</p>
+<h4>创建视图</h4>
+<p>如上面所述，视图是包含HTML和PHP代码的PHP脚本文件，下面就是一个展示登录表单的视图，如你所见，PHP代码用来生成动态的内容例如页面标题和表单，HTML代码则负责把它组织成一个漂亮的HTML页面。</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">yii\helpers\Html</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">yii\widgets\ActiveForm</span><span class="p">;</span>
+
+<span class="cm">/* @var $this yii\web\View */</span>
+<span class="cm">/* @var $form yii\widgets\ActiveForm */</span>
+<span class="cm">/* @var $model app\models\LoginForm */</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">title</span> <span class="o">=</span> <span class="s1">&#39;Login&#39;</span><span class="p">;</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+<span class="x">&lt;h1&gt;</span><span class="cp">&lt;?</span><span class="o">=</span> <span class="nx">Html</span><span class="o">::</span><span class="na">encode</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">title</span><span class="p">)</span> <span class="cp">?&gt;</span><span class="x">&lt;/h1&gt;</span>
+
+<span class="x">&lt;p&gt;Please fill out the following fields to login:&lt;/p&gt;</span>
+
+<span class="cp">&lt;?php</span> <span class="nv">$form</span> <span class="o">=</span> <span class="nx">ActiveForm</span><span class="o">::</span><span class="na">begin</span><span class="p">();</span> <span class="cp">?&gt;</span><span class="x"></span>
+<span class="x">    </span><span class="cp">&lt;?</span><span class="o">=</span> <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">field</span><span class="p">(</span><span class="nv">$model</span><span class="p">,</span> <span class="s1">&#39;username&#39;</span><span class="p">)</span> <span class="cp">?&gt;</span><span class="x"></span>
+<span class="x">    </span><span class="cp">&lt;?</span><span class="o">=</span> <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">field</span><span class="p">(</span><span class="nv">$model</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">passwordInput</span><span class="p">()</span> <span class="cp">?&gt;</span><span class="x"></span>
+<span class="x">    </span><span class="cp">&lt;?</span><span class="o">=</span> <span class="nx">Html</span><span class="o">::</span><span class="na">submitButton</span><span class="p">(</span><span class="s1">&#39;Login&#39;</span><span class="p">)</span> <span class="cp">?&gt;</span><span class="x"></span>
+<span class="cp">&lt;?php</span> <span class="nx">ActiveForm</span><span class="o">::</span><span class="na">end</span><span class="p">();</span> <span class="cp">?&gt;</span><span class="x"></span>
+</pre></div>
+
+
+<p>在视图中，可以通过访问<code>$this</code>（指向<a href="http://www.yiiframework.com/doc-2.0/yii-web-view.html">yii\web\View</a>）来管理和渲染这个视图文件。</p>
+<p>除了<code>$this</code>之外，上述示例中的视图有其它预定义变量如<code>$model</code>，这些变量代表从控制器或其它触发视图渲染的对象传入到视图的数据。</p>
+<p>小技巧：将预定义变量列在视图文件头部注释处，这样儿可以被IDE编辑器识别到，也是生成视图文档的好方法。</p>
+<h5>安全</h5>
+<p>当创建生成HTML页面的视图时，在显示之前将用户输入数据进行转码和过滤是非常重要的，否则你的应用可能会被<a href="http://en.wikipedia.org/wiki/Cross-site_scripting">跨站脚本</a>攻击。</p>
+<p>要显示纯文本，先调用yii\helpers\Html::encode()进行转码，例如如下代码将用户名在显示前先进行转码操作：</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">yii\helpers\Html</span><span class="p">;</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+
+<span class="x">&lt;div class=&quot;username&quot;&gt;</span>
+<span class="x">    </span><span class="cp">&lt;?</span><span class="o">=</span> <span class="nx">Html</span><span class="o">::</span><span class="na">encode</span><span class="p">(</span><span class="nv">$user</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">)</span> <span class="cp">?&gt;</span><span class="x"></span>
+<span class="x">&lt;/div&gt;</span>
+</pre></div>
+
+
+<p>要显示HTML内容，先调用yii\helpers\HtmlPurifier过滤内容，例如如下代码将提交内容在显示前先过滤：</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">yii\helpers\HtmlPurifier</span><span class="p">;</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+
+<span class="x">&lt;div class=&quot;post&quot;&gt;</span>
+<span class="x">    </span><span class="cp">&lt;?</span><span class="o">=</span> <span class="nx">HtmlPurifier</span><span class="o">::</span><span class="na">process</span><span class="p">(</span><span class="nv">$post</span><span class="o">-&gt;</span><span class="na">text</span><span class="p">)</span> <span class="cp">?&gt;</span><span class="x"></span>
+<span class="x">&lt;/div&gt;</span>
+</pre></div>
+
+
+<p>小技巧：HTMLPurifier在保证输出数据的安全性上做的不错，但是性能不佳，如果你的应用需要高性能可能需要考虑<a href="http://www.yiiframework.com/doc-2.0/guide-caching-overview.html">缓存</a>过滤后的结果。</p>
+<h5>组织视图</h5>
+<p>与控制器和模型类似，在组织视图上有一些约定：</p>
+<ul>
+<li>控制器渲染的视图文件默认放在<code>@app/views/ControllerID</code>目录下，其中<code>ControllerID</code>对应控制器ID，例如控制器类为<code>PostController</code>，则对应的视图文件目录应该为<code>@app/views/post</code>，控制器类<code>PostCommentController</code>对应的目录应该为<code>@app/views/post-comment</code>，如果是模块中的控制器，目录应该为yii\base\Module::basePath模块目录下的<code>views/ControllerID</code>目录；</li>
+<li>对于小部件徐然的视图文件默认放在<code>WidgetPath/views</code>目录，其中<code>WidgetPath</code>代表小部件类文件所在的目录；</li>
+<li>对于其他对象渲染的视图文件，建议遵循和小部件相似的规则</li>
+</ul>
+<p>可以通过覆盖控制器或者小部件的yii\base\ViewContextInterface::getViewPath()方法来自定义视图文件默认目录。</p>
+<h4>渲染视图</h4>
+<p>我们可以在控制器、小部件，或者其他地方调用渲染视图的方法来渲染视图，该方法类似以下的格式：</p>
+<div class="highlight"><pre><span></span><span class="x">/**</span>
+<span class="x"> * @param string $view 命名视图或文件路径，由实际的渲染方法决定</span>
+<span class="x"> * @param array $params 传递给视图的数据</span>
+<span class="x"> * @return string 渲染结果</span>
+<span class="x"> */</span>
+<span class="x">methodName($view, $params = [])</span>
+</pre></div>
+
+
+<h5>在控制器中渲染</h5>
+<p>在控制器中，我们可以通过调用以下控制器方法来渲染视图：</p>
+<ul>
+<li>yii\base\Controller::render():渲染一个命名视图并使用一个布局渲染结果</li>
+<li>yii\base\Controller::renderPartial():渲染一个命名的视图并且不使用布局</li>
+<li>yii\web\Controller::renderAjax():渲染一个命名视图并且不适用布局，并且注入所有注册的JS/CSS脚本和文件等，通常在响应AJAX网页请求的情况下使用</li>
+<li>yii\base\Controller::renderFile():渲染一个视图文件目录或别名下的视图文件</li>
+</ul>
+<p>例如：</p>
+<div class="highlight"><pre><span></span><span class="x">namespace app\controllers;</span>
+
+<span class="x">use Yii;</span>
+<span class="x">use app\models\Post;</span>
+<span class="x">use yii\web\Controller;</span>
+<span class="x">use yii\web\NotFoundHttpException;</span>
+
+<span class="x">class PostController extends Controller</span>
+<span class="x">{</span>
+<span class="x">    public function actionView($id)</span>
+<span class="x">    {</span>
+<span class="x">        $model = Post::findOne($id);</span>
+<span class="x">        if ($model === null) {</span>
+<span class="x">            throw new NotFoundHttpException;</span>
+<span class="x">        }</span>
+
+<span class="x">        // 渲染一个名称为&quot;view&quot;的视图并使用布局</span>
+<span class="x">        return $this-&gt;render(&#39;view&#39;, [</span>
+<span class="x">            &#39;model&#39; =&gt; $model,</span>
+<span class="x">        ]);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</pre></div>
+
+
+<h5>在小部件中渲染</h5>
+<p>在小部件中，我们可以调用以下的小部件方法来渲染视图：</p>
+<ul>
+<li>yii\base\Widget::render():渲染一个命名的视图</li>
+<li>yii\base\Widget::renderFile():渲染一个视图文件目录或者别名下的视图文件</li>
+</ul>
+<p>例如：</p>
+<div class="highlight"><pre><span></span><span class="x">namespace app\components;</span>
+
+<span class="x">use yii\base\Widget;</span>
+<span class="x">use yii\helpers\Html;</span>
+
+<span class="x">class ListWidget extends Widget</span>
+<span class="x">{</span>
+<span class="x">    public $items = [];</span>
+
+<span class="x">    public function run()</span>
+<span class="x">    {</span>
+<span class="x">        // 渲染一个名为 &quot;list&quot; 的视图</span>
+<span class="x">        return $this-&gt;render(&#39;list&#39;, [</span>
+<span class="x">            &#39;items&#39; =&gt; $this-&gt;items,</span>
+<span class="x">        ]);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</pre></div>
+
+
+<h5>在视图中渲染</h5>
+<p>我们可以通过视图组件提供的如下方法在一个视图中调用另一个视图：</p>
+<ul>
+<li>yii\base\View::render():渲染一个命名视图</li>
+<li>yii\web\View::renderAjax():渲染一个命名视图并注入所有注册的JS/CSS脚本和文件，通常在响应AJAX网页请求的情况下使用</li>
+<li>yii\base\View::renderFile():渲染一个视图文件目录或者别名下的视图文件</li>
+</ul>
+<p>例如，视图中的如下代码会渲染该视图所在目录下的<code>_overview.php</code>视图文件，这里需要记住的是视图中的<code>$this</code>对应的是yii\base\View组件：</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?</span><span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">render</span><span class="p">(</span><span class="s1">&#39;_overview&#39;</span><span class="p">)</span> <span class="cp">?&gt;</span><span class="x"></span>
+</pre></div>
+
+
+<h5>在其他地方渲染</h5>
+<p>在任何地方都可以通过表达式<code>Yii::$app-&gt;view</code>来访问yii\base\View应用组件，调用它的如上所述的方法来渲染视图，例如：</p>
+<div class="highlight"><pre><span></span><span class="x">// 显示视图文件 &quot;@app/views/site/license.php&quot;</span>
+<span class="x">echo \Yii::$app-&gt;view-&gt;renderFile(&#39;@app/views/site/license.php&#39;);</span>
+</pre></div>
+
+
+<h5>命名视图</h5>
+<p>当我们渲染一个视图的时候，我们可以通过两种方式来指定要渲染的视图，要么指定视图名，要么指定视图文件的路径/别名，在大多数情况下，我们更多的是使用前者因为它更加简洁和灵活。我们可以将这些通过名字来指定的视图为命名视图。</p>
+<p>通过如下规则可以将一个视图名与相应的视图文件路径对应起来：</p>
+<ul>
+<li>视图名可以省略文件扩展名，这种情况下使用<code>.php</code>作为扩展名，视图名<code>about</code>对应到<code>about.php</code>文件名；</li>
+<li>视图名以双斜杠<code>//</code>开头，对应的视图文件路径为<code>@app/views/ViewName</code>，也就是说视图文件在yii\base\Application::viewPath路径下找，例如<code>//site/about</code>对应到<code>@app/views/site/about.php</code>。</li>
+<li>视图名以单斜杠<code>/</code>开始，视图文件路径以当前使用模块的yii\base\Module::viewPath开始，如果不存在模块，使用<code>@app/views/ViewName</code>开始，例如，如果当前模块是<code>user</code>，<code>/user/create</code>对应<code>@app/modules/user/views/create.php</code>，如果模块不存在，<code>/user/create</code>则对应<code>@app/views/user/create.php</code>。</li>
+<li>如果是通过yii\base\View::context的方式渲染视图并且实现了yii\base\ViewContextInterface接口，视图文件的路径由Context上下文的yii\base\ViewContextInterface::getViewPath()开始，这种方式主要用在控制器和小部件中渲染视图，例如如果上下文为控制器<code>SiteController</code>，<code>site/about</code>对应到<code>@app/views/site/about.php</code>。</li>
+<li>如果A视图是在B视图中被调用渲染，那么B视图所在的目录会被作为A视图所对应的路径的前缀。例如，如果<code>item</code>视图在<code>@app/views/post/index.php</code>视图中被调用渲染，那么<code>item</code>视图对应的就是<code>@app/views/post/item.php</code>。</li>
+</ul>
+<p>根据上述规则，在控制器中<code>app\controllers\PostController</code>调用<code>$this-&gt;render('view')</code>，实际上会渲染<code>@app/views/post/view.php</code>视图文件，而在<code>@app/views/post/view.php</code>视图文件中调用<code>$this-&gt;render('_overview')</code>会渲染<code>@app/views/post/_overview.php</code>视图文件。</p>
+<h5>在视图中访问数据</h5>
+<p>在视图中有两种方式可以访问数据：推送和拉取。</p>
+<p>推送方式是通过视图渲染方法的第二个参数传递数据来实现的，数据格式应为名称-值的数组，视图渲染时，调用PHP的<code>extract()</code>方法将该数组转换为视图可以访问的变量。例如，如下控制器的渲染视图代码推送2个变量到<code>report</code>视图：<code>$foo=1</code>和<code>$bar=2</code>。</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">echo</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">render</span><span class="p">(</span><span class="s1">&#39;report&#39;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="s1">&#39;foo&#39;</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s1">&#39;bar&#39;</span> <span class="o">=&gt;</span> <span class="mi">2</span><span class="p">,</span>
+<span class="p">]);</span>
+</pre></div>
+
+
+<p>拉取方式可以让视图从yii\base\View视图组件或其他对象中主动获得数据（如<code>Yii::$app</code>），在视图中使用如下表达式<code>$this-&gt;context</code>可以获取到控制器ID，由此可以让你在<code>report</code>视图中获取控制器的任意属性或方法，如下代码用来获取控制器ID：</p>
+<div class="highlight"><pre><span></span><span class="x">The controller ID is: </span><span class="cp">&lt;?</span><span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">context</span><span class="o">-&gt;</span><span class="na">id</span> <span class="cp">?&gt;</span><span class="x"></span>
+</pre></div>
+
+
+<p>推送方式让视图可以更少的依赖上下文对象，是视图获取数据的优先使用方式，缺点是需要手动构建数组，这点儿比较繁琐，在不同的地方渲染的时候容易出错。</p>
+<h5>视图间共享数据</h5>
+<p>yii\base\View视图组件提供yii\base\View:params参数属性来让不同视图共享数据</p>
+<p>例如在<code>about</code>视图中，我们可以使用如下代码指定面包屑导航的当前部分：</p>
+<div class="highlight"><pre><span></span><span class="x">$this-&gt;params[&#39;breadcrumbs&#39;][] = &#39;About Us&#39;;</span>
+</pre></div>
+
+
+<p>然后，在布局文件（也是一个视图）中，我们可以将面包屑导航显示出来：</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?</span><span class="o">=</span> <span class="nx">yii\widgets\Breadcrumbs</span><span class="o">::</span><span class="na">widget</span><span class="p">([</span>
+    <span class="s1">&#39;links&#39;</span> <span class="o">=&gt;</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">params</span><span class="p">[</span><span class="s1">&#39;breadcrumbs&#39;</span><span class="p">])</span> <span class="o">?</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">params</span><span class="p">[</span><span class="s1">&#39;breadcrumbs&#39;</span><span class="p">]</span> <span class="o">:</span> <span class="p">[],</span>
+<span class="p">])</span> <span class="cp">?&gt;</span><span class="x"></span>
+</pre></div>
+
+
+<h4>布局</h4>
+<p>布局是一种特殊的视图，代表多个视图的公共部分，例如，大多数Web应用共享相同的页头和页尾，在每个视图中重复相同的页头和页尾，更好的方式是将这些公共部分放到一个布局中，渲染内容视图后在合适的地方嵌入到布局中。</p>
+<h5>创建布局</h5>
+<p>由于布局也是视图，它可以像普通视图一样创建，布局默认存储在<code>@app/views/layouts</code>路径下，模块中使用的布局应存储在yii\base\Module::basePath模块目录下的<code>views/layouts</code>路径下，可配置yii\base\Module::layoutPath来自定义应用或模块的布局默认路径。</p>
+<p>如下示例是一个布局的大致内容，而该示例简化了很多代码，在实际中可能我们想要添加更多内容，如头部标签、主菜单等。</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">yii\helpers\Html</span><span class="p">;</span>
+
+<span class="cm">/* @var $this yii\web\View */</span>
+<span class="cm">/* @var $content string 字符串 */</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+<span class="cp">&lt;?php</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">beginPage</span><span class="p">()</span> <span class="cp">?&gt;</span><span class="x"></span>
+<span class="x">&lt;!DOCTYPE html&gt;</span>
+<span class="x">&lt;html lang=&quot;en&quot;&gt;</span>
+<span class="x">&lt;head&gt;</span>
+<span class="x">    &lt;meta charset=&quot;UTF-8&quot;/&gt;</span>
+<span class="x">    </span><span class="cp">&lt;?</span><span class="o">=</span> <span class="nx">Html</span><span class="o">::</span><span class="na">csrfMetaTags</span><span class="p">()</span> <span class="cp">?&gt;</span><span class="x"></span>
+<span class="x">    &lt;title&gt;</span><span class="cp">&lt;?</span><span class="o">=</span> <span class="nx">Html</span><span class="o">::</span><span class="na">encode</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">title</span><span class="p">)</span> <span class="cp">?&gt;</span><span class="x">&lt;/title&gt;</span>
+<span class="x">    </span><span class="cp">&lt;?php</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">head</span><span class="p">()</span> <span class="cp">?&gt;</span><span class="x"></span>
+<span class="x">&lt;/head&gt;</span>
+<span class="x">&lt;body&gt;</span>
+<span class="cp">&lt;?php</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">beginBody</span><span class="p">()</span> <span class="cp">?&gt;</span><span class="x"></span>
+<span class="x">    &lt;header&gt;My Company&lt;/header&gt;</span>
+<span class="x">    </span><span class="cp">&lt;?</span><span class="o">=</span> <span class="nv">$content</span> <span class="cp">?&gt;</span><span class="x"></span>
+<span class="x">    &lt;footer&gt;&amp;copy; 2016 by My Company&lt;/footer&gt;</span>
+<span class="cp">&lt;?php</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">endBody</span><span class="p">()</span> <span class="cp">?&gt;</span><span class="x"></span>
+<span class="x">&lt;/body&gt;</span>
+<span class="x">&lt;/html&gt;</span>
+<span class="cp">&lt;?php</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">endPage</span><span class="p">()</span> <span class="cp">?&gt;</span><span class="x"></span>
+</pre></div>
+
+
+<p>如上所示，布局生成每个页面通用的HTML标签，在<code>&lt;body&gt;</code>标签中，打印<code>$content</code>变量，<code>$content</code>变量代表党yii\base\Controller::render()控制器渲染方法调用时传递到布局的内容视图渲染结果。</p>
+<p>大多数视图应调用上述代码中的如下方法，这些方法触发关于渲染过程的事件，这样儿其他地方注册的脚本和标签会添加到这些方法调用的地方。</p>
+<ul>
+<li>yii\base\View::beginPage():该方法应在布局的开始处调用，它触发表明页面开始的yii\base\View::EVENT_BEGIN_PAGE事件。</li>
+<li>yii\base\View::endPage():该方法应在布局的结尾处调用，它触发表明页面结尾的yii\base\View::EVENT_END_PAGE事件。</li>
+<li>yii\web\View::head():该方法应在HTML页面的<code>&lt;head&gt;</code>标签中调用，它生成一个占位符，在页面渲染结束时会被注册的头部HTML代码（如link标签，meta标签）替换。</li>
+<li>yii\web\View::beginBody():该方法应在<code>&lt;body&gt;</code>标签的开始处调用，它触发yii\web\View::EVENT_BEGIN_BODY事件并生成一个占位符，会被注册的HTML代码（如JavaScript）在页面body体开始处替换。</li>
+<li>yii\web\View::endBody():该方法应在<code>&lt;body&gt;</code>标签的结尾处调用，它触发yii\web\View::EVENT_END_BODY事件并生成一个占位符，会被注册的HTML代码（如JavaScript）在页面body体结尾处替换。</li>
+</ul>
+<h5>在布局中访问数据</h5>
+<p>在布局中可以访问两个预定义变量：<code>$this</code>和<code>$content</code>，前者对应和普通视图类似的yii\base\View视图组件，后者包含调用yii\base\Controller::render()方法渲染内容视图的结果。</p>
+<p>如果想在布局中访问其他数据，必须使用<a href="http://www.yiiframework.com/doc-2.0/guide-structure-views.html#accessing-data-in-views">在视图中访问数据</a>一节中介绍的数据拉取方式，如果想从内容视图中传递数据到布局，可以使用<a href="http://www.yiiframework.com/doc-2.0/guide-structure-views.html#sharing-data-among-views">视图间共享数据</a>一节中的方法。</p>
+<h5>使用布局</h5>
+<p>正如<a href="http://www.yiiframework.com/doc-2.0/guide-structure-views.html#rendering-in-controllers">控制器中渲染</a>一节中描述的，当我们在控制器中通过调用yii\base\Controller::render()方法渲染视图时，布局文件也会同时被应用到渲染结果中。默认情况下会使用<code>@app/views/layouts/main.php</code>作为布局文件。</p>
+<p>我们可以配置yii\base\Application::layout或yii\base\Controller::layout使用其他布局文件，前者管理所有控制器的布局，后者覆盖前者来控制单个控制器的布局。例如，如下的代码使<code>post</code>控制器渲染视图时使用<code>@app/views/layouts/post.php</code>作为布局文件，假如<code>layout</code>属性没改变，控制器默认使用<code>@app/views/layouts/main.php</code>作为布局文件。</p>
+<div class="highlight"><pre><span></span><span class="x">namespace app\controllers;</span>
+
+<span class="x">use yii\web\Controller;</span>
+
+<span class="x">class PostController extends Controller</span>
+<span class="x">{</span>
+<span class="x">    public $layout = &#39;post&#39;;</span>
+
+<span class="x">    // ...</span>
+<span class="x">}</span>
+</pre></div>
+
+
+<p>对于模块中的控制器，我们可以配置模块的yii\base\Module::layout属性指定布局文件，以此应用到该模块下的所有控制器。</p>
+<p>由于<code>layout</code>可以在不同层级（控制器、模块、应用）进行配置，所以在幕后，Yii通过以下两步来判断控制器实际使用的布局文件：</p>
+<p>第一步，判断布局的值和上下文模块：</p>
+<ul>
+<li>如果控制器的yii\base\Controller::$layout属性不为空，则使用该属性作为布局的值，使用控制器所在的模块作为上下文模块。</li>
+<li>如果$layout为空，则从控制器的所有上级模块（ancestor modules，包括应用）开始查找，查找到的第一个yii\base\Module::layout属性不为空的模块作为上下文模块，并将它的yii\base\Module::layout的值作为布局的值，如果都没有找到，则表示不使用布局。</li>
+</ul>
+<p>第二步，根据第一步中布局的值和上下文模块判断实际的布局文件，布局文件的值可能为：</p>
+<ul>
+<li>路径别名（例如<code>@app/views/layouts/main</code>）</li>
+<li>绝对路径（例如<code>/main</code>）：布局的值以斜杠开始。实际的布局文件位于应用的<a href="http://www.yiiframework.com/doc-2.0/yii-base-module.html#$layoutPath-detail">布局文件路径</a>下，默认是<code>@app/views/layouts</code>。</li>
+<li>相对路径（如<code>main</code>）：在上下文模块的yii\base\Module::layoutPath布局文件路径中查找实际的布局文件，默认是yii\base\Module::basePath模块目录下的<code>views/layouts</code>目录。</li>
+<li>布尔值<code>false</code>：不使用布局。</li>
+</ul>
+<p>布局的值没有包含文件的扩展名，默认的扩展名是<code>.php</code></p>
+<h5>嵌套布局</h5>
+<p>有时候我们可能需要将一个布局嵌套到另一个布局中，例如，在Web站点的不同地方，想要使用不同的布局，而这些布局共享相同的生成全局HTML5页面结构的基本布局，这时候我们可以通过在子布局中调用yii\base\View::beginContent()和yii\base\View::endContent()方法，如下所示：</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">beginContent</span><span class="p">(</span><span class="s1">&#39;@app/views/layouts/base.php&#39;</span><span class="p">);</span> <span class="cp">?&gt;</span><span class="x"></span>
+
+<span class="x">...child layout content here...</span>
+
+<span class="cp">&lt;?php</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">endContent</span><span class="p">();</span> <span class="cp">?&gt;</span><span class="x"></span>
+</pre></div>
+
+
+<p>如上所示，自布局内容应在yii\base\View::beginContent()和yii\bse\View::endContent()方法之间，传给yii\base\View::beginContent()的参数指定父布局，父布局可以是布局文件或者别名。</p>
+<p>使用该方式可以多层嵌套布局。</p>
+<h5>使用数据块</h5>
+<p>数据块可以在一个地方指定视图内容在另一个地方显示，通常它需要和布局一起使用，例如，我们可以在内容视图中定义数据块，然后在布局中显示它。</p>
+<p>我们可以通过yii\base\View::beginBlock()和yii\base\View::endBlock()来定义数据块，并且通过<code>$view-&gt;blocks[$blockID]</code>来访问它，其中<code>$blockID</code>是定义数据块时指定的唯一标识ID。</p>
+<p>下面的示例演示了如何在一个内容视图中使用数据块来自定义布局。</p>
+<p>首先，在内容视图中，定义一个或多个数据块：</p>
+<div class="highlight"><pre><span></span><span class="x">...</span>
+
+<span class="cp">&lt;?php</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">beginBlock</span><span class="p">(</span><span class="s1">&#39;block1&#39;</span><span class="p">);</span> <span class="cp">?&gt;</span><span class="x"></span>
+
+<span class="x">...数据块block1的内容...</span>
+
+<span class="cp">&lt;?php</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">endBlock</span><span class="p">();</span> <span class="cp">?&gt;</span><span class="x"></span>
+
+<span class="x">...</span>
+
+<span class="cp">&lt;?php</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">beginBlock</span><span class="p">(</span><span class="s1">&#39;block3&#39;</span><span class="p">);</span> <span class="cp">?&gt;</span><span class="x"></span>
+
+<span class="x">...数据块block3的内容...</span>
+
+<span class="cp">&lt;?php</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">endBlock</span><span class="p">();</span> <span class="cp">?&gt;</span><span class="x"></span>
+</pre></div>
+
+
+<p>然后，在布局视图中，如果数据块可用的话就渲染数据块，如果数据块未定义则显示默认内容。</p>
+<div class="highlight"><pre><span></span><span class="x">...</span>
+<span class="cp">&lt;?php</span> <span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">blocks</span><span class="p">[</span><span class="s1">&#39;block1&#39;</span><span class="p">]))</span><span class="o">:</span> <span class="cp">?&gt;</span><span class="x"></span>
+<span class="x">    </span><span class="cp">&lt;?</span><span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">blocks</span><span class="p">[</span><span class="s1">&#39;block1&#39;</span><span class="p">]</span> <span class="cp">?&gt;</span><span class="x"></span>
+<span class="cp">&lt;?php</span> <span class="k">else</span><span class="o">:</span> <span class="cp">?&gt;</span><span class="x"></span>
+<span class="x">    ... block1的默认内容 ...</span>
+<span class="cp">&lt;?php</span> <span class="k">endif</span><span class="p">;</span> <span class="cp">?&gt;</span><span class="x"></span>
+
+<span class="x">...</span>
+
+<span class="cp">&lt;?php</span> <span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">blocks</span><span class="p">[</span><span class="s1">&#39;block2&#39;</span><span class="p">]))</span><span class="o">:</span> <span class="cp">?&gt;</span><span class="x"></span>
+<span class="x">    </span><span class="cp">&lt;?</span><span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">blocks</span><span class="p">[</span><span class="s1">&#39;block2&#39;</span><span class="p">]</span> <span class="cp">?&gt;</span><span class="x"></span>
+<span class="cp">&lt;?php</span> <span class="k">else</span><span class="o">:</span> <span class="cp">?&gt;</span><span class="x"></span>
+<span class="x">    ... block2的默认内容 ...</span>
+<span class="cp">&lt;?php</span> <span class="k">endif</span><span class="p">;</span> <span class="cp">?&gt;</span><span class="x"></span>
+
+<span class="x">...</span>
+
+<span class="cp">&lt;?php</span> <span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">blocks</span><span class="p">[</span><span class="s1">&#39;block3&#39;</span><span class="p">]))</span><span class="o">:</span> <span class="cp">?&gt;</span><span class="x"></span>
+<span class="x">    </span><span class="cp">&lt;?</span><span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">blocks</span><span class="p">[</span><span class="s1">&#39;block3&#39;</span><span class="p">]</span> <span class="cp">?&gt;</span><span class="x"></span>
+<span class="cp">&lt;?php</span> <span class="k">else</span><span class="o">:</span> <span class="cp">?&gt;</span><span class="x"></span>
+<span class="x">    ... block3的默认内容 ...</span>
+<span class="cp">&lt;?php</span> <span class="k">endif</span><span class="p">;</span> <span class="cp">?&gt;</span><span class="x"></span>
+<span class="x">...</span>
+</pre></div>
+
+
+<h4>使用视图组件</h4>
+<p>yii\base\View视图组件提供了许多视图相关的特性，我们可以通过创建yii\base\View或它的子类实例来获取视图组件，大多数情况下我们主要使用<code>view</code>应用组件，我们可以通过如下所示的方式在配置文件中来配置该组件：</p>
+<div class="highlight"><pre><span></span><span class="x">[</span>
+<span class="x">    // ...</span>
+<span class="x">    &#39;components&#39; =&gt; [</span>
+<span class="x">        &#39;view&#39; =&gt; [</span>
+<span class="x">            &#39;class&#39; =&gt; &#39;app\components\View&#39;,</span>
+<span class="x">        ],</span>
+<span class="x">        // ...</span>
+<span class="x">    ],</span>
+<span class="x">]</span>
+</pre></div>
+
+
+<p>视图组件提供如下实用的视图相关的特性，每项详情将会在后面的独立章节中介绍：</p>
+<ul>
+<li><a href="http://www.yiiframework.com/doc-2.0/guide-output-theming.html">主题</a>：允许我们为自己的Web站点开发和修改主题</li>
+<li><a href="http://www.yiiframework.com/doc-2.0/guide-caching-fragment.html">片段缓存</a>：允许我们在Web页面中缓存片段</li>
+<li><a href="http://www.yiiframework.com/doc-2.0/guide-output-client-scripts.html">客户端脚本处理</a>：支持CSS和JavaScript注册和渲染</li>
+<li><a href="http://www.yiiframework.com/doc-2.0/guide-structure-assets.html">资源包处理</a>：支持资源包的注册和渲染</li>
+<li><a href="http://www.yiiframework.com/doc-2.0/guide-tutorial-template-engines.html">模板引擎</a>：允许你使用其他模板引擎，如<a href="http://twig.sensiolabs.org/">Twig</a>、<a href="http://www.smarty.net/">Smarty</a>等</li>
+</ul>
+<p>当然了，在我们开发Web页面的时候，我们可能也会频繁的用到下面的一些实用的小特性。</p>
+<h5>设置页面标题</h5>
+<p>每个Web页面都应该有一个标题，正常情况下标题的标签显示在布局中，但实际上标题大多由内容视图而不是布局来决定，为了解决这个问题，yii\web\View提供了yii\web\View::title标题属性，可以让标题信息从内容视图传递到布局中。</p>
+<p>为了使用该特性，在每个内容视图中，我们都可以通过如下所示的代码来设置页面标题：</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">title</span> <span class="o">=</span> <span class="s1">&#39;我的页面标题&#39;</span><span class="p">;</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+</pre></div>
+
+
+<p>然后在布局中，确保我们在<code>&lt;head&gt;</code>区域有如下的代码：</p>
+<div class="highlight"><pre><span></span><span class="x">&lt;title&gt;</span><span class="cp">&lt;?</span><span class="o">=</span> <span class="nx">Html</span><span class="o">::</span><span class="na">encode</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">title</span><span class="p">)</span> <span class="cp">?&gt;</span><span class="x">&lt;/title&gt;</span>
+</pre></div>
+
+
+<h5>注册Meta元标签</h5>
+<p>Web页面通常需要生成各种元标签用以提供给不同的浏览器，如<code>&lt;head&gt;</code>中的页面标题。元标签通常在布局中生成。</p>
+<p>如果想要在内容视图中生成原标签，我们可以通过在内容视图中调用yii\web\View::registerMetaTag()方法，如下所示：</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">registerMetaTag</span><span class="p">([</span><span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;keywords&#39;</span><span class="p">,</span> <span class="s1">&#39;content&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;yii, framework, php&#39;</span><span class="p">]);</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+</pre></div>
+
+
+<p>上述代码会通过视图组件注册一个“keywords”元标签，注册的元标签通常会在布局渲染结束之后渲染。当我们在某处调用yii\web\View::head()方法时，如下HTML代码将会生成并且插入调用yii\web\View::head()方法的地方：</p>
+<div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">meta</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;keywords&quot;</span> <span class="na">content</span><span class="o">=</span><span class="s">&quot;yii, framework, php&quot;</span><span class="p">&gt;</span>
+</pre></div>
+
+
+<p>这里需要注意的是，如果我们多次调用yii\web\View::registerMetaTag()方法，则会多次注册元标签，不论后面注册的元标签是否会重复。</p>
+<p>所以为了确保每种元标签只有一个，我们可以在调用方法时指定键作为第二个参数，例如，如下代码注册了两次“description”元标签，但只有第二次会渲染：</p>
+<div class="highlight"><pre><span></span><span class="x">$this-&gt;registerMetaTag([&#39;name&#39; =&gt; &#39;description&#39;, &#39;content&#39; =&gt; &#39;This is my cool website made with Yii!&#39;], &#39;description&#39;);</span>
+<span class="x">$this-&gt;registerMetaTag([&#39;name&#39; =&gt; &#39;description&#39;, &#39;content&#39; =&gt; &#39;This website is about funny raccoons.&#39;], &#39;description&#39;);</span>
+</pre></div>
+
+
+<h5>注册链接标签</h5>
+<p>和Meta标签类似，链接标签有时候也很实用，如自定义网站图标，指定Rss订阅，或授权OpenID到其他服务器，使用方法也和元标签类似，通过调用yii\web\View::registerLinkTag()，例如，在内容视图中注册链接标签，如下所示：</p>
+<div class="highlight"><pre><span></span><span class="x">$this-&gt;registerLinkTag([</span>
+<span class="x">    &#39;title&#39; =&gt; &#39;Live News for Yii&#39;,</span>
+<span class="x">    &#39;rel&#39; =&gt; &#39;alternate&#39;,</span>
+<span class="x">    &#39;type&#39; =&gt; &#39;application/rss+xml&#39;,</span>
+<span class="x">    &#39;href&#39; =&gt; &#39;http://www.yiiframework.com/rss.xml/&#39;,</span>
+<span class="x">]);</span>
+</pre></div>
+
+
+<p>上述代码会转换成：</p>
+<div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">link</span> <span class="na">title</span><span class="o">=</span><span class="s">&quot;Live News for Yii&quot;</span> <span class="na">rel</span><span class="o">=</span><span class="s">&quot;alternate&quot;</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;application/rss+xml&quot;</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;http://www.yiiframework.com/rss.xml/&quot;</span><span class="p">&gt;</span>
+</pre></div>
+
+
+<p>和yii\web\View::registerMetaTag()类似，我们可以通过指定键来避免生成重复的链接标签。</p>
+<h4>视图事件</h4>
+<p>yii\base\View视图组件会在视图渲染过程中触发几个事件，我们可以在内容发送给终端用户前，通过响应这些事件来添加内容到视图中或是处理相应的渲染结果。</p>
+<ul>
+<li>yii\base\View:EVENT_BEFORE_RENDER:在控制器渲染文件开始时触发，该事件可以设置yii\base\ViewEvent::isValid为false来取消视图渲染</li>
+<li>yii\base\View::EVENT_AFTER_RENDER:在布局中调用yii\base\View::beginPage()时触发，该事件可以获取yii\base\ViewEvent::output的渲染结果，可以通过修改该属性来修改渲染结果</li>
+<li>yii\base\View::EVENT_BEGIN_PAGE:在布局调用yii\base\View::beginPage()时触发</li>
+<li>yii\base\View::EVENT_END_PAGE:在布局调用yii\base\View::endPage()时触发</li>
+<li>yii\base\View::EVENT_BEGIN_BODY:在布局调用yii\base\View::beginBody()时触发</li>
+<li>yii\base\View::EVENT_END_BODY:在布局调用yii\base\View::endBody()时触发</li>
+</ul>
+<p>例如，如下代码将当前日期添加到页面结尾处：</p>
+<div class="highlight"><pre><span></span><span class="x">\Yii::$app-&gt;view-&gt;on(View::EVENT_END_BODY, function () {</span>
+<span class="x">    echo date(&#39;Y-m-d&#39;);</span>
+<span class="x">});</span>
+</pre></div>
+
+
+<h4>渲染静态页面</h4>
+<p>静态页面指的是大部分内容为静态的不需要控制器传递动态数据的Web页面</p>
+<p>我们可以将HTML代码放在视图中，然后在控制器中使用如下代码输出静态页面：</p>
+<div class="highlight"><pre><span></span><span class="x">public function actionAbout()</span>
+<span class="x">{</span>
+<span class="x">    return $this-&gt;render(&#39;about&#39;);</span>
+<span class="x">}</span>
+</pre></div>
+
+
+<p>如果Web站点包含很多静态页面，多次重复相似的代码会显得很繁琐，为了解决这个问题，我们可以使用控制器中的一个被称为yii\web\ViewAction的独立操作。例如：</p>
+<div class="highlight"><pre><span></span><span class="x">namespace app\controllers;</span>
+
+<span class="x">use yii\web\Controller;</span>
+
+<span class="x">class SiteController extends Controller</span>
+<span class="x">{</span>
+<span class="x">    public function actions()</span>
+<span class="x">    {</span>
+<span class="x">        return [</span>
+<span class="x">            &#39;page&#39; =&gt; [</span>
+<span class="x">                &#39;class&#39; =&gt; &#39;yii\web\ViewAction&#39;,</span>
+<span class="x">            ],</span>
+<span class="x">        ];</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</pre></div>
+
+
+<p>现在，如果你在<code>@app/views/site/pages</code>目录下创建名为<code>about</code>的视图，可以通过如下的URL显示该视图：</p>
+<div class="highlight"><pre><span></span>http://hostname/index.php?r=site/page&amp;view=about
+</pre></div>
+
+
+<p><code>GET</code>中的<code>view</code>参数告知yii\web\ViewAction操作，确定要请求哪个视图，然后操作在<code>@app/views/site/pages</code>目录下寻找该视图，可以通过配置yii\web\WebAction::viewPrefix来修改搜索视图的目录。</p>
+<h4>最佳实践</h4>
+<p>视图负责将模型的数据以用户想要的格式展示，总的来说，视图：</p>
+<ul>
+<li>应该主要包含展示代码，如HTML，和简单的PHP代码来控制、格式化和渲染数据</li>
+<li>不应该包含执行数据查询的代码，这种类型的代码最好放在模型中</li>
+<li>应该避免直接访问请求数据，如<code>$_GET</code>、<code>$_POST</code>，这种应该放在控制器中执行，如果需要请求数据，应该由控制器推送到视图</li>
+<li>可以读取模型属性，但不应该修改它们</li>
+</ul>
+<p>为了使模型更加易于维护，避免创建太复杂或者包含太多冗余代码的视图，为了达到这个目标我们可以遵循以下方法：</p>
+<ul>
+<li>使用布局来展示公共代码（如，页面头部、尾部）</li>
+<li>将复杂的视图拆分成几个小视图，可以使用上面描述的渲染方法将这些小视图渲染并组装成大视图</li>
+<li>创建并使用小部件作为视图的数据块</li>
+<li>创建并使用助手类在视图中转换和格式化数据</li>
+</ul><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-13-application-structure-viewsying-yong-jie-gou-zhi-shi-tu.html#disqus_thread">comments</a></p>            </article>
+
+
+                <hr  class="gradient"/>
+
+
+        
+
+
+            <article>
                 <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-12-application-structure-modelsying-yong-jie-gou-zhi-mo-xing.html"><h3 class="article-title">Yii2学习笔记系列12——Application Structure-Models（应用结构之模型）</h3></a>
 <h6 class="subheader" title="2016-04-17T16:50:19+08:00">日 17 四月 2016
 </h6>
@@ -65,350 +559,15 @@
 <p><code>Model</code>类也是更多高级模型例如Active Record活动记录类的基类，更多关于高级模型的详情请参考相关手册。</p>
 <p>注意：模型并不强制一定要继承yii\base\Model，但是由于很多组件支持yii\base\Model，所以最好使用它作为模型基类。</p>
 <h4>属性</h4>
-<p>模型通过属性来代表业务数据，每个属性都像是模型的公有可访问属性，yii\base\Modell::attributes()方法制定了模型类包含的属性。</p>
-<p>我们可以像访问一个对象的属性一样来访问模型的属性：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="nv">$model</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\app\models\ContactForm</span><span class="p">;</span>
-
-<span class="c1">// &quot;name&quot;是ContactForm模型的属性</span>
-<span class="nv">$model</span><span class="o">-&gt;</span><span class="na">name</span> <span class="o">=</span> <span class="s1">&#39;example&#39;</span><span class="p">;</span>
-<span class="k">echo</span> <span class="nv">$model</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">;</span>
-</pre></div>
-
-
-<p>感谢yii\base\Model提供的<a href="http://php.net/manual/en/class.arrayaccess.php">数组访问（ArrayAccess）</a>和<a href="http://php.net/manual/en/class.arrayiterator.php">数组迭代器（ArrayIterator）</a>，我们可以像访问数组项一样访问属性：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="nv">$model</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\app\models\ContactForm</span><span class="p">;</span>
-
-<span class="c1">// 像访问数组项一样访问属性</span>
-<span class="nv">$model</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;example&#39;</span><span class="p">;</span>
-<span class="k">echo</span> <span class="nv">$model</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">];</span>
-
-<span class="c1">// 数组迭代器</span>
-<span class="k">foreach</span> <span class="p">(</span><span class="nv">$model</span> <span class="k">as</span> <span class="nv">$name</span> <span class="o">=&gt;</span> <span class="nv">$value</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">echo</span> <span class="s2">&quot;</span><span class="si">$name</span><span class="s2">: </span><span class="si">$value\n</span><span class="s2">&quot;</span><span class="p">;</span>
-<span class="p">}</span>
-</pre></div>
-
-
-<h5>定义属性</h5>
-<p>默认情况下，如果你的模型类直接从yii\base\Model继承，所有非静态的公有成员变量都是属性。例如，下述<code>ContactForm</code>模型类中有四个属性<code>name</code>、<code>email</code>、<code>subject</code>和<code>body</code>，<code>ContactForm</code>模型用来代表HTML表单获取的输入数据。</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="k">namespace</span> <span class="nx">app\models</span><span class="p">;</span>
-
-<span class="k">use</span> <span class="nx">yii\base\Model</span><span class="p">;</span>
-
-<span class="k">class</span> <span class="nc">ContactForm</span> <span class="k">extends</span> <span class="nx">Model</span>
-<span class="p">{</span>
-    <span class="k">public</span> <span class="nv">$name</span><span class="p">;</span>
-    <span class="k">public</span> <span class="nv">$email</span><span class="p">;</span>
-    <span class="k">public</span> <span class="nv">$subject</span><span class="p">;</span>
-    <span class="k">public</span> <span class="nv">$body</span><span class="p">;</span>
-<span class="p">}</span>
-</pre></div>
-
-
-<p>另一种方式是通过重写yii\base\Model::attributes()来定义属性，该方法返回模型的属性名，例如yii\db\ActiveRecord返回对应数据表列名作为它的属性名，注意，可能需要重写魔术方法如<code>__get()</code>、<code>__set()</code>以便属性可以像普通对象的属性一样被访问。</p>
-<h5>属性标签</h5>
-<p>当属性显示或获取输入时，经常要显示属性相关标签，例如如果一个属性名为<code>firstName</code>，在某些地方如表单输入或错误信息处，你可能想显示对终端用户来说更友好的<code>First Name</code>标签。</p>
-<p>我们可以通过调用yii\base\Model::getAttributeLabel()方法来获取属性的标签，例如：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="nv">$model</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\app\models\ContactForm</span><span class="p">;</span>
-
-<span class="c1">// 展示为“Name”</span>
-<span class="k">echo</span> <span class="nv">$model</span><span class="o">-&gt;</span><span class="na">getAttributeLabel</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">);</span>
-</pre></div>
-
-
-<p>默认情况下，属性标签通过yii\base\Model::generateAttributeLabel()方法自动从属性名生成，它会自动将驼峰式大小写变量名转换为多个首字母大写的单词，例如userName转换成Username，firstName转换为First Name。</p>
-<p>如果你不想用自动生成的标签，可以通过重写yii\base\Model::attributeLabels()方法明确指定属性标签，例如：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="k">namespace</span> <span class="nx">app\models</span><span class="p">;</span>
-
-<span class="k">use</span> <span class="nx">yii\base\Model</span><span class="p">;</span>
-
-<span class="k">class</span> <span class="nc">ContactForm</span> <span class="k">extends</span> <span class="nx">Model</span>
-<span class="p">{</span>
-    <span class="k">public</span> <span class="nv">$name</span><span class="p">;</span>
-    <span class="k">public</span> <span class="nv">$email</span><span class="p">;</span>
-    <span class="k">public</span> <span class="nv">$subject</span><span class="p">;</span>
-    <span class="k">public</span> <span class="nv">$body</span><span class="p">;</span>
-
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">attributeLabels</span><span class="p">()</span>
-    <span class="p">{</span>
-        <span class="k">return</span> <span class="p">[</span>
-            <span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Your name&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;email&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Your email address&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;subject&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Subject&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;body&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Content&#39;</span><span class="p">,</span>
-        <span class="p">];</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-
-
-<p>对于支持多语言的应用，我们可能需要对属性标签进行翻译，这个需求也可以通过yii\base\Model::attributeLabels()方法来实现，如下所示：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="k">public</span> <span class="k">function</span> <span class="nf">attributeLabels</span><span class="p">()</span>
-<span class="p">{</span>
-    <span class="k">return</span> <span class="p">[</span>
-        <span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="nx">\Yii</span><span class="o">::</span><span class="na">t</span><span class="p">(</span><span class="s1">&#39;app&#39;</span><span class="p">,</span> <span class="s1">&#39;Your name&#39;</span><span class="p">),</span>
-        <span class="s1">&#39;email&#39;</span> <span class="o">=&gt;</span> <span class="nx">\Yii</span><span class="o">::</span><span class="na">t</span><span class="p">(</span><span class="s1">&#39;app&#39;</span><span class="p">,</span> <span class="s1">&#39;Your email address&#39;</span><span class="p">),</span>
-        <span class="s1">&#39;subject&#39;</span> <span class="o">=&gt;</span> <span class="nx">\Yii</span><span class="o">::</span><span class="na">t</span><span class="p">(</span><span class="s1">&#39;app&#39;</span><span class="p">,</span> <span class="s1">&#39;Subject&#39;</span><span class="p">),</span>
-        <span class="s1">&#39;body&#39;</span> <span class="o">=&gt;</span> <span class="nx">\Yii</span><span class="o">::</span><span class="na">t</span><span class="p">(</span><span class="s1">&#39;app&#39;</span><span class="p">,</span> <span class="s1">&#39;Content&#39;</span><span class="p">),</span>
-    <span class="p">];</span>
-<span class="p">}</span>
-</pre></div>
-
-
-<p>我们甚至可以根据条件定义属性标签，例如通过使用模型的<a href="http://www.yiiframework.com/doc-2.0/guide-structure-models.html#scenarios">场景</a>， 可对相同的属性返回不同的标签。</p>
-<p>补充：属性标签是视图一部分，但是在模型中申明标签通常非常方便，并可行程非常简洁可重用代码。</p>
-<h4>场景</h4>
-<p>模型可以在多个场景下使用，例如User模块可能会在收集用户登录输入或者用户注册时使用，在不同的场景下，模型可能会使用不同的业务规则和逻辑，例如email属性在注册时强制必须有，但在登录时则非必要。</p>
-<p>模型使用yii\base\Model::scenario属性保持使用场景的跟踪，默认情况下，模型支持一个名为<code>default</code>的场景，如下展示了两种设置场景的方法：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="c1">// 场景作为属性来设置</span>
-<span class="nv">$model</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">User</span><span class="p">;</span>
-<span class="nv">$model</span><span class="o">-&gt;</span><span class="na">scenario</span> <span class="o">=</span> <span class="s1">&#39;login&#39;</span><span class="p">;</span>
-
-<span class="c1">// 场景通过构造初始化配置来设置</span>
-<span class="nv">$model</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">User</span><span class="p">([</span><span class="s1">&#39;scenario&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;login&#39;</span><span class="p">]);</span>
-</pre></div>
-
-
-<p>默认情况下，模型支持的场景由模型中申明的验证规则来决定， 但你可以通过重写yii\base\Model::scenarios()方法来自定义行为，如下所示：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="k">namespace</span> <span class="nx">app\models</span><span class="p">;</span>
-
-<span class="k">use</span> <span class="nx">yii\db\ActiveRecord</span><span class="p">;</span>
-
-<span class="k">class</span> <span class="nc">User</span> <span class="k">extends</span> <span class="nx">ActiveRecord</span>
-<span class="p">{</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">scenarios</span><span class="p">()</span>
-    <span class="p">{</span>
-        <span class="k">return</span> <span class="p">[</span>
-            <span class="s1">&#39;login&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">],</span>
-            <span class="s1">&#39;register&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">,</span> <span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">],</span>
-        <span class="p">];</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-
-
-<p>补充：在上述和下述的例子中，模型类都是继承yii\db\ActiveRecord， 因为多场景的使用通常发生在活动记录类（Active Record）类中。</p>
-<p><code>scenarios()</code>方法返回一个数组，数组的键是场景名，值为对应的活动属性（active attributes）。活动属性可被块赋值并且遵循验证规则，在上面的例子中，<code>username</code>和<code>password</code>在<code>login</code>场景中启用，而在<code>register</code>场景中，除了<code>username</code>和<code>password</code>之外，<code>email</code>也被启用。</p>
-<p><code>scenarios()</code>方法的默认实现方法会返回所有yii\base\Model::rules()方法中声明的验证规则中的场景，当重写<code>scenarios()</code>方法时，如果你想在默认场景外使用新场景，可以编写类似如下代码：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="k">namespace</span> <span class="nx">app\models</span><span class="p">;</span>
-
-<span class="k">use</span> <span class="nx">yii\db\ActiveRecord</span><span class="p">;</span>
-
-<span class="k">class</span> <span class="nc">User</span> <span class="k">extends</span> <span class="nx">ActiveRecord</span>
-<span class="p">{</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">scenarios</span><span class="p">()</span>
-    <span class="p">{</span>
-        <span class="nv">$scenarios</span> <span class="o">=</span> <span class="k">parent</span><span class="o">::</span><span class="na">scenarios</span><span class="p">();</span>
-        <span class="nv">$scenarios</span><span class="p">[</span><span class="s1">&#39;login&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">];</span>
-        <span class="nv">$scenarios</span><span class="p">[</span><span class="s1">&#39;register&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">,</span> <span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">];</span>
-        <span class="k">return</span> <span class="nv">$scenarios</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-
-
-<p>场景特性主要在验证和属性块赋值中使用，你也可以用于其他目的，例如可基于不同的场景定义不同的属性标签。</p>
-<h4>验证规则</h4>
-<p>当接收到终端用户输入的模型数据时，这些数据应该通过验证以便确保它满足特定的规则（称为验证规则或者业务规则）。例如，给定一个<code>ContactForm</code>模型，你可能需要确保所有的属性不能为空，并且<code>email</code>属性包含一个合法的邮件地址。如果某些属性的值不满足相应的业务规则，系统会展示相应的错误信息，以便帮助用户修正错误。</p>
-<p>我们可以通过调用yii\base\Model::validate()方法来验证接收到的数据，该方法使用yii\base\Model::rules()方法中声明的验证规则来验证每个相关属性，如果没有找到错误会返回true，否则它会将错误信息保存在yii\base\Model::errors属性中，并且返回false，例如：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="nv">$model</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\app\models\ContactForm</span><span class="p">;</span>
-
-<span class="c1">// 用户输入数据赋值到模型属性</span>
-<span class="nv">$model</span><span class="o">-&gt;</span><span class="na">attributes</span> <span class="o">=</span> <span class="nx">\Yii</span><span class="o">::</span><span class="nv">$app</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">post</span><span class="p">(</span><span class="s1">&#39;ContactForm&#39;</span><span class="p">);</span>
-
-<span class="k">if</span> <span class="p">(</span><span class="nv">$model</span><span class="o">-&gt;</span><span class="na">validate</span><span class="p">())</span> <span class="p">{</span>
-    <span class="c1">// 所有输入数据都有效 all inputs are valid</span>
-<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-    <span class="c1">// 验证失败：$errors 是一个包含错误信息的数组</span>
-    <span class="nv">$errors</span> <span class="o">=</span> <span class="nv">$model</span><span class="o">-&gt;</span><span class="na">errors</span><span class="p">;</span>
-<span class="p">}</span>
-</pre></div>
-
-
-<p>我们可以通过重写yii\base\Model::rules()方法，指定模型属性应该满足的规则来声明模型相关验证规则，下面的例子展示了<code>ContactForm</code>模型声明的验证规则：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="k">public</span> <span class="k">function</span> <span class="nf">rules</span><span class="p">()</span>
-<span class="p">{</span>
-    <span class="k">return</span> <span class="p">[</span>
-        <span class="c1">// name, email, subject 和 body 属性必须有值</span>
-        <span class="p">[[</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="s1">&#39;subject&#39;</span><span class="p">,</span> <span class="s1">&#39;body&#39;</span><span class="p">],</span> <span class="s1">&#39;required&#39;</span><span class="p">],</span>
-
-        <span class="c1">// email 属性必须是一个有效的电子邮箱地址</span>
-        <span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="s1">&#39;email&#39;</span><span class="p">],</span>
-    <span class="p">];</span>
-<span class="p">}</span>
-</pre></div>
-
-
-<p>一条规则可用来验证一个或多个属性，一个属性可以对应一条或者多条规则，详情参考<a href="http://www.yiiframework.com/doc-2.0/guide-input-validation.html">验证输入</a>一节。</p>
-<p>有时候我们只想在某个场景下应用一条规则，为此我们可以指定规则的<code>on</code>属性，如下所示：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="k">public</span> <span class="k">function</span> <span class="nf">rules</span><span class="p">()</span>
-<span class="p">{</span>
-    <span class="k">return</span> <span class="p">[</span>
-        <span class="c1">// 在&quot;register&quot; 场景下 username, email 和 password 必须有值</span>
-        <span class="p">[[</span><span class="s1">&#39;username&#39;</span><span class="p">,</span> <span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">],</span> <span class="s1">&#39;required&#39;</span><span class="p">,</span> <span class="s1">&#39;on&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;register&#39;</span><span class="p">],</span>
-
-        <span class="c1">// 在 &quot;login&quot; 场景下 username 和 password 必须有值</span>
-        <span class="p">[[</span><span class="s1">&#39;username&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">],</span> <span class="s1">&#39;required&#39;</span><span class="p">,</span> <span class="s1">&#39;on&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;login&#39;</span><span class="p">],</span>
-    <span class="p">];</span>
-<span class="p">}</span>
-</pre></div>
-
-
-<p>如果没有指定<code>on</code>属性，规则会在所有场景下应用，在当前yii\base\Model::scenario下应用的规则被称之为活动规则（acrive rule）。</p>
-<p>一个属性只有在属于<code>scenarios()</code>方法中定义的活动属性并且在<code>rules()</code>方法中声明对应一条或多条活动规则的情况下被验证。</p>
-<h4>块赋值</h4>
-<p>块赋值只用一行代码就可以将用户的所有输入填充到一个模型中，非常方便，它直接将输入数据填充到对应的yii\base\Model::attributes属性中。以下两段代码的效果是相同的，都是将终端用户输入的表单数据赋值到<code>ContactForm</code>模型的属性，明显地前一段块赋值的代码比后一段代码简洁并且不容易出错。</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="nv">$model</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\app\models\ContactForm</span><span class="p">;</span>
-<span class="nv">$model</span><span class="o">-&gt;</span><span class="na">attributes</span> <span class="o">=</span> <span class="nx">\Yii</span><span class="o">::</span><span class="nv">$app</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">post</span><span class="p">(</span><span class="s1">&#39;ContactForm&#39;</span><span class="p">);</span>
-</pre></div>
-
-
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="nv">$model</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\app\models\ContactForm</span><span class="p">;</span>
-<span class="nv">$data</span> <span class="o">=</span> <span class="nx">\Yii</span><span class="o">::</span><span class="nv">$app</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">post</span><span class="p">(</span><span class="s1">&#39;ContactForm&#39;</span><span class="p">,</span> <span class="p">[]);</span>
-<span class="nv">$model</span><span class="o">-&gt;</span><span class="na">name</span> <span class="o">=</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$data</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span> <span class="o">?</span> <span class="nv">$data</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">:</span> <span class="k">null</span><span class="p">;</span>
-<span class="nv">$model</span><span class="o">-&gt;</span><span class="na">email</span> <span class="o">=</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$data</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">])</span> <span class="o">?</span> <span class="nv">$data</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">]</span> <span class="o">:</span> <span class="k">null</span><span class="p">;</span>
-<span class="nv">$model</span><span class="o">-&gt;</span><span class="na">subject</span> <span class="o">=</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$data</span><span class="p">[</span><span class="s1">&#39;subject&#39;</span><span class="p">])</span> <span class="o">?</span> <span class="nv">$data</span><span class="p">[</span><span class="s1">&#39;subject&#39;</span><span class="p">]</span> <span class="o">:</span> <span class="k">null</span><span class="p">;</span>
-<span class="nv">$model</span><span class="o">-&gt;</span><span class="na">body</span> <span class="o">=</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$data</span><span class="p">[</span><span class="s1">&#39;body&#39;</span><span class="p">])</span> <span class="o">?</span> <span class="nv">$data</span><span class="p">[</span><span class="s1">&#39;body&#39;</span><span class="p">]</span> <span class="o">:</span> <span class="k">null</span><span class="p">;</span>
-</pre></div>
-
-
-<h5>安全属性</h5>
-<p>块赋值只会应用在安全属性上（所谓的安全属性，指的是一个模型的当前场景下<code>yii\base\Model::scenarios()</code>中列出的属性），例如，如果<code>User</code>模型声明以下场景，当当前场景是<code>login</code>的时候，只有<code>username</code>和<code>password</code>可以被块赋值，其他属性不会被赋值。</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="k">public</span> <span class="k">function</span> <span class="nf">scenarios</span><span class="p">()</span>
-<span class="p">{</span>
-    <span class="k">return</span> <span class="p">[</span>
-        <span class="s1">&#39;login&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">],</span>
-        <span class="s1">&#39;register&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">,</span> <span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">],</span>
-    <span class="p">];</span>
-<span class="p">}</span>
-</pre></div>
-
-
-<p>补充：块赋值只应用在安全属性上，因为当我们想控制那些属性会被终端用户输入数据所修改，例如，如果当<code>User</code>模型中有一个<code>permisssion</code>属性对应用户的权限，我们可能只想让这个属性在后台被管理员修改。</p>
-<p>由于默认情况yii\base\Model::scenarios()的实现方法会返回yii\base\Model::rules()中所有的属性和数据，如果不重写这个方法，则表示只要出现在活动规则中的属性都是安全的。</p>
-<p>为了，Yii提供了一个特别的别名为<code>safe</code>的验证器来声明哪些属性是安全的并且不需要被验证的，如下示例的规则声明<code>title</code>和<code>description</code>属性都是安全属性。</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="k">public</span> <span class="k">function</span> <span class="nf">rules</span><span class="p">()</span>
-<span class="p">{</span>
-    <span class="k">return</span> <span class="p">[</span>
-        <span class="p">[[</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">],</span> <span class="s1">&#39;safe&#39;</span><span class="p">],</span>
-    <span class="p">];</span>
-<span class="p">}</span>
-</pre></div>
-
-
-<h5>非安全属性</h5>
-<p>如上所述，yii\base\Model::scenarios()方法主要有两个用处：定义哪些属性应该被验证，定义哪些属性是安全属性。但在某些情况下，我们可能想验证一个属性但不想让它是安全属性，这时候我们可以在<code>scenarios()</code>方法中为属性名添加一个叹号<code>!</code>，例如：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="k">public</span> <span class="k">function</span> <span class="nf">scenarios</span><span class="p">()</span>
-<span class="p">{</span>
-    <span class="k">return</span> <span class="p">[</span>
-        <span class="s1">&#39;login&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">,</span> <span class="s1">&#39;!secret&#39;</span><span class="p">],</span>
-    <span class="p">];</span>
-<span class="p">}</span>
-</pre></div>
-
-
-<p>当模型在<code>login</code>场景下，三个属性都会被验证，但只有<code>username</code>和<code>password</code>属性会被块赋值，如果想要对<code>secret</code>属性赋值，需要使用如下的方式：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="nv">$model</span><span class="o">-&gt;</span><span class="na">secret</span> <span class="o">=</span> <span class="nv">$secret</span><span class="p">;</span>
-</pre></div>
-
-
-<h4>数据导出</h4>
-<p>模型通常要导出成不同的格式，例如，我们可能需要将模型的一个集合转换成JSON或者Excel格式，导出过程可以分解为两个步骤，第一步，模型转换成数组；第二步，数组转换成所需要的格式。我们只需要关注第一步，因为第二步可恶意通过数据转换器yii\web\JsonResponseFormatter来完成。</p>
-<p>将模型转换为数组最简单的方式是使用yii\base\Model::attibutes属性，例如：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="nv">$post</span> <span class="o">=</span> <span class="nx">\app\models\Post</span><span class="o">::</span><span class="na">findOne</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
-<span class="nv">$array</span> <span class="o">=</span> <span class="nv">$post</span><span class="o">-&gt;</span><span class="na">attributes</span><span class="p">;</span>
-</pre></div>
-
-
-<p>yii\base\Model::attributes属性会返回所有yii\base\Model::attributes()中声明的属性的值。</p>
-<p>一个更灵活更强大的将模型转换为数组的方式是使用yii\base\Model::toArray()方法，它的行为默认和yii\base\Model::attributes相同，但是它允许我们选择哪些数据项放入到结果数组中并且同时被格式化。实际上，这是导出模型到RESTful网页服务开发的默认方法，详情参考<a href="http://www.yiiframework.com/doc-2.0/guide-rest-response-formatting.html">响应格式</a>。</p>
-<h5>字段</h5>
-<p>字段是模型通过调用<code>yii\base\Model::toArray()</code>生成的数组的单元名。</p>
-<p>默认情况下，字段名对应属性名，但是我们可以通过重写<code>yii\base\Model::fields()</code> 或<code>yii\base\Model::extraFields()</code>方法来改变这种行为，两个方法都返回一个字段定义列表，<code>fields()</code>方法定义的字段是默认字段，表示<code>toArray()</code>方法默认会返回这些字段。 <code>extraFields()</code>方法定义额外的可用字段，通过<code>toArray()</code>方法指定<code>$expand</code>参数来返回这些额外可用字段。例如如下代码会返回<code>fields()</code>方法定义的所有字段和<code>extraFields()</code>方法定义的<code>prettyName</code>和<code>fullAddress</code>字段。</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="nv">$array</span> <span class="o">=</span> <span class="nv">$model</span><span class="o">-&gt;</span><span class="na">toArray</span><span class="p">([],</span> <span class="p">[</span><span class="s1">&#39;prettyName&#39;</span><span class="p">,</span> <span class="s1">&#39;fullAddress&#39;</span><span class="p">]);</span>
-</pre></div>
-
-
-<p>我们可以通过重写<code>fields()</code>来增加、删除、重命名和重定义字段，<code>fields()</code>方法返回值应为数组，数组的键为字段名，数组的值为对应的可为属性名或匿名函数返回的字段定义对应的值。 特使情况下，如果字段名和属性定义名相同，可以省略数组键，例如：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="c1">// 明确列出每个字段，特别用于你想确保数据表或模型属性改变不会导致你的字段改变(保证后端的API兼容).</span>
-<span class="k">public</span> <span class="k">function</span> <span class="nf">fields</span><span class="p">()</span>
-<span class="p">{</span>
-    <span class="k">return</span> <span class="p">[</span>
-        <span class="c1">// 字段名和属性名相同</span>
-        <span class="s1">&#39;id&#39;</span><span class="p">,</span>
-
-        <span class="c1">// 字段名为 &quot;email&quot;，对应属性名为 &quot;email_address&quot;</span>
-        <span class="s1">&#39;email&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;email_address&#39;</span><span class="p">,</span>
-
-        <span class="c1">// 字段名为 &quot;name&quot;, 值通过PHP代码返回</span>
-        <span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">first_name</span> <span class="o">.</span> <span class="s1">&#39; &#39;</span> <span class="o">.</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">last_name</span><span class="p">;</span>
-        <span class="p">},</span>
-    <span class="p">];</span>
-<span class="p">}</span>
-
-<span class="c1">// 过滤掉一些字段，特别用于你想继承父类实现并不想用一些敏感字段</span>
-<span class="k">public</span> <span class="k">function</span> <span class="nf">fields</span><span class="p">()</span>
-<span class="p">{</span>
-    <span class="nv">$fields</span> <span class="o">=</span> <span class="k">parent</span><span class="o">::</span><span class="na">fields</span><span class="p">();</span>
-
-    <span class="c1">// 去掉一些包含敏感信息的字段</span>
-    <span class="nb">unset</span><span class="p">(</span><span class="nv">$fields</span><span class="p">[</span><span class="s1">&#39;auth_key&#39;</span><span class="p">],</span> <span class="nv">$fields</span><span class="p">[</span><span class="s1">&#39;password_hash&#39;</span><span class="p">],</span> <span class="nv">$fields</span><span class="p">[</span><span class="s1">&#39;password_reset_token&#39;</span><span class="p">]);</span>
-
-    <span class="k">return</span> <span class="nv">$fields</span><span class="p">;</span>
-<span class="p">}</span>
-</pre></div>
-
-
-<p>注意：由于模型的所有属性会被包含在导出数组，最好检查数据确保没包含敏感数据， 如果有敏感数据，应覆盖<code>fields()</code>方法过滤掉，在上述列子中，我们选择过滤掉<code>auth_key</code>，<code>password_hash</code>和<code>password_reset_token</code>。</p>
-<h4>最佳实践</h4>
-<p>模型是代表业务数据、规则和逻辑的核心地带，模型经常需要在不同的地方被重用，在一个设计良好的应用中，模型通常比控制器的代码要多不少。</p>
-<p>总结起来就是，模型：</p>
-<ul>
-<li>可以包含属性来展示业务数据；</li>
-<li>可以包含验证规则确保数据有效和完整；</li>
-<li>可以包含方法实现业务逻辑；</li>
-<li>不应该直接访问请求、session会话以及其他环境数据，这些数据应该由控制器传入到模型中；</li>
-<li>应该避免嵌入HTML或者其他展示代码，与HTML或者展示相关的代码最好在视图中进行处理；</li>
-<li>单个模型中避免过多的场景。</li>
-</ul>
-<p>在开发大型复杂系统时，应该经常需要考虑最后一条建议，在这些系统中，模型会很大并且会在很多地方被使用，因此会包含必要的规则集和业务逻辑，最后维护这些模型代码会成为一个噩梦，因为一个简单的修改可能会影响很多地方，为确保模型便于维护，最好使用以下策略：</p>
-<ul>
-<li>定义可以被多个应用主体或者模块共享的模型基类集合，这些模型类应该包含通用的最小规则集合和逻辑。</li>
-<li>在每个使用模型的应用主体或者模块中，通过继承对应的模型基类来定义具体的模型类，具体模型类包含应用主体或者模块指定的规则和逻辑。</li>
-</ul>
-<p>例如，在<a href="https://github.com/yiisoft/yii2-app-advanced/blob/master/docs/guide/README.md">Yii高级模板</a>中，我们可以定义一个模型基类<code>common\models\Post</code>，然后在前台应用中，定义并使用一个继承<code>common\models\Post</code>的具体模型类<code>frontend\models\Post</code>，在后台应用中可以类似地定义<code>backend\models\Post</code>，通过这种策略，我们可以清楚地知道<code>frontend\models\Post</code>只对应前台应用，如果我们修改它，无需担心会影响后台应用。</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+<p>模型通过属性来代表业务数据，每个属性都像是模型的公有可访问属性，yii\base\Modell::attributes()方法制定了模型类包含的属性 ...</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
 
 </p>
 
 
 
-<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-12-application-structure-modelsying-yong-jie-gou-zhi-mo-xing.html#disqus_thread">comments</a></p>            </article>
-
-
+<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-12-application-structure-modelsying-yong-jie-gou-zhi-mo-xing.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-12-application-structure-modelsying-yong-jie-gou-zhi-mo-xing.html">Read More</a>
                 <hr  class="gradient"/>
-
+            </article>
 
         
 
@@ -691,41 +850,6 @@
 
 
 <p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-4-working-with-formsshi-yong-formbiao-dan.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-4-working-with-formsshi-yong-formbiao-dan.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
-
-        
-
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-3-hello-world.html"><h3 class="article-title">Yii2学习笔记系列3——Hello World</h3></a>
-<h6 class="subheader" title="2016-04-05T11:26:37+08:00">二 05 四月 2016
-</h6>
-
-
-<h3>Yii2笔记系列3——Hello World</h3>
-<p>上一篇笔记中简单介绍了Yii的内建功能、如何组织代码以及一般情况下应用如何处理请求，这一篇我们进入熟悉的实现一个“Hello World”的功能，为了实现这一目标，我们需要创建一个操作和一个视图：</p>
-<ul>
-<li>Yii应用会将页面请求分派给相应的action</li>
-<li>action将会依次渲染视图，呈现“Hello World”给最终用户</li>
-</ul>
-<h4>创建action</h4>
-<p>我们这里直接在<code>controllers/SiteController.php</code>中定义一个名为<code>hello</code>的action，以下是主要的代码：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="k">namespace</span> <span class="nx">app\controllers</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">yii\web\Controller</span><span class="p">;</span>
-<span class="k">class</span> <span class="nc">SiteController</span> <span class="k">extends</span> <span class="nx">Controller</span>
-<span class="p">{</span>
-    <span class="c1">// ...其它代码...</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">actionHello</span><span class="p">(</span><span class="nv">$message</span> <span class="o">=</span> <span class="s1">&#39;Hello World&#39;</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">render</span><span class="p">(</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;message ...</span></pre></div><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-3-hello-world.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-3-hello-world.html">Read More</a>
                 <hr  class="gradient"/>
             </article>
 
