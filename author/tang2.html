@@ -49,6 +49,47 @@
 
 
             <article>
+                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-4-working-with-formsshi-yong-formbiao-dan.html"><h3 class="article-title">Yii2学习笔记系列4——Working With Forms（使用Form表单）</h3></a>
+<h6 class="subheader" title="2016-04-06T10:58:53+08:00">三 06 四月 2016
+</h6>
+
+
+<h3>Yii2笔记系列4——Wroking With Forms（使用Form表单）</h3>
+<p>本章节的主要学习目标是学习如何创建一个可以让用户输入数据并提交的表单页，该页面会显示一个包含姓名输入框和Email输入框的表单，当用户提交这两部分信息后，页面将会显示用户输入的信息。</p>
+<p>为了实现这个目标，我们需要创建一个action、两个视图以及一个模型。</p>
+<h4>创建模型</h4>
+<p>这里我们在<code>basic/models</code>下创建一个名为<code>EntryForm</code>的模型类，代表从用户请求的数据，具体代码如下：</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * Created by PhpStorm.</span>
+<span class="sd"> * User: 赵振棠</span>
+<span class="sd"> * Date: 16/4/6</span>
+<span class="sd"> */</span>
+<span class="k">namespace</span> <span class="nx">app\models</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">yii\base\Model</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">EntryForm</span> <span class="k">extends</span> <span class="nx">Model</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="nv">$user_name</span><span class="p">;</span>
+    <span class="k">public</span> <span class="nv">$user_email</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">rules</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return ...</span></pre></div><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-4-working-with-formsshi-yong-formbiao-dan.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-4-working-with-formsshi-yong-formbiao-dan.html">Read More</a>
+                <hr  class="gradient"/>
+            </article>
+
+        
+
+
+            <article>
                 <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-3-hello-world.html"><h3 class="article-title">Yii2学习笔记系列3——Hello World</h3></a>
 <h6 class="subheader" title="2016-04-05T11:26:37+08:00">二 05 四月 2016
 </h6>

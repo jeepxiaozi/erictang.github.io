@@ -49,6 +49,47 @@
 
 
             <article>
+                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-4-working-with-formsshi-yong-formbiao-dan.html"><h3 class="article-title">Yii2学习笔记系列4——Working With Forms（使用Form表单）</h3></a>
+<h6 class="subheader" title="2016-04-06T10:58:53+08:00">三 06 四月 2016
+</h6>
+
+
+<h3>Yii2笔记系列4——Wroking With Forms（使用Form表单）</h3>
+<p>本章节的主要学习目标是学习如何创建一个可以让用户输入数据并提交的表单页，该页面会显示一个包含姓名输入框和Email输入框的表单，当用户提交这两部分信息后，页面将会显示用户输入的信息。</p>
+<p>为了实现这个目标，我们需要创建一个action、两个视图以及一个模型。</p>
+<h4>创建模型</h4>
+<p>这里我们在<code>basic/models</code>下创建一个名为<code>EntryForm</code>的模型类，代表从用户请求的数据，具体代码如下：</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * Created by PhpStorm.</span>
+<span class="sd"> * User: 赵振棠</span>
+<span class="sd"> * Date: 16/4/6</span>
+<span class="sd"> */</span>
+<span class="k">namespace</span> <span class="nx">app\models</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">yii\base\Model</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">EntryForm</span> <span class="k">extends</span> <span class="nx">Model</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="nv">$user_name</span><span class="p">;</span>
+    <span class="k">public</span> <span class="nv">$user_email</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">rules</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return ...</span></pre></div><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-4-working-with-formsshi-yong-formbiao-dan.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-4-working-with-formsshi-yong-formbiao-dan.html">Read More</a>
+                <hr  class="gradient"/>
+            </article>
+
+        
+
+
+            <article>
                 <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-3-hello-world.html"><h3 class="article-title">Yii2学习笔记系列3——Hello World</h3></a>
 <h6 class="subheader" title="2016-04-05T11:26:37+08:00">二 05 四月 2016
 </h6>
@@ -314,36 +355,6 @@ android {
 
 
 <p><a href="http://jeepxiaozi.github.io/androidkai-fa-zhi-gradlebi-ji-zheng-li-2-gradlechang-yong-ming-ling-ji-umengduo-qu-dao-da-bao-shi-zhan.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/androidkai-fa-zhi-gradlebi-ji-zheng-li-2-gradlechang-yong-ming-ling-ji-umengduo-qu-dao-da-bao-shi-zhan.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
-
-        
-
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/androidkai-fa-zhi-gradlebi-ji-zheng-li-1.html"><h3 class="article-title">Android开发之Gradle笔记整理1</h3></a>
-<h6 class="subheader" title="2015-04-05T17:55:50+08:00">日 05 四月 2015
-</h6>
-
-
-<p>在Android开发中，我们经常会涉及到打包的问题，不管是debug包还是release包或者是beta包，又或是形形色色的各种国内的应用市场，即使是常见的应用市场，也不下几十个，所以打包的时候尤其痛苦，好在我们有Gradle。当然，看过美团的Android项目打包方案，也是一个不错的选择，感兴趣的同学也同样可以研究一下：<a href="http://tech.meituan.com/mt-apk-packaging.html">美团Android自动化之旅—生成渠道包</a></p>
-<h5>Gradle是啥？</h5>
-<p>Gradle是一个依赖管理工具，基于Groovy语言，面向java应用为主，它抛弃了各种基于XML的繁琐配置，取而代之的时基于Groovy的内部领域特定语言，即DSL语言。</p>
-<h5>Gradle安装</h5>
-<p>在Mac下，安装了Idea并且启用了Gradle支持的话，首次创建Gradle: Android Module的时候会自动下载Gradle，最好翻墙下载，速度会快一些，当然不翻墙也可以成功下载。</p>
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/64502CCD-3560-49F8-A520-9D2B737FF2F0.png-img.normal" /></p>
-<p>下载之后的Gradle保存在 <code>shell /Users/EricTang/.gradle</code>下</p>
-<h5>Gradle快速入门</h5>
-<p>我们随便新建一个项目，命名为GradleTest，然后我们看一下Gradle的相关配置文件，跟Gradle配置相关的文件主要有：
-一、 GradleTest/GradleTest/build.gradle</p>
-<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/2E9D9E49-7D82-413D-BDDD-6E16C57191E2.png-img.normal" /></p>
-<p>此处的build.gradle是整个Module的Gradle配置文件，也是主要的Gradle配置文件，然后我们看一下主Gradle配置文件的内容以及注释 ...</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/android-develop.html">Android Develop</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/androidkai-fa-zhi-gradlebi-ji-zheng-li-1.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/androidkai-fa-zhi-gradlebi-ji-zheng-li-1.html">Read More</a>
                 <hr  class="gradient"/>
             </article>
 
