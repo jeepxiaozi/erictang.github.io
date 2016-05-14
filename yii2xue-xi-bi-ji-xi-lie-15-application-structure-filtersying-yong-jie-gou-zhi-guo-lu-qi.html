@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8" />
+    <!-- Set the viewport width to device width for mobile -->
+    <meta name="viewport" content="width=device-width" />
+
+    <title>Yii2学习笔记系列15——Application Structure-Filters（应用结构之过滤器）</title>
+
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/normalize.css" />
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/foundation.min.css" />
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/style.css" />
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/pygments.css" />
+    <script src="http://jeepxiaozi.github.io/theme/js/modernizr.js"></script>
+</head>
+
+<body>
+
+    <!-- Nav Bar -->
+    <nav>
+        <div class="top-bar">
+            <div class="row">
+                <div class="large-9 large-centered columns">
+                    <h1><a href="http://jeepxiaozi.github.io">一把汤勺</a></h1>
+                </div>
+            </div>
+        </div>
+
+        <!-- Show menu items and pages -->
+        <div class="row">
+            <div class="large-9 columns">
+                <ul class="button-group navigation">
+                      <li><a href="http://jeepxiaozi.github.io/pages/guan-yu-zuo-zhe.html" class="button secondary small">关于作者</a>
+                    </li>
+                 </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- End Nav -->
+
+
+    <!-- Main Page Content and Sidebar -->
+    <div class="row">
+
+        <!-- Main Blog Content -->
+        <div class="large-9 columns">
+<article>
+    <header>
+        <h3 class="article-title"><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-15-application-structure-filtersying-yong-jie-gou-zhi-guo-lu-qi.html" rel="bookmark"
+        title="Permalink to Yii2学习笔记系列15——Application Structure-Filters（应用结构之过滤器）">Yii2学习笔记系列15——Application Structure-Filters（应用结构之过滤器）</a></h3>
+    </header>
+
+<h6 class="subheader" title="2016-05-13T13:25:08+08:00">五 13 五月 2016
+</h6>
+
+
+    <h3>过滤器</h3>
+<p>过滤器是控制器动作执行之前或之后执行的对象，例如，访问控制过滤器在动作执行之前运行以确保只有具备权限的终端用户才能访问，内容压缩过滤器在动作执行之后发送给终端用户之前运行以压缩响应内容。</p>
+<p>过滤器可能包含 预过滤（过滤逻辑在动作之前）或 后过滤（过滤逻辑在动作之后），也可能同时包含两者。</p>
+<h4>使用过滤器</h4>
+<p>过滤器本质上是一类特殊的行为，所以使用 过滤器 和使用 行为 一样。我们可以通过在控制器类中重写yii\base\Controller::behaviors()方法来声明过滤器，如下所示：</p>
+<div class="highlight"><pre><span></span><span class="x">public function behaviors()</span>
+<span class="x">{</span>
+<span class="x">    return [</span>
+<span class="x">        [</span>
+<span class="x">            &#39;class&#39; =&gt; &#39;yii\filters\HttpCache&#39;,</span>
+<span class="x">            &#39;only&#39; =&gt; [&#39;index&#39;, &#39;view&#39;],</span>
+<span class="x">            &#39;lastModified&#39; =&gt; function ($action, $params) {</span>
+<span class="x">                $q = new \yii\db\Query();</span>
+<span class="x">                return $q-&gt;from(&#39;user&#39;)-&gt;max(&#39;updated_at&#39;);</span>
+<span class="x">            },</span>
+<span class="x">        ],</span>
+<span class="x">    ];</span>
+<span class="x">}</span>
+</pre></div>
+
+
+<p>控制器类的过滤器默认应用到该类的所有action，但我们也可以通过配置yii\base\ActionFilter::only属性来明确指定控制器应用到哪些动作。在上述例子中，<code>HttpCache</code>过滤器只应用到到<code>index</code>和<code>index</code>这两个动作。当然，我们也可以通过配置yii\base\ActionFilter::except属性来使一些动作不执行过滤器。</p>
+<p>除了控制器，我们还可以在模块或者应用主体中声明过滤器。如果这么做的话，过滤器就会应用到模块或者应用主体的所有控制器动作上，除非像上述一样配置过滤器的yii\base\ActionFilter::only和yii\base\ActionFilter::except属性。</p>
+<blockquote>
+<p>补充：在模块或者应用主体中声明过滤器的时候，最好在 yii\base\ActionFilter::only 和 yii\base\ActionFilter::except 属性中使用路由来代替动作ID，因为在模块或者应用主体中只用动作ID并不能唯一指定到具体动作。</p>
+</blockquote>
+<p>当一个动作有多个过滤器时，它们会根据根据以下规则先后执行：</p>
+<ul>
+<li>预过滤<ul>
+<li>按顺序执行应用主体中<code>behaviors()</code>列出的过滤器</li>
+<li>按顺序执行模块中<code>behaviors()</code>列出的过滤器</li>
+<li>按顺序执行控制器中<code>behaviors()</code>列出的过滤器</li>
+<li>如果任何一个过滤器终止了动作执行，后的过滤器（包括预过滤和后过滤）都不会再执行</li>
+</ul>
+</li>
+<li>成功通过预过滤后执行动作</li>
+<li>后过滤<ul>
+<li>倒序执行控制器中<code>behaviors()</code>列出的过滤器</li>
+<li>倒序执行模块中<code>behaviors()</code>列出的过滤器</li>
+<li>倒序执行应用主体中<code>behaviors()</code>列出的过滤器</li>
+</ul>
+</li>
+</ul>
+<h4>创建过滤器</h4>
+<p>想要创建一个过滤器，我们需要继承yii\base\ActionFilter类，并且覆盖yii\base\ActionFilter::beforeAction() 和/或 yii\base\ActionFilter::afterAction() 方法来创建动作的过滤器。前者在动作执行之前执行，后者在动作之后执行。yii\base\ActionFilter::beforeAction() 方法的返回值决定动作是否应该继续执行，如果为false，之后的过滤器和动作都不会继续执行。</p>
+<p>如下示例代码展示了一个用来记录action执行时间的过滤器：</p>
+<div class="highlight"><pre><span></span><span class="x">namespace app\components;</span>
+
+<span class="x">use Yii;</span>
+<span class="x">use yii\base\ActionFilter;</span>
+
+<span class="x">class ActionTimeFilter extends ActionFilter</span>
+<span class="x">{</span>
+<span class="x">    private $_startTime;</span>
+
+<span class="x">    public function beforeAction($action)</span>
+<span class="x">    {</span>
+<span class="x">        $this-&gt;_startTime = microtime(true);</span>
+<span class="x">        return parent::beforeAction($action);</span>
+<span class="x">    }</span>
+
+<span class="x">    public function afterAction($action, $result)</span>
+<span class="x">    {</span>
+<span class="x">        $time = microtime(true) - $this-&gt;_startTime;</span>
+<span class="x">        Yii::trace(&quot;Action &#39;{$action-&gt;uniqueId}&#39; spent $time second.&quot;);</span>
+<span class="x">        return parent::afterAction($action, $result);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</pre></div>
+
+
+<h4>核心过滤器</h4>
+<p>Yii提供了一组常用过滤器，在<code>yii\filters</code>命名空间下，接下来我们简要介绍一下这些过滤器。</p>
+<h5>yii\filters\AccessControl</h5>
+<p>AccessControl提供基于yii\filters\AccessControl::rules规则的访问控制，特别是动作执行之前，访问控制会检测所有规则并找到第一个符合上下文的变量（比如用户IP地址、登录状态等等）的规则，来决定是允许还是拒绝请求动作的执行，如果没有规则符合，访问就会被拒绝。如下示例表示允许已认证的用户访问<code>create</code>和<code>update</code>动作，拒绝其他用户访问这两个动作。</p>
+<div class="highlight"><pre><span></span><span class="x">use yii\filters\AccessControl;</span>
+
+<span class="x">public function behaviors()</span>
+<span class="x">{</span>
+<span class="x">    return [</span>
+<span class="x">        &#39;access&#39; =&gt; [</span>
+<span class="x">            &#39;class&#39; =&gt; AccessControl::className(),</span>
+<span class="x">            &#39;only&#39; =&gt; [&#39;create&#39;, &#39;update&#39;],</span>
+<span class="x">            &#39;rules&#39; =&gt; [</span>
+<span class="x">                // 允许认证用户</span>
+<span class="x">                [</span>
+<span class="x">                    &#39;allow&#39; =&gt; true,</span>
+<span class="x">                    &#39;roles&#39; =&gt; [&#39;@&#39;],</span>
+<span class="x">                ],</span>
+<span class="x">                // 默认禁止其他用户</span>
+<span class="x">            ],</span>
+<span class="x">        ],</span>
+<span class="x">    ];</span>
+<span class="x">}</span>
+</pre></div>
+
+
+<p>更多的关于访问控制的细节可以访问<a href="http://www.yiiframework.com/doc-2.0/guide-security-authorization.html">授权</a>一节。</p>
+<h5>认证方法过滤器</h5>
+<p>认证方法过滤器通过各种方式来认证一个一个用户，例如<a href="http://en.wikipedia.org/wiki/Basic_access_authentication">HTTP Basic Auth</a>和<a href="http://oauth.net/2/">OAuth 2.0</a>。这些过滤器类都在命名空间<code>yii\filters\auth</code>下。</p>
+<p>如下示例表示我们可以使用yii\filters\auth\HttpBasicAuth来认证一个用户，它使用基于HTTP基础认证方法的令牌。需要注意的是，为了保证能够运行，yii\web\User::identityClass类必须实现yii\web\IdentityInterface::findIdentityByAccessToken()方法。</p>
+<div class="highlight"><pre><span></span><span class="x">use yii\filters\auth\HttpBasicAuth;</span>
+
+<span class="x">public function behaviors()</span>
+<span class="x">{</span>
+<span class="x">    return [</span>
+<span class="x">        &#39;basicAuth&#39; =&gt; [</span>
+<span class="x">            &#39;class&#39; =&gt; HttpBasicAuth::className(),</span>
+<span class="x">        ],</span>
+<span class="x">    ];</span>
+<span class="x">}</span>
+</pre></div>
+
+
+<p>认证方法过滤器通常在实现RESTful API中使用，更多关于访问控制的详情请参阅<a href="http://www.yiiframework.com/doc-2.0/guide-rest-authentication.html">RESTful认证</a>一节。</p>
+<h5>yii\filters\ContentNegotiator</h5>
+<p>ContentNegotiator支持响应式内容格式处理和语言处理，通过检查<code>GET</code>参数和<code>Accept</code>的HTTP头部来决定响应内容格式和语言。</p>
+<p>如下示例，配置ContentNegotiator支持JSON和XML响应格式以及响应语言为美式英语和德语。</p>
+<div class="highlight"><pre><span></span><span class="x">use yii\filters\ContentNegotiator;</span>
+<span class="x">use yii\web\Response;</span>
+
+<span class="x">public function behaviors()</span>
+<span class="x">{</span>
+<span class="x">    return [</span>
+<span class="x">        [</span>
+<span class="x">            &#39;class&#39; =&gt; ContentNegotiator::className(),</span>
+<span class="x">            &#39;formats&#39; =&gt; [</span>
+<span class="x">                &#39;application/json&#39; =&gt; Response::FORMAT_JSON,</span>
+<span class="x">                &#39;application/xml&#39; =&gt; Response::FORMAT_XML,</span>
+<span class="x">            ],</span>
+<span class="x">            &#39;languages&#39; =&gt; [</span>
+<span class="x">                &#39;en-US&#39;,</span>
+<span class="x">                &#39;de&#39;,</span>
+<span class="x">            ],</span>
+<span class="x">        ],</span>
+<span class="x">    ];</span>
+<span class="x">}</span>
+</pre></div>
+
+
+<p>在应用主体生命周期过程中，通常要先判断响应格式和语言，因此，ContentNegotiator被设计成既能作为过滤器也能作为引导启动组件的方式。例如，我们可以在应用主体配置中这样儿配置ContentNegotiator：</p>
+<div class="highlight"><pre><span></span><span class="x">use yii\filters\ContentNegotiator;</span>
+<span class="x">use yii\web\Response;</span>
+
+<span class="x">[</span>
+<span class="x">    &#39;bootstrap&#39; =&gt; [</span>
+<span class="x">        [</span>
+<span class="x">            &#39;class&#39; =&gt; ContentNegotiator::className(),</span>
+<span class="x">            &#39;formats&#39; =&gt; [</span>
+<span class="x">                &#39;application/json&#39; =&gt; Response::FORMAT_JSON,</span>
+<span class="x">                &#39;application/xml&#39; =&gt; Response::FORMAT_XML,</span>
+<span class="x">            ],</span>
+<span class="x">            &#39;languages&#39; =&gt; [</span>
+<span class="x">                &#39;en-US&#39;,</span>
+<span class="x">                &#39;de&#39;,</span>
+<span class="x">            ],</span>
+<span class="x">        ],</span>
+<span class="x">    ],</span>
+<span class="x">];</span>
+</pre></div>
+
+
+<blockquote>
+<p>补充，如果请求中没有检测到内容格式和语言，则默认使用formats和languages的第一个配置项。</p>
+</blockquote>
+<h5>yii\filters\HttpCache</h5>
+<p>HttpCache利用<code>Last-Modified</code>和<code>Etag</code>HTTP头实现客户端缓存。例如：</p>
+<div class="highlight"><pre><span></span><span class="x">use yii\filters\HttpCache;</span>
+
+<span class="x">public function behaviors()</span>
+<span class="x">{</span>
+<span class="x">    return [</span>
+<span class="x">        [</span>
+<span class="x">            &#39;class&#39; =&gt; HttpCache::className(),</span>
+<span class="x">            &#39;only&#39; =&gt; [&#39;index&#39;],</span>
+<span class="x">            &#39;lastModified&#39; =&gt; function ($action, $params) {</span>
+<span class="x">                $q = new \yii\db\Query();</span>
+<span class="x">                return $q-&gt;from(&#39;user&#39;)-&gt;max(&#39;updated_at&#39;);</span>
+<span class="x">            },</span>
+<span class="x">        ],</span>
+<span class="x">    ];</span>
+<span class="x">}</span>
+</pre></div>
+
+
+<p>更多关于HttpCache的详情请参阅<a href="http://www.yiiframework.com/doc-2.0/guide-caching-http.html">HTTP缓存</a>一节。</p>
+<h5>yii\filters\PageCache</h5>
+<p>PageCache实现服务器端整个页面的缓存，如下所示，PageCache应用在<code>index</code>动作，缓存整个页面60秒或直到<code>post</code>表的记录数发生变化。它也会根据选定的应用语言保存不同版本的页面。</p>
+<div class="highlight"><pre><span></span><span class="x">use yii\filters\PageCache;</span>
+<span class="x">use yii\caching\DbDependency;</span>
+
+<span class="x">public function behaviors()</span>
+<span class="x">{</span>
+<span class="x">    return [</span>
+<span class="x">        &#39;pageCache&#39; =&gt; [</span>
+<span class="x">            &#39;class&#39; =&gt; PageCache::className(),</span>
+<span class="x">            &#39;only&#39; =&gt; [&#39;index&#39;],</span>
+<span class="x">            &#39;duration&#39; =&gt; 60,</span>
+<span class="x">            &#39;dependency&#39; =&gt; [</span>
+<span class="x">                &#39;class&#39; =&gt; DbDependency::className(),</span>
+<span class="x">                &#39;sql&#39; =&gt; &#39;SELECT COUNT(*) FROM post&#39;,</span>
+<span class="x">            ],</span>
+<span class="x">            &#39;variations&#39; =&gt; [</span>
+<span class="x">                \Yii::$app-&gt;language,</span>
+<span class="x">            ]</span>
+<span class="x">        ],</span>
+<span class="x">    ];</span>
+<span class="x">}</span>
+</pre></div>
+
+
+<p>更多关于PageCache的细节请参阅<a href="http://www.yiiframework.com/doc-2.0/guide-caching-page.html">页面缓存</a>一节。</p>
+<h5>yii\filters\RateLimiter</h5>
+<p>RateLimiter实现了基于<a href="http://en.wikipedia.org/wiki/Leaky_bucket">漏桶算法</a>的速率限制算法，它主要用在实现RESTful接口上。更多关于该过滤器的详情请参阅<a href="http://www.yiiframework.com/doc-2.0/guide-rest-rate-limiting.html">Rate Limiting</a>一节。</p>
+<h5>yii\filters\VerbFilter</h5>
+<p>VerbFilter检查动作的HTTP请求方式是否允许执行，如果不允许，则直接抛出HTTP405错误。如下示例中，VerbFilter指定CRUD动作所允许的请求方式：</p>
+<div class="highlight"><pre><span></span><span class="x">use yii\filters\VerbFilter;</span>
+
+<span class="x">public function behaviors()</span>
+<span class="x">{</span>
+<span class="x">    return [</span>
+<span class="x">        &#39;verbs&#39; =&gt; [</span>
+<span class="x">            &#39;class&#39; =&gt; VerbFilter::className(),</span>
+<span class="x">            &#39;actions&#39; =&gt; [</span>
+<span class="x">                &#39;index&#39;  =&gt; [&#39;get&#39;],</span>
+<span class="x">                &#39;view&#39;   =&gt; [&#39;get&#39;],</span>
+<span class="x">                &#39;create&#39; =&gt; [&#39;get&#39;, &#39;post&#39;],</span>
+<span class="x">                &#39;update&#39; =&gt; [&#39;get&#39;, &#39;put&#39;, &#39;post&#39;],</span>
+<span class="x">                &#39;delete&#39; =&gt; [&#39;post&#39;, &#39;delete&#39;],</span>
+<span class="x">            ],</span>
+<span class="x">        ],</span>
+<span class="x">    ];</span>
+<span class="x">}</span>
+</pre></div>
+
+
+<h5>yii\filters\Cors</h5>
+<p>跨域资源共享CORS机制允许一个网页的许多资源（例如字体、JS脚本等）可以通过其它域名访问获取，特别是JS的AJAX调用可以使用XMLHttpRequest机制，由于同源安全策略，该跨域请求会被网页浏览器禁止。CORS定义浏览器和服务器交互时哪些跨域请求是允许的、哪些是禁止的。</p>
+<p>yii\filters\Cors应该在授权/认证过滤器之前定义，以保证CORS头部总是被发送。</p>
+<div class="highlight"><pre><span></span><span class="x">use yii\filters\Cors;</span>
+<span class="x">use yii\helpers\ArrayHelper;</span>
+
+<span class="x">public function behaviors()</span>
+<span class="x">{</span>
+<span class="x">    return ArrayHelper::merge([</span>
+<span class="x">        [</span>
+<span class="x">            &#39;class&#39; =&gt; Cors::className(),</span>
+<span class="x">        ],</span>
+<span class="x">    ], parent::behaviors());</span>
+<span class="x">}</span>
+</pre></div>
+
+
+<p>我们可以通过使用<code>cors</code>属性来调整Cors过滤器：</p>
+<ul>
+<li><code>cors['Origin']</code>：定义允许来源的数组，可以是<code>['*']</code>（任何用户）或<code>['http://www.myserver.net', 'http://www.myotherserver.com']</code>，默认为<code>['*']</code>。</li>
+<li><code>cors['Access-Control-Request-Method']</code>：允许动作数组如<code>['GET', 'OPTIONS', 'HEAD']</code>,默认为<code>['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS']</code>。</li>
+<li><code>cors['Access-Control-Request-Headers']</code>：允许请求头数组，可以为<code>['*']</code>（所有类型头部）或<code>['X-Request-With']</code>指定类型头部，默认是<code>['*']</code>。</li>
+<li><code>cors['Access-Control-Allow-Credentials']</code>：定义当前请求是否使用证书，可以为<code>true</code>、<code>false</code>或<code>null</code>（不设置），默认是<code>null</code>。</li>
+<li><code>cors['Access-Control-Max-Age']</code>：定义请求的有效时间，默认是86400。</li>
+</ul>
+<p>例如，允许来源为<code>http://www.myserver.net</code>以及请求方式为<code>GET</code>、<code>HEAD</code>和<code>OPTIONS</code>的CORS如下：</p>
+<div class="highlight"><pre><span></span><span class="x">use yii\filters\Cors;</span>
+<span class="x">use yii\helpers\ArrayHelper;</span>
+
+<span class="x">public function behaviors()</span>
+<span class="x">{</span>
+<span class="x">    return ArrayHelper::merge([</span>
+<span class="x">        [</span>
+<span class="x">            &#39;class&#39; =&gt; Cors::className(),</span>
+<span class="x">            &#39;cors&#39; =&gt; [</span>
+<span class="x">                &#39;Origin&#39; =&gt; [&#39;http://www.myserver.net&#39;],</span>
+<span class="x">                &#39;Access-Control-Request-Method&#39; =&gt; [&#39;GET&#39;, &#39;HEAD&#39;, &#39;OPTIONS&#39;],</span>
+<span class="x">            ],</span>
+<span class="x">        ],</span>
+<span class="x">    ], parent::behaviors());</span>
+<span class="x">}</span>
+</pre></div>
+
+
+<p>我们可以通过重写默认的参数为每个动作调整CORS头部，例如，为<code>login</code>动作增加<code>Access-Control-Allow-Credentials</code>参数如下所示：</p>
+<div class="highlight"><pre><span></span><span class="x">use yii\filters\Cors;</span>
+<span class="x">use yii\helpers\ArrayHelper;</span>
+
+<span class="x">public function behaviors()</span>
+<span class="x">{</span>
+<span class="x">    return ArrayHelper::merge([</span>
+<span class="x">        [</span>
+<span class="x">            &#39;class&#39; =&gt; Cors::className(),</span>
+<span class="x">            &#39;cors&#39; =&gt; [</span>
+<span class="x">                &#39;Origin&#39; =&gt; [&#39;http://www.myserver.net&#39;],</span>
+<span class="x">                &#39;Access-Control-Request-Method&#39; =&gt; [&#39;GET&#39;, &#39;HEAD&#39;, &#39;OPTIONS&#39;],</span>
+<span class="x">            ],</span>
+<span class="x">            &#39;actions&#39; =&gt; [</span>
+<span class="x">                &#39;login&#39; =&gt; [</span>
+<span class="x">                    &#39;Access-Control-Allow-Credentials&#39; =&gt; true,</span>
+<span class="x">                ]</span>
+<span class="x">            ]</span>
+<span class="x">        ],</span>
+<span class="x">    ], parent::behaviors());</span>
+<span class="x">}</span>
+</pre></div>
+<p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+
+</p>
+
+
+
+
+	<h4>Comments</h4>
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        var disqus_shortname = 'erictang'
+        var disqus_identifier = "yii2xue-xi-bi-ji-xi-lie-15-application-structure-filtersying-yong-jie-gou-zhi-guo-lu-qi.html";
+        var disqus_url = "http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-15-application-structure-filtersying-yong-jie-gou-zhi-guo-lu-qi.html";
+
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</article>
+        </div>
+        <!-- End Main Content -->
+
+        <!-- Sidebar -->
+        <aside class="large-3 columns">
+            <h5 class="sidebar-title">Site</h5>
+            <ul class="side-nav">
+                <li><a href="http://jeepxiaozi.github.io/archives.html">Archives</a>
+                    <li><a href="http://jeepxiaozi.github.io/tags.html">Tags</a>              </ul>
+
+            <h5 class="sidebar-title">Categories</h5>
+            <ul class="side-nav">
+                <li><a href="http://jeepxiaozi.github.io/category/android-develop.html">Android Develop</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/git.html">Git</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/ios-develop.html">iOS Develop</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo.html">技术生活</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/markdownxie-zuo.html">Markdown写作</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/multicopter.html">MultiCopter</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/pages.html">Pages</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/server-develop.html">Server Develop</a>
+                </li>
+            </ul>
+             <h5 class="sidebar-title">Links</h5>
+            <ul class="side-nav">
+                <li><a href="http://www.linuxzen.com">cold's world</a>
+                </li>
+                <li><a href="http://www.icnws.com/">城南往事小站</a>
+                </li>
+                <li><a href="http://wellmakers.com">电子匠人</a>
+                </li>
+                <li><a href="http://androidcat.com/">AndroidCat</a>
+                </li>
+            </ul>
+             <h5 class="sidebar-title">Social</h5>
+            <ul class="side-nav social">
+                <li><a href="https://twitter.com/jeepxiaoxiaozi">twitter</a>
+                </li>
+                <li><a href="https://github.com/jeepxiaozi">GitHub</a>
+                </li>
+                <li><a href="http://weibo.com/u/1375170263/">Weibo</a>
+                </li>
+            </ul>
+
+        </aside>
+        <!-- End Sidebar -->
+
+    </div>
+    <!-- End Main Content and Sidebar -->
+
+
+    <!-- Footer -->
+    <footer class="row">
+        <div class="large-12 columns">
+            <hr />
+            <div class="row">
+                <div class="large-6 columns">
+                    <p><a href="http://jeepxiaozi.github.io">一把汤勺</a> &copy; EricTang 2016 
+ 
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1254253569'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s95.cnzz.com/z_stat.php%3Fid%3D1254253569%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));</script>
+                 </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

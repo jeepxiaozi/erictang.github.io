@@ -49,6 +49,39 @@
 
 
             <article>
+                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-5-working-with-databaseshi-yong-shu-ju-ku.html"><h3 class="article-title">Yii2学习笔记系列5——Working With Database（使用数据库）</h3></a>
+<h6 class="subheader" title="2016-04-08T23:09:45+08:00">五 08 四月 2016
+</h6>
+
+
+<h3>Yii2笔记系列5——Working With Database（使用数据库）</h3>
+<p>上一篇中我们学习了如何使用Form表单，掌握了Form表单的提交以及在Yii中通过视图展示提交内容的技能，这一篇我们来学习一下如何创建一个从数据表<code>country</code>中读取国家数据并显示出来的页面，为此，我们需要配置一个数据库连接，创建一个<a href="http://www.yiiframework.com/doc-2.0/guide-db-active-record.html">活动记录类</a>，并且创建一个操作和一个视图。</p>
+<p>通过这篇，我们将会学习到的：</p>
+<ul>
+<li>配置一个数据库连接</li>
+<li>定义一个活动记录类</li>
+<li>使用活动记录类从数据库中查询数据</li>
+<li>以分页的方式在视图中显示数据</li>
+</ul>
+<h4>准备数据库</h4>
+<p>首先创建一个名为<code>yii2basic</code>的数据库，应用将从这个数据库中读取数据，Yii中内置了多种数据库支持，这里我们使用最常见的MySQL数据库。以下是MySQL的建表语句：</p>
+<div class="highlight"><pre><span></span><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="o">`</span><span class="n">country</span><span class="o">`</span> <span class="p">(</span>
+  <span class="o">`</span><span class="n">code</span><span class="o">`</span> <span class="nb">CHAR</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+  <span class="o">`</span><span class="n">name</span><span class="o">`</span> <span class="nb">CHAR</span><span class="p">(</span><span class="mi">52</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="o">`</span><span class="n">population</span><span class="o">`</span> <span class="nb">INT</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">DEFAULT ...</span></pre></div><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-5-working-with-databaseshi-yong-shu-ju-ku.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-5-working-with-databaseshi-yong-shu-ju-ku.html">Read More</a>
+                <hr  class="gradient"/>
+            </article>
+
+        
+
+
+            <article>
                 <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-4-working-with-formsshi-yong-formbiao-dan.html"><h3 class="article-title">Yii2学习笔记系列4——Working With Forms（使用Form表单）</h3></a>
 <h6 class="subheader" title="2016-04-06T10:58:53+08:00">三 06 四月 2016
 </h6>
@@ -313,48 +346,6 @@ mv composer.phar /usr/local/bin/composer
 
 
 <p><a href="http://jeepxiaozi.github.io/yi-dian-er-gan-kai-du-cheng-xu-yuan-bi-du-de-zhi-ye-gui-hua-shu.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yi-dian-er-gan-kai-du-cheng-xu-yuan-bi-du-de-zhi-ye-gui-hua-shu.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
-
-        
-
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/androidkai-fa-zhi-gradlebi-ji-zheng-li-2-gradlechang-yong-ming-ling-ji-umengduo-qu-dao-da-bao-shi-zhan.html"><h3 class="article-title">Android开发之Gradle笔记整理2——Gradle常用命令及UMeng多渠道打包实战</h3></a>
-<h6 class="subheader" title="2015-04-06T21:54:47+08:00">一 06 四月 2015
-</h6>
-
-
-<p>在前一篇博客里我们简单快速的学习了一下Gradle的基本安装和配置，以及解决了其中遇到的一些小的错误，这篇文章里我们来小小的实践一下，本身也是在Android开发中必不可少的技能。</p>
-<h5>修改build.gradle文件</h5>
-<p>接着之前的项目继续看，我们修改一下Module中的build.gradle文件，这里也不做过多讲解了，注释都在文件中，慢慢看，还是比较容易懂的：</p>
-<div class="highlight"><pre><span></span>apply plugin: &#39;com.android.application&#39;
-
-repositories {
-    jcenter()
-}
-
-android {
-    compileSdkVersion 19
-    buildToolsVersion &quot;21.1.1&quot;
-
-    defaultConfig {
-        applicationId &quot;com.aiscot.gradle.test&quot;
-        minSdkVersion 9
-        targetSdkVersion 19
-        versionCode 1
-        versionName &quot;1.0&quot;
-
-        // 修改dex 65536的限制
-        multiDexEnabled true
-        // AndroidManifest.xml文件中UMENG_CHANNEL的value为<span class="cp">${</span><span class="n">UMENG_CHANNEL_VALUE</span><span class="cp">}</span>
-        manifestPlaceholders ...</pre></div><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/android-develop.html">Android Develop</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/androidkai-fa-zhi-gradlebi-ji-zheng-li-2-gradlechang-yong-ming-ling-ji-umengduo-qu-dao-da-bao-shi-zhan.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/androidkai-fa-zhi-gradlebi-ji-zheng-li-2-gradlechang-yong-ming-ling-ji-umengduo-qu-dao-da-bao-shi-zhan.html">Read More</a>
                 <hr  class="gradient"/>
             </article>
 

@@ -48,6 +48,328 @@
         
 
             <article>
+                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-15-application-structure-filtersying-yong-jie-gou-zhi-guo-lu-qi.html"><h3 class="article-title">Yii2学习笔记系列15——Application Structure-Filters（应用结构之过滤器）</h3></a>
+<h6 class="subheader" title="2016-05-13T13:25:08+08:00">五 13 五月 2016
+</h6>
+
+
+<h3>过滤器</h3>
+<p>过滤器是控制器动作执行之前或之后执行的对象，例如，访问控制过滤器在动作执行之前运行以确保只有具备权限的终端用户才能访问，内容压缩过滤器在动作执行之后发送给终端用户之前运行以压缩响应内容。</p>
+<p>过滤器可能包含 预过滤（过滤逻辑在动作之前）或 后过滤（过滤逻辑在动作之后），也可能同时包含两者。</p>
+<h4>使用过滤器</h4>
+<p>过滤器本质上是一类特殊的行为，所以使用 过滤器 和使用 行为 一样。我们可以通过在控制器类中重写yii\base\Controller::behaviors()方法来声明过滤器，如下所示：</p>
+<div class="highlight"><pre><span></span><span class="x">public function behaviors()</span>
+<span class="x">{</span>
+<span class="x">    return [</span>
+<span class="x">        [</span>
+<span class="x">            &#39;class&#39; =&gt; &#39;yii\filters\HttpCache&#39;,</span>
+<span class="x">            &#39;only&#39; =&gt; [&#39;index&#39;, &#39;view&#39;],</span>
+<span class="x">            &#39;lastModified&#39; =&gt; function ($action, $params) {</span>
+<span class="x">                $q = new \yii\db\Query();</span>
+<span class="x">                return $q-&gt;from(&#39;user&#39;)-&gt;max(&#39;updated_at&#39;);</span>
+<span class="x">            },</span>
+<span class="x">        ],</span>
+<span class="x">    ];</span>
+<span class="x">}</span>
+</pre></div>
+
+
+<p>控制器类的过滤器默认应用到该类的所有action，但我们也可以通过配置yii\base\ActionFilter::only属性来明确指定控制器应用到哪些动作。在上述例子中，<code>HttpCache</code>过滤器只应用到到<code>index</code>和<code>index</code>这两个动作。当然，我们也可以通过配置yii\base\ActionFilter::except属性来使一些动作不执行过滤器。</p>
+<p>除了控制器，我们还可以在模块或者应用主体中声明过滤器。如果这么做的话，过滤器就会应用到模块或者应用主体的所有控制器动作上，除非像上述一样配置过滤器的yii\base\ActionFilter::only和yii\base\ActionFilter::except属性。</p>
+<blockquote>
+<p>补充：在模块或者应用主体中声明过滤器的时候，最好在 yii\base\ActionFilter::only 和 yii\base\ActionFilter::except 属性中使用路由来代替动作ID，因为在模块或者应用主体中只用动作ID并不能唯一指定到具体动作。</p>
+</blockquote>
+<p>当一个动作有多个过滤器时，它们会根据根据以下规则先后执行：</p>
+<ul>
+<li>预过滤<ul>
+<li>按顺序执行应用主体中<code>behaviors()</code>列出的过滤器</li>
+<li>按顺序执行模块中<code>behaviors()</code>列出的过滤器</li>
+<li>按顺序执行控制器中<code>behaviors()</code>列出的过滤器</li>
+<li>如果任何一个过滤器终止了动作执行，后的过滤器（包括预过滤和后过滤）都不会再执行</li>
+</ul>
+</li>
+<li>成功通过预过滤后执行动作</li>
+<li>后过滤<ul>
+<li>倒序执行控制器中<code>behaviors()</code>列出的过滤器</li>
+<li>倒序执行模块中<code>behaviors()</code>列出的过滤器</li>
+<li>倒序执行应用主体中<code>behaviors()</code>列出的过滤器</li>
+</ul>
+</li>
+</ul>
+<h4>创建过滤器</h4>
+<p>想要创建一个过滤器，我们需要继承yii\base\ActionFilter类，并且覆盖yii\base\ActionFilter::beforeAction() 和/或 yii\base\ActionFilter::afterAction() 方法来创建动作的过滤器。前者在动作执行之前执行，后者在动作之后执行。yii\base\ActionFilter::beforeAction() 方法的返回值决定动作是否应该继续执行，如果为false，之后的过滤器和动作都不会继续执行。</p>
+<p>如下示例代码展示了一个用来记录action执行时间的过滤器：</p>
+<div class="highlight"><pre><span></span><span class="x">namespace app\components;</span>
+
+<span class="x">use Yii;</span>
+<span class="x">use yii\base\ActionFilter;</span>
+
+<span class="x">class ActionTimeFilter extends ActionFilter</span>
+<span class="x">{</span>
+<span class="x">    private $_startTime;</span>
+
+<span class="x">    public function beforeAction($action)</span>
+<span class="x">    {</span>
+<span class="x">        $this-&gt;_startTime = microtime(true);</span>
+<span class="x">        return parent::beforeAction($action);</span>
+<span class="x">    }</span>
+
+<span class="x">    public function afterAction($action, $result)</span>
+<span class="x">    {</span>
+<span class="x">        $time = microtime(true) - $this-&gt;_startTime;</span>
+<span class="x">        Yii::trace(&quot;Action &#39;{$action-&gt;uniqueId}&#39; spent $time second.&quot;);</span>
+<span class="x">        return parent::afterAction($action, $result);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</pre></div>
+
+
+<h4>核心过滤器</h4>
+<p>Yii提供了一组常用过滤器，在<code>yii\filters</code>命名空间下，接下来我们简要介绍一下这些过滤器。</p>
+<h5>yii\filters\AccessControl</h5>
+<p>AccessControl提供基于yii\filters\AccessControl::rules规则的访问控制，特别是动作执行之前，访问控制会检测所有规则并找到第一个符合上下文的变量（比如用户IP地址、登录状态等等）的规则，来决定是允许还是拒绝请求动作的执行，如果没有规则符合，访问就会被拒绝。如下示例表示允许已认证的用户访问<code>create</code>和<code>update</code>动作，拒绝其他用户访问这两个动作。</p>
+<div class="highlight"><pre><span></span><span class="x">use yii\filters\AccessControl;</span>
+
+<span class="x">public function behaviors()</span>
+<span class="x">{</span>
+<span class="x">    return [</span>
+<span class="x">        &#39;access&#39; =&gt; [</span>
+<span class="x">            &#39;class&#39; =&gt; AccessControl::className(),</span>
+<span class="x">            &#39;only&#39; =&gt; [&#39;create&#39;, &#39;update&#39;],</span>
+<span class="x">            &#39;rules&#39; =&gt; [</span>
+<span class="x">                // 允许认证用户</span>
+<span class="x">                [</span>
+<span class="x">                    &#39;allow&#39; =&gt; true,</span>
+<span class="x">                    &#39;roles&#39; =&gt; [&#39;@&#39;],</span>
+<span class="x">                ],</span>
+<span class="x">                // 默认禁止其他用户</span>
+<span class="x">            ],</span>
+<span class="x">        ],</span>
+<span class="x">    ];</span>
+<span class="x">}</span>
+</pre></div>
+
+
+<p>更多的关于访问控制的细节可以访问<a href="http://www.yiiframework.com/doc-2.0/guide-security-authorization.html">授权</a>一节。</p>
+<h5>认证方法过滤器</h5>
+<p>认证方法过滤器通过各种方式来认证一个一个用户，例如<a href="http://en.wikipedia.org/wiki/Basic_access_authentication">HTTP Basic Auth</a>和<a href="http://oauth.net/2/">OAuth 2.0</a>。这些过滤器类都在命名空间<code>yii\filters\auth</code>下。</p>
+<p>如下示例表示我们可以使用yii\filters\auth\HttpBasicAuth来认证一个用户，它使用基于HTTP基础认证方法的令牌。需要注意的是，为了保证能够运行，yii\web\User::identityClass类必须实现yii\web\IdentityInterface::findIdentityByAccessToken()方法。</p>
+<div class="highlight"><pre><span></span><span class="x">use yii\filters\auth\HttpBasicAuth;</span>
+
+<span class="x">public function behaviors()</span>
+<span class="x">{</span>
+<span class="x">    return [</span>
+<span class="x">        &#39;basicAuth&#39; =&gt; [</span>
+<span class="x">            &#39;class&#39; =&gt; HttpBasicAuth::className(),</span>
+<span class="x">        ],</span>
+<span class="x">    ];</span>
+<span class="x">}</span>
+</pre></div>
+
+
+<p>认证方法过滤器通常在实现RESTful API中使用，更多关于访问控制的详情请参阅<a href="http://www.yiiframework.com/doc-2.0/guide-rest-authentication.html">RESTful认证</a>一节。</p>
+<h5>yii\filters\ContentNegotiator</h5>
+<p>ContentNegotiator支持响应式内容格式处理和语言处理，通过检查<code>GET</code>参数和<code>Accept</code>的HTTP头部来决定响应内容格式和语言。</p>
+<p>如下示例，配置ContentNegotiator支持JSON和XML响应格式以及响应语言为美式英语和德语。</p>
+<div class="highlight"><pre><span></span><span class="x">use yii\filters\ContentNegotiator;</span>
+<span class="x">use yii\web\Response;</span>
+
+<span class="x">public function behaviors()</span>
+<span class="x">{</span>
+<span class="x">    return [</span>
+<span class="x">        [</span>
+<span class="x">            &#39;class&#39; =&gt; ContentNegotiator::className(),</span>
+<span class="x">            &#39;formats&#39; =&gt; [</span>
+<span class="x">                &#39;application/json&#39; =&gt; Response::FORMAT_JSON,</span>
+<span class="x">                &#39;application/xml&#39; =&gt; Response::FORMAT_XML,</span>
+<span class="x">            ],</span>
+<span class="x">            &#39;languages&#39; =&gt; [</span>
+<span class="x">                &#39;en-US&#39;,</span>
+<span class="x">                &#39;de&#39;,</span>
+<span class="x">            ],</span>
+<span class="x">        ],</span>
+<span class="x">    ];</span>
+<span class="x">}</span>
+</pre></div>
+
+
+<p>在应用主体生命周期过程中，通常要先判断响应格式和语言，因此，ContentNegotiator被设计成既能作为过滤器也能作为引导启动组件的方式。例如，我们可以在应用主体配置中这样儿配置ContentNegotiator：</p>
+<div class="highlight"><pre><span></span><span class="x">use yii\filters\ContentNegotiator;</span>
+<span class="x">use yii\web\Response;</span>
+
+<span class="x">[</span>
+<span class="x">    &#39;bootstrap&#39; =&gt; [</span>
+<span class="x">        [</span>
+<span class="x">            &#39;class&#39; =&gt; ContentNegotiator::className(),</span>
+<span class="x">            &#39;formats&#39; =&gt; [</span>
+<span class="x">                &#39;application/json&#39; =&gt; Response::FORMAT_JSON,</span>
+<span class="x">                &#39;application/xml&#39; =&gt; Response::FORMAT_XML,</span>
+<span class="x">            ],</span>
+<span class="x">            &#39;languages&#39; =&gt; [</span>
+<span class="x">                &#39;en-US&#39;,</span>
+<span class="x">                &#39;de&#39;,</span>
+<span class="x">            ],</span>
+<span class="x">        ],</span>
+<span class="x">    ],</span>
+<span class="x">];</span>
+</pre></div>
+
+
+<blockquote>
+<p>补充，如果请求中没有检测到内容格式和语言，则默认使用formats和languages的第一个配置项。</p>
+</blockquote>
+<h5>yii\filters\HttpCache</h5>
+<p>HttpCache利用<code>Last-Modified</code>和<code>Etag</code>HTTP头实现客户端缓存。例如：</p>
+<div class="highlight"><pre><span></span><span class="x">use yii\filters\HttpCache;</span>
+
+<span class="x">public function behaviors()</span>
+<span class="x">{</span>
+<span class="x">    return [</span>
+<span class="x">        [</span>
+<span class="x">            &#39;class&#39; =&gt; HttpCache::className(),</span>
+<span class="x">            &#39;only&#39; =&gt; [&#39;index&#39;],</span>
+<span class="x">            &#39;lastModified&#39; =&gt; function ($action, $params) {</span>
+<span class="x">                $q = new \yii\db\Query();</span>
+<span class="x">                return $q-&gt;from(&#39;user&#39;)-&gt;max(&#39;updated_at&#39;);</span>
+<span class="x">            },</span>
+<span class="x">        ],</span>
+<span class="x">    ];</span>
+<span class="x">}</span>
+</pre></div>
+
+
+<p>更多关于HttpCache的详情请参阅<a href="http://www.yiiframework.com/doc-2.0/guide-caching-http.html">HTTP缓存</a>一节。</p>
+<h5>yii\filters\PageCache</h5>
+<p>PageCache实现服务器端整个页面的缓存，如下所示，PageCache应用在<code>index</code>动作，缓存整个页面60秒或直到<code>post</code>表的记录数发生变化。它也会根据选定的应用语言保存不同版本的页面。</p>
+<div class="highlight"><pre><span></span><span class="x">use yii\filters\PageCache;</span>
+<span class="x">use yii\caching\DbDependency;</span>
+
+<span class="x">public function behaviors()</span>
+<span class="x">{</span>
+<span class="x">    return [</span>
+<span class="x">        &#39;pageCache&#39; =&gt; [</span>
+<span class="x">            &#39;class&#39; =&gt; PageCache::className(),</span>
+<span class="x">            &#39;only&#39; =&gt; [&#39;index&#39;],</span>
+<span class="x">            &#39;duration&#39; =&gt; 60,</span>
+<span class="x">            &#39;dependency&#39; =&gt; [</span>
+<span class="x">                &#39;class&#39; =&gt; DbDependency::className(),</span>
+<span class="x">                &#39;sql&#39; =&gt; &#39;SELECT COUNT(*) FROM post&#39;,</span>
+<span class="x">            ],</span>
+<span class="x">            &#39;variations&#39; =&gt; [</span>
+<span class="x">                \Yii::$app-&gt;language,</span>
+<span class="x">            ]</span>
+<span class="x">        ],</span>
+<span class="x">    ];</span>
+<span class="x">}</span>
+</pre></div>
+
+
+<p>更多关于PageCache的细节请参阅<a href="http://www.yiiframework.com/doc-2.0/guide-caching-page.html">页面缓存</a>一节。</p>
+<h5>yii\filters\RateLimiter</h5>
+<p>RateLimiter实现了基于<a href="http://en.wikipedia.org/wiki/Leaky_bucket">漏桶算法</a>的速率限制算法，它主要用在实现RESTful接口上。更多关于该过滤器的详情请参阅<a href="http://www.yiiframework.com/doc-2.0/guide-rest-rate-limiting.html">Rate Limiting</a>一节。</p>
+<h5>yii\filters\VerbFilter</h5>
+<p>VerbFilter检查动作的HTTP请求方式是否允许执行，如果不允许，则直接抛出HTTP405错误。如下示例中，VerbFilter指定CRUD动作所允许的请求方式：</p>
+<div class="highlight"><pre><span></span><span class="x">use yii\filters\VerbFilter;</span>
+
+<span class="x">public function behaviors()</span>
+<span class="x">{</span>
+<span class="x">    return [</span>
+<span class="x">        &#39;verbs&#39; =&gt; [</span>
+<span class="x">            &#39;class&#39; =&gt; VerbFilter::className(),</span>
+<span class="x">            &#39;actions&#39; =&gt; [</span>
+<span class="x">                &#39;index&#39;  =&gt; [&#39;get&#39;],</span>
+<span class="x">                &#39;view&#39;   =&gt; [&#39;get&#39;],</span>
+<span class="x">                &#39;create&#39; =&gt; [&#39;get&#39;, &#39;post&#39;],</span>
+<span class="x">                &#39;update&#39; =&gt; [&#39;get&#39;, &#39;put&#39;, &#39;post&#39;],</span>
+<span class="x">                &#39;delete&#39; =&gt; [&#39;post&#39;, &#39;delete&#39;],</span>
+<span class="x">            ],</span>
+<span class="x">        ],</span>
+<span class="x">    ];</span>
+<span class="x">}</span>
+</pre></div>
+
+
+<h5>yii\filters\Cors</h5>
+<p>跨域资源共享CORS机制允许一个网页的许多资源（例如字体、JS脚本等）可以通过其它域名访问获取，特别是JS的AJAX调用可以使用XMLHttpRequest机制，由于同源安全策略，该跨域请求会被网页浏览器禁止。CORS定义浏览器和服务器交互时哪些跨域请求是允许的、哪些是禁止的。</p>
+<p>yii\filters\Cors应该在授权/认证过滤器之前定义，以保证CORS头部总是被发送。</p>
+<div class="highlight"><pre><span></span><span class="x">use yii\filters\Cors;</span>
+<span class="x">use yii\helpers\ArrayHelper;</span>
+
+<span class="x">public function behaviors()</span>
+<span class="x">{</span>
+<span class="x">    return ArrayHelper::merge([</span>
+<span class="x">        [</span>
+<span class="x">            &#39;class&#39; =&gt; Cors::className(),</span>
+<span class="x">        ],</span>
+<span class="x">    ], parent::behaviors());</span>
+<span class="x">}</span>
+</pre></div>
+
+
+<p>我们可以通过使用<code>cors</code>属性来调整Cors过滤器：</p>
+<ul>
+<li><code>cors['Origin']</code>：定义允许来源的数组，可以是<code>['*']</code>（任何用户）或<code>['http://www.myserver.net', 'http://www.myotherserver.com']</code>，默认为<code>['*']</code>。</li>
+<li><code>cors['Access-Control-Request-Method']</code>：允许动作数组如<code>['GET', 'OPTIONS', 'HEAD']</code>,默认为<code>['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS']</code>。</li>
+<li><code>cors['Access-Control-Request-Headers']</code>：允许请求头数组，可以为<code>['*']</code>（所有类型头部）或<code>['X-Request-With']</code>指定类型头部，默认是<code>['*']</code>。</li>
+<li><code>cors['Access-Control-Allow-Credentials']</code>：定义当前请求是否使用证书，可以为<code>true</code>、<code>false</code>或<code>null</code>（不设置），默认是<code>null</code>。</li>
+<li><code>cors['Access-Control-Max-Age']</code>：定义请求的有效时间，默认是86400。</li>
+</ul>
+<p>例如，允许来源为<code>http://www.myserver.net</code>以及请求方式为<code>GET</code>、<code>HEAD</code>和<code>OPTIONS</code>的CORS如下：</p>
+<div class="highlight"><pre><span></span><span class="x">use yii\filters\Cors;</span>
+<span class="x">use yii\helpers\ArrayHelper;</span>
+
+<span class="x">public function behaviors()</span>
+<span class="x">{</span>
+<span class="x">    return ArrayHelper::merge([</span>
+<span class="x">        [</span>
+<span class="x">            &#39;class&#39; =&gt; Cors::className(),</span>
+<span class="x">            &#39;cors&#39; =&gt; [</span>
+<span class="x">                &#39;Origin&#39; =&gt; [&#39;http://www.myserver.net&#39;],</span>
+<span class="x">                &#39;Access-Control-Request-Method&#39; =&gt; [&#39;GET&#39;, &#39;HEAD&#39;, &#39;OPTIONS&#39;],</span>
+<span class="x">            ],</span>
+<span class="x">        ],</span>
+<span class="x">    ], parent::behaviors());</span>
+<span class="x">}</span>
+</pre></div>
+
+
+<p>我们可以通过重写默认的参数为每个动作调整CORS头部，例如，为<code>login</code>动作增加<code>Access-Control-Allow-Credentials</code>参数如下所示：</p>
+<div class="highlight"><pre><span></span><span class="x">use yii\filters\Cors;</span>
+<span class="x">use yii\helpers\ArrayHelper;</span>
+
+<span class="x">public function behaviors()</span>
+<span class="x">{</span>
+<span class="x">    return ArrayHelper::merge([</span>
+<span class="x">        [</span>
+<span class="x">            &#39;class&#39; =&gt; Cors::className(),</span>
+<span class="x">            &#39;cors&#39; =&gt; [</span>
+<span class="x">                &#39;Origin&#39; =&gt; [&#39;http://www.myserver.net&#39;],</span>
+<span class="x">                &#39;Access-Control-Request-Method&#39; =&gt; [&#39;GET&#39;, &#39;HEAD&#39;, &#39;OPTIONS&#39;],</span>
+<span class="x">            ],</span>
+<span class="x">            &#39;actions&#39; =&gt; [</span>
+<span class="x">                &#39;login&#39; =&gt; [</span>
+<span class="x">                    &#39;Access-Control-Allow-Credentials&#39; =&gt; true,</span>
+<span class="x">                ]</span>
+<span class="x">            ]</span>
+<span class="x">        ],</span>
+<span class="x">    ], parent::behaviors());</span>
+<span class="x">}</span>
+</pre></div><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-15-application-structure-filtersying-yong-jie-gou-zhi-guo-lu-qi.html#disqus_thread">comments</a></p>            </article>
+
+
+                <hr  class="gradient"/>
+
+
+        
+
+
+            <article>
                 <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-14-application-structure-modulesying-yong-jie-gou-zhi-mo-kuai.html"><h3 class="article-title">Yii2学习笔记系列14——Application Structure-Modules（应用结构之模块）</h3></a>
 <h6 class="subheader" title="2016-05-11T22:29:18+08:00">三 11 五月 2016
 </h6>
@@ -70,171 +392,15 @@
 
 
 <h5>模块类</h5>
-<p>每个模块都有一个继承yii\base\Module的模块类，该类文件直接放在模块的yii\base\Module::basePath目录下，并且可以被自动加载。当一个模块被访问时，该模块的唯一实例会被创建，与应用主体实例类似，模块实例用来帮助模块内代码共享数据和组件。</p>
-<p>以下示例是一个模块类的示例：</p>
-<div class="highlight"><pre><span></span><span class="x">namespace app\modules\forum;</span>
-
-<span class="x">class Module extends \yii\base\Module</span>
-<span class="x">{</span>
-<span class="x">    public function init()</span>
-<span class="x">    {</span>
-<span class="x">        parent::init();</span>
-
-<span class="x">        $this-&gt;params[&#39;foo&#39;] = &#39;bar&#39;;</span>
-<span class="x">        // ...  其它初始化代码 ...</span>
-<span class="x">    }</span>
-<span class="x">}</span>
-</pre></div>
-
-
-<p>如果<code>init()</code>方法中包含很多初始化模块属性代码，可以将它们保存在配置文件中，并在<code>init()</code>方法中使用以下代码加载：</p>
-<div class="highlight"><pre><span></span><span class="x">public function init()</span>
-<span class="x">{</span>
-<span class="x">    parent::init();</span>
-<span class="x">    // 从config.php加载配置来初始化模块</span>
-<span class="x">    \Yii::configure($this, require(__DIR__ . &#39;/config.php&#39;));</span>
-<span class="x">}</span>
-</pre></div>
-
-
-<p><code>config.php</code>配置文件可能包含以下内容，类似应用主体配置。</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="k">return</span> <span class="p">[</span>
-    <span class="s1">&#39;components&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
-        <span class="c1">// 组件配置列表</span>
-    <span class="p">],</span>
-    <span class="s1">&#39;params&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
-        <span class="c1">// 参数列表</span>
-    <span class="p">],</span>
-<span class="p">];</span>
-</pre></div>
-
-
-<h5>模块中的控制器</h5>
-<p>创建模块的控制器时，惯例是将控制器类放在模块命名空间的<code>controllers</code>子命名空间中，这也意味着要将控制器的类文件放在模块yii\base\Module::basePath目录中的<code>controllers</code>子目录中，例如，上小节中要在<code>forum</code>模块中创建<code>post</code>控制器，应该像如下声明控制器类一样：</p>
-<div class="highlight"><pre><span></span><span class="x">namespace app\modules\forum\controllers;</span>
-
-<span class="x">use yii\web\Controller;</span>
-
-<span class="x">class PostController extends Controller</span>
-<span class="x">{</span>
-<span class="x">    // ...</span>
-<span class="x">}</span>
-</pre></div>
-
-
-<p>我们可以通过配置yii\base\Module::$controllerNamespace属性来实现自定义控制器类的命名空间，如果一些控制器不在该命名空间下，可以通过配置yii\base\Module::controllerMap属性让它们能被访问，这类似于我们在应用主体配置中所做的。</p>
-<h5>模块中的视图</h5>
-<p>视图应该放在模块的yii\base\Module::basePath对应目录下的<code>views</code>目录中，对于模块中控制器对应的视图文件应该放在<code>views/ControllerID</code>目录下，其中<code>ControllerID</code>对应控制器ID。例如，假设控制器类是<code>PostController</code>，目录对应模块yii\base\Module::basePath<code>目录下的</code>views/post```目录。</p>
-<p>模块可以指定在模块控制器视图渲染中所使用的布局，该布局默认存放在<code>view/layouts</code>目录下，我们可以通过配置yii\base\Module::layout属性来指定布局名，如果没有配置该属性，默认使用应用的布局名。</p>
-<h5>模块中的控制台命令</h5>
-<p>我们的模块中可能也会声明一些<a href="http://www.yiiframework.com/doc-2.0/guide-tutorial-console.html">控制台</a>模式下可用的命令。</p>
-<p>为了使得命令行实用程序（command line utility）能够识别到我们的命令，在Yii以命令行模式运行时，我们需要修改yii\base\Module::controllerNamespace属性，将其指向我们定义的命令的命名空间。</p>
-<p>如下代码就是其中的一个实现方法，在模块的初始化方法中测试Yii应用程序的实例类型：</p>
-<div class="highlight"><pre><span></span><span class="x">public function init()</span>
-<span class="x">{</span>
-<span class="x">    parent::init();</span>
-<span class="x">    if (Yii::$app instanceof \yii\console\Application) {</span>
-<span class="x">        $this-&gt;controllerNamespace = &#39;app\modules\forum\commands&#39;;</span>
-<span class="x">    }</span>
-<span class="x">}</span>
-</pre></div>
-
-
-<p>之后我们的命令可以通过如下的规则从命令行中访问到：</p>
-<div class="highlight"><pre><span></span>yii &lt;module_id&gt;/&lt;command&gt;/&lt;sub_command&gt;
-</pre></div>
-
-
-<h4>使用模块</h4>
-<p>想要在应用中使用模块，只需要将模块加入到应用主体配置的yii\base\Application::modules属性对应的列表中，如下代码的应用主体配置使用<code>forum</code>模块：</p>
-<div class="highlight"><pre><span></span><span class="x">[</span>
-<span class="x">    &#39;modules&#39; =&gt; [</span>
-<span class="x">        &#39;forum&#39; =&gt; [</span>
-<span class="x">            &#39;class&#39; =&gt; &#39;app\modules\forum\Module&#39;,</span>
-<span class="x">            // ... 模块其他配置 ...</span>
-<span class="x">        ],</span>
-<span class="x">    ],</span>
-<span class="x">]</span>
-</pre></div>
-
-
-<p>yii\base\Application::modules属性使用模块配置数组，每个数组的键为模块ID，它标识该应用中唯一的模块，数组的值为用来创建模块的配置。</p>
-<h5>路由</h5>
-<p>和访问应用的控制器类似，路由也被用在模块中对控制器进行寻址。模块中控制器的路由必须以模块ID开始，接下来是控制器ID和操作ID。例如，假设应用使用一个<code>forum</code>模块，路由<code>forum.post/index</code>代表模块中<code>post</code>控制器的<code>index</code>操作，如果路由只包含模块ID，默认为<code>default</code>的yii\base\Module::defaultRoute属性来决定使用哪个控制器/操作，也就是说路由<code>forum</code>可能代表<code>forum</code>模块的<code>default</code>控制器。</p>
-<h5>访问模块</h5>
-<p>在模块中，可能经常需要获取模块类的实例来访问模块ID、模块参数、模块组件等，我们可以使用如下的语句来获取module的实例：</p>
-<div class="highlight"><pre><span></span><span class="x">$module = MyModuleClass::getInstance();</span>
-</pre></div>
-
-
-<p>其中，<code>MyModuleClass</code>对应你想要的模块类，<code>getInstance()</code>方法返回当前请求的模块类实例，如果模块没有被请求，该方法会返回空。需要注意的是，这里不需要手动创建一个模块类的实例，因为手动创建的和Yii处理请求时自动创建的是不一样的。</p>
-<p>补充说明：在开发模块时，我们不能假设模块是使用固定的ID的，因为在应用或者其他模块中，模块可能会对应到任意的ID，为了获取模块ID，应该使用上述代码获取模块实例，然后通过<code>$module-&gt;id</code>获取模块ID。</p>
-<p>也可以使用如下方式访问模块实例：</p>
-<div class="highlight"><pre><span></span><span class="x">// 获取ID为 &quot;forum&quot; 的模块</span>
-<span class="x">$module = \Yii::$app-&gt;getModule(&#39;forum&#39;);</span>
-
-<span class="x">// 获取处理当前请求控制器所属的模块</span>
-<span class="x">$module = \Yii::$app-&gt;controller-&gt;module;</span>
-</pre></div>
-
-
-<p>第一种方式仅在我们明确知道模块ID的情况下有效，第二种方式在我们知道处理请求的控制器的情况下使用。</p>
-<p>一旦获取到模块实例，我们就可以访问注册到模块的参数和组件，例如：</p>
-<div class="highlight"><pre><span></span><span class="x">$maxPostCount = $module-&gt;params[&#39;maxPostCount&#39;];</span>
-</pre></div>
-
-
-<h5>引导启动模块</h5>
-<p>有些模块在每个请求下都会运行，比如yii\debug\Module模块，为此，我们需要将这种模块加入到主体的yii\base\Application::bootstrap属性中。</p>
-<p>例如，如下实例的应用主体配置会确保<code>debug</code>模块每次都被加载：</p>
-<div class="highlight"><pre><span></span><span class="x">[</span>
-<span class="x">    &#39;bootstrap&#39; =&gt; [</span>
-<span class="x">        &#39;debug&#39;,</span>
-<span class="x">    ],</span>
-
-<span class="x">    &#39;modules&#39; =&gt; [</span>
-<span class="x">        &#39;debug&#39; =&gt; &#39;yii\debug\Module&#39;,</span>
-<span class="x">    ],</span>
-<span class="x">]</span>
-</pre></div>
-
-
-<h5>嵌套模块</h5>
-<p>模块可以无限级嵌套，也就是说，模块可以包含另一个模块的模块，我们称前者为父模块，后者为子模块，子模块必须在父模块的yii\base\Module::modules属性中声明，例如：</p>
-<div class="highlight"><pre><span></span><span class="x">namespace app\modules\forum;</span>
-
-<span class="x">class Module extends \yii\base\Module</span>
-<span class="x">{</span>
-<span class="x">    public function init()</span>
-<span class="x">    {</span>
-<span class="x">        parent::init();</span>
-
-<span class="x">        $this-&gt;modules = [</span>
-<span class="x">            &#39;admin&#39; =&gt; [</span>
-<span class="x">                // 此处应考虑使用一个更短的命名空间</span>
-<span class="x">                &#39;class&#39; =&gt; &#39;app\modules\forum\modules\admin\Module&#39;,</span>
-<span class="x">            ],</span>
-<span class="x">        ];</span>
-<span class="x">    }</span>
-<span class="x">}</span>
-</pre></div>
-
-
-<p>在嵌套模块中的控制器，它的路由应该包含它所有的上级模块（Ancestor Module）的ID，例如<code>forum/admin/dashboard/index</code>代表在模块<code>forum</code>中子模块的<code>admin</code>中<code>dashboard</code>控制器的<code>index</code>操作。</p>
-<h4>最佳实践</h4>
-<p>模块在大型项目中常备使用，这些项目的特性可分组，每个组包含一些强相关的特性，每个特性组可以做成一个模块，由特定的开发人员和开发组来进行开发和维护。</p>
-<p>在特性组上，使用模块也是重用代码的好方式，一些常用特性，如用户管理，评论管理，可以开发成模块，这样儿在相关项目中非常容易被重用。</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+<p>每个模块都有一个继承yii\base ...</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
 
 </p>
 
 
 
-<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-14-application-structure-modulesying-yong-jie-gou-zhi-mo-kuai.html#disqus_thread">comments</a></p>            </article>
-
-
+<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-14-application-structure-modulesying-yong-jie-gou-zhi-mo-kuai.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-14-application-structure-modulesying-yong-jie-gou-zhi-mo-kuai.html">Read More</a>
                 <hr  class="gradient"/>
-
+            </article>
 
         
 
@@ -507,39 +673,6 @@
 
 
 <p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-6-generating-code-with-giishi-yong-giisheng-cheng-dai-ma.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-6-generating-code-with-giishi-yong-giisheng-cheng-dai-ma.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
-
-        
-
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-5-working-with-databaseshi-yong-shu-ju-ku.html"><h3 class="article-title">Yii2学习笔记系列5——Working With Database（使用数据库）</h3></a>
-<h6 class="subheader" title="2016-04-08T23:09:45+08:00">五 08 四月 2016
-</h6>
-
-
-<h3>Yii2笔记系列5——Working With Database（使用数据库）</h3>
-<p>上一篇中我们学习了如何使用Form表单，掌握了Form表单的提交以及在Yii中通过视图展示提交内容的技能，这一篇我们来学习一下如何创建一个从数据表<code>country</code>中读取国家数据并显示出来的页面，为此，我们需要配置一个数据库连接，创建一个<a href="http://www.yiiframework.com/doc-2.0/guide-db-active-record.html">活动记录类</a>，并且创建一个操作和一个视图。</p>
-<p>通过这篇，我们将会学习到的：</p>
-<ul>
-<li>配置一个数据库连接</li>
-<li>定义一个活动记录类</li>
-<li>使用活动记录类从数据库中查询数据</li>
-<li>以分页的方式在视图中显示数据</li>
-</ul>
-<h4>准备数据库</h4>
-<p>首先创建一个名为<code>yii2basic</code>的数据库，应用将从这个数据库中读取数据，Yii中内置了多种数据库支持，这里我们使用最常见的MySQL数据库。以下是MySQL的建表语句：</p>
-<div class="highlight"><pre><span></span><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="o">`</span><span class="n">country</span><span class="o">`</span> <span class="p">(</span>
-  <span class="o">`</span><span class="n">code</span><span class="o">`</span> <span class="nb">CHAR</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
-  <span class="o">`</span><span class="n">name</span><span class="o">`</span> <span class="nb">CHAR</span><span class="p">(</span><span class="mi">52</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
-  <span class="o">`</span><span class="n">population</span><span class="o">`</span> <span class="nb">INT</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">DEFAULT ...</span></pre></div><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-5-working-with-databaseshi-yong-shu-ju-ku.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-5-working-with-databaseshi-yong-shu-ju-ku.html">Read More</a>
                 <hr  class="gradient"/>
             </article>
 

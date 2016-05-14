@@ -49,6 +49,48 @@
 
 
             <article>
+                <a href="http://jeepxiaozi.github.io/androidkai-fa-zhi-gradlebi-ji-zheng-li-2-gradlechang-yong-ming-ling-ji-umengduo-qu-dao-da-bao-shi-zhan.html"><h3 class="article-title">Android开发之Gradle笔记整理2——Gradle常用命令及UMeng多渠道打包实战</h3></a>
+<h6 class="subheader" title="2015-04-06T21:54:47+08:00">一 06 四月 2015
+</h6>
+
+
+<p>在前一篇博客里我们简单快速的学习了一下Gradle的基本安装和配置，以及解决了其中遇到的一些小的错误，这篇文章里我们来小小的实践一下，本身也是在Android开发中必不可少的技能。</p>
+<h5>修改build.gradle文件</h5>
+<p>接着之前的项目继续看，我们修改一下Module中的build.gradle文件，这里也不做过多讲解了，注释都在文件中，慢慢看，还是比较容易懂的：</p>
+<div class="highlight"><pre><span></span>apply plugin: &#39;com.android.application&#39;
+
+repositories {
+    jcenter()
+}
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion &quot;21.1.1&quot;
+
+    defaultConfig {
+        applicationId &quot;com.aiscot.gradle.test&quot;
+        minSdkVersion 9
+        targetSdkVersion 19
+        versionCode 1
+        versionName &quot;1.0&quot;
+
+        // 修改dex 65536的限制
+        multiDexEnabled true
+        // AndroidManifest.xml文件中UMENG_CHANNEL的value为<span class="cp">${</span><span class="n">UMENG_CHANNEL_VALUE</span><span class="cp">}</span>
+        manifestPlaceholders ...</pre></div><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/android-develop.html">Android Develop</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/androidkai-fa-zhi-gradlebi-ji-zheng-li-2-gradlechang-yong-ming-ling-ji-umengduo-qu-dao-da-bao-shi-zhan.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/androidkai-fa-zhi-gradlebi-ji-zheng-li-2-gradlechang-yong-ming-ling-ji-umengduo-qu-dao-da-bao-shi-zhan.html">Read More</a>
+                <hr  class="gradient"/>
+            </article>
+
+        
+
+
+            <article>
                 <a href="http://jeepxiaozi.github.io/androidkai-fa-zhi-gradlebi-ji-zheng-li-1.html"><h3 class="article-title">Android开发之Gradle笔记整理1</h3></a>
 <h6 class="subheader" title="2015-04-05T17:55:50+08:00">日 05 四月 2015
 </h6>
