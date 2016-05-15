@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8" />
+    <!-- Set the viewport width to device width for mobile -->
+    <meta name="viewport" content="width=device-width" />
+
+    <title>Yii2学习笔记系列16——Application Structure-Widgets（应用结构之小部件）</title>
+
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/normalize.css" />
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/foundation.min.css" />
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/style.css" />
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/pygments.css" />
+    <script src="http://jeepxiaozi.github.io/theme/js/modernizr.js"></script>
+</head>
+
+<body>
+
+    <!-- Nav Bar -->
+    <nav>
+        <div class="top-bar">
+            <div class="row">
+                <div class="large-9 large-centered columns">
+                    <h1><a href="http://jeepxiaozi.github.io">一把汤勺</a></h1>
+                </div>
+            </div>
+        </div>
+
+        <!-- Show menu items and pages -->
+        <div class="row">
+            <div class="large-9 columns">
+                <ul class="button-group navigation">
+                      <li><a href="http://jeepxiaozi.github.io/pages/guan-yu-zuo-zhe.html" class="button secondary small">关于作者</a>
+                    </li>
+                 </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- End Nav -->
+
+
+    <!-- Main Page Content and Sidebar -->
+    <div class="row">
+
+        <!-- Main Blog Content -->
+        <div class="large-9 columns">
+<article>
+    <header>
+        <h3 class="article-title"><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-16-application-structure-widgetsying-yong-jie-gou-zhi-xiao-bu-jian.html" rel="bookmark"
+        title="Permalink to Yii2学习笔记系列16——Application Structure-Widgets（应用结构之小部件）">Yii2学习笔记系列16——Application Structure-Widgets（应用结构之小部件）</a></h3>
+    </header>
+
+<h6 class="subheader" title="2016-05-15T15:57:05+08:00">日 15 五月 2016
+</h6>
+
+
+    <h3>小部件</h3>
+<p>小部件是视图中可以重复使用的构建单元，用于以面向对象的方式创建复杂的并且可以配置的用户接口元素。例如，一个日期小部件会生成一个允许用户选择他们想要输入的日期的漂亮组件，而我们要做的只是把如下的代码插入到视图中即可：</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">yii\jui\DatePicker</span><span class="p">;</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+<span class="cp">&lt;?</span><span class="o">=</span> <span class="nx">DatePicker</span><span class="o">::</span><span class="na">widget</span><span class="p">([</span><span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;date&#39;</span><span class="p">])</span> <span class="cp">?&gt;</span><span class="x"></span>
+</pre></div>
+
+
+<p>Yii提供了许多优秀的小部件，比如<a href="http://www.yiiframework.com/doc-2.0/yii-widgets-activeform.html">activeForm</a>、<a href="http://www.yiiframework.com/doc-2.0/yii-widgets-menu.html">menu</a>、<a href="http://www.yiiframework.com/doc-2.0/guide-widget-jui.html">jQuery UI widgets</a>、<a href="http://www.yiiframework.com/doc-2.0/guide-widget-bootstrap.html">Twitter Bootstrap widgets</a>。下面我们会讲解关于小部件的基础只是，如果你想了解某个小部件请参考对应的API文档。</p>
+<h4>使用小部件</h4>
+<p>小部件主要在视图中使用。我们可以通过调用<code>yii\base\Widget::widget()</code>方法在视图中使用小部件，该方法接收一个配置数组用于初始化小部件并且返回小部件的渲染结果。例如，如下示例代码插入一个配置使用俄语并且输入的值会作为<code>$model</code>模型的<code>from_date</code>属性的日期小部件：</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">yii\jui\DatePicker</span><span class="p">;</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+<span class="cp">&lt;?</span><span class="o">=</span> <span class="nx">DatePicker</span><span class="o">::</span><span class="na">widget</span><span class="p">([</span>
+    <span class="s1">&#39;model&#39;</span> <span class="o">=&gt;</span> <span class="nv">$model</span><span class="p">,</span>
+    <span class="s1">&#39;attribute&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;from_date&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;language&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;ru&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;clientOptions&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="s1">&#39;dateFormat&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;yy-mm-dd&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">])</span> <span class="cp">?&gt;</span><span class="x"></span>
+</pre></div>
+
+
+<p>有些小部件可以在yii\base\Widget::begin()方法和yii\base\Widget::end()方法之间调用内容块。例如，下面的代码使用<a href="http://www.yiiframework.com/doc-2.0/yii-widgets-activeform.html">yii\widgets\ActiveForm</a>小部件生成了一个登录的Form表单，小部件会生成在<code>begin()</code>方法和<code>end()</code>方法被调用的地方分别生成开始和结束的<code>&lt;form&gt;</code>标签，位于开始和结束标签中间的任何数据也都会被渲染。</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">yii\widgets\ActiveForm</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">yii\helpers\Html</span><span class="p">;</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+
+<span class="cp">&lt;?php</span> <span class="nv">$form</span> <span class="o">=</span> <span class="nx">ActiveForm</span><span class="o">::</span><span class="na">begin</span><span class="p">([</span><span class="s1">&#39;id&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;login-form&#39;</span><span class="p">]);</span> <span class="cp">?&gt;</span><span class="x"></span>
+
+<span class="x">    </span><span class="cp">&lt;?</span><span class="o">=</span> <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">field</span><span class="p">(</span><span class="nv">$model</span><span class="p">,</span> <span class="s1">&#39;username&#39;</span><span class="p">)</span> <span class="cp">?&gt;</span><span class="x"></span>
+
+<span class="x">    </span><span class="cp">&lt;?</span><span class="o">=</span> <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">field</span><span class="p">(</span><span class="nv">$model</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">passwordInput</span><span class="p">()</span> <span class="cp">?&gt;</span><span class="x"></span>
+
+<span class="x">    &lt;div class=&quot;form-group&quot;&gt;</span>
+<span class="x">        </span><span class="cp">&lt;?</span><span class="o">=</span> <span class="nx">Html</span><span class="o">::</span><span class="na">submitButton</span><span class="p">(</span><span class="s1">&#39;Login&#39;</span><span class="p">)</span> <span class="cp">?&gt;</span><span class="x"></span>
+<span class="x">    &lt;/div&gt;</span>
+
+<span class="cp">&lt;?php</span> <span class="nx">ActiveForm</span><span class="o">::</span><span class="na">end</span><span class="p">();</span> <span class="cp">?&gt;</span><span class="x"></span>
+</pre></div>
+
+
+<p>需要注意的是，与<a href="http://www.yiiframework.com/doc-2.0/yii-base-widget.html#widget()-detail">yii\base\Widget::widget()</a>方法（该方法返回渲染结果）不同的是，<a href="http://www.yiiframework.com/doc-2.0/yii-base-widget.html#begin()-detail">yii\base\Widget::begin()</a>方法返回一个我们可以用来构建小部件内容的小部件实例。</p>
+<h5>配置全局默认值</h5>
+<p>一个小部件类型的全局默认值可以通过DI容器进行配置：</p>
+<div class="highlight"><pre><span></span><span class="x">\Yii::$container-&gt;set(&#39;yii\widgets\LinkPager&#39;, [&#39;maxButtonCount&#39; =&gt; 5]);</span>
+</pre></div>
+
+
+<p>更多详情请参阅<a href="http://www.yiiframework.com/doc-2.0/guide-concept-di-container.html#practical-usage">DI容器指南中“实际使用”</a>一节。</p>
+<h4>创建小部件</h4>
+<p>为了创建小部件，我们需要继承<a href="http://www.yiiframework.com/doc-2.0/yii-base-widget.html">yii\base\Widget</a>类，并且重写<a href="http://www.yiiframework.com/doc-2.0/yii-base-object.html#init()-detail">yii\base\Widget::init()</a>方法 和/或 <a href="http://www.yiiframework.com/doc-2.0/yii-base-widget.html#run()-detail">yii\base\Widget::run()</a>方法。通常来讲，<code>init()</code>方法主要包含处理小部件属性的代码，<code>run()</code>方法主要包含生成小部件渲染结果的代码。<code>run()</code>方法可以将渲染结果直接输出也可以以字符串形式返回。</p>
+<p>下面的示例中，<code>HelloWidget</code> 将赋值给它的<code>message</code>属性进行HTML编码并且显示，如果<code>message</code>属性没有设置，则默认会显示“Hello World”。</p>
+<div class="highlight"><pre><span></span><span class="x">namespace app\components;</span>
+
+<span class="x">use yii\base\Widget;</span>
+<span class="x">use yii\helpers\Html;</span>
+
+<span class="x">class HelloWidget extends Widget</span>
+<span class="x">{</span>
+<span class="x">    public $message;</span>
+
+<span class="x">    public function init()</span>
+<span class="x">    {</span>
+<span class="x">        parent::init();</span>
+<span class="x">        if ($this-&gt;message === null) {</span>
+<span class="x">            $this-&gt;message = &#39;Hello World&#39;;</span>
+<span class="x">        }</span>
+<span class="x">    }</span>
+
+<span class="x">    public function run()</span>
+<span class="x">    {</span>
+<span class="x">        return Html::encode($this-&gt;message);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</pre></div>
+
+
+<p>要想使用这个小部件，只需要在视图中简单的插入如下代码：</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">app\components\HelloWidget</span><span class="p">;</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+<span class="cp">&lt;?</span><span class="o">=</span> <span class="nx">HelloWidget</span><span class="o">::</span><span class="na">widget</span><span class="p">([</span><span class="s1">&#39;message&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Good morning&#39;</span><span class="p">])</span> <span class="cp">?&gt;</span><span class="x"></span>
+</pre></div>
+
+
+<p>下面是一个HelloWidget的变种版本，它主要获取begin()方法和end()方法中间的内容，然后进行HTML编码并且进行展示：</p>
+<div class="highlight"><pre><span></span><span class="x">namespace app\components;</span>
+
+<span class="x">use yii\base\Widget;</span>
+<span class="x">use yii\helpers\Html;</span>
+
+<span class="x">class HelloWidget extends Widget</span>
+<span class="x">{</span>
+<span class="x">    public function init()</span>
+<span class="x">    {</span>
+<span class="x">        parent::init();</span>
+<span class="x">        ob_start();</span>
+<span class="x">    }</span>
+
+<span class="x">    public function run()</span>
+<span class="x">    {</span>
+<span class="x">        $content = ob_get_clean();</span>
+<span class="x">        return Html::encode($content);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</pre></div>
+
+
+<p>如你所见，PHP的输入缓冲在<code>init()</code>方法中启动，所以<code>init()</code>方法和<code>run()</code>方法中间的任意输出都会被捕获、处理并且在<code>run()</code>方法中被返回。</p>
+<blockquote>
+<p>注意：当你调用<a href="http://www.yiiframework.com/doc-2.0/yii-base-widget.html#begin()-detail">yii\base\Widget::begin()</a>方法时，会创建一个小部件的实例，并且<code>init()</code>方法会在小部件的构造方法结尾处被调用。当你调用<a href="http://www.yiiframework.com/doc-2.0/yii-base-widget.html#end()-detail">yii\base\Widget::end()</a>方法时，<code>run()</code>方法会在被调用，并且它的返回结果会被<code>end()</code>方法输出。</p>
+</blockquote>
+<p>下面的代码展示了HelloWidget的变种的使用方法：</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">app\components\HelloWidget</span><span class="p">;</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+<span class="cp">&lt;?php</span> <span class="nx">HelloWidget</span><span class="o">::</span><span class="na">begin</span><span class="p">();</span> <span class="cp">?&gt;</span><span class="x"></span>
+
+<span class="x">    content that may contain &lt;tag&gt;&#39;s</span>
+
+<span class="cp">&lt;?php</span> <span class="nx">HelloWidget</span><span class="o">::</span><span class="na">end</span><span class="p">();</span> <span class="cp">?&gt;</span><span class="x"></span>
+</pre></div>
+
+
+<p>有时候，一个小部件可以能需要渲染一大段内容，我们除了可以将内容嵌入到<code>run()</code>方法之外，更好的办法就是将其放入一个视图中并且调用<a href="http://www.yiiframework.com/doc-2.0/yii-base-widget.html#render()-detail">yii\base\Widget::render()</a>方法去渲染它。例如：</p>
+<div class="highlight"><pre><span></span><span class="x">public function run()</span>
+<span class="x">{</span>
+<span class="x">    return $this-&gt;render(&#39;hello&#39;);</span>
+<span class="x">}</span>
+</pre></div>
+
+
+<p>默认情况下，小部件的视图文件存储在<code>WidgetPath/views</code>目录下，其中<code>WidgetPath</code>表示包含小部件类文件的路径。因此，上述示例中，假设小部件类位于<code>@app/components</code>目录下，则渲染<code>@app/components/views/hello.php</code>文件。我们可以通过重写<a href="http://www.yiiframework.com/doc-2.0/yii-base-widget.html#getViewPath()-detail">yii\base\Widget::getViewPath()</a>方法来自定义包含小部件视图代码的目录。</p>
+<h4>最佳实践</h4>
+<p>小部件是通过面向对象来实现视图代码重用的一种方式。</p>
+<p>当创建小部件时，仍然需要遵循MVC模式，通常我们需要将逻辑代码保存在小部件类中，将展示代码放在视图中。</p>
+<p>小部件应该被设计成独立的，也就是说，当我们使用一个小部件的时候，只需要把它丢进我们的视图中即可，不需要做任何其它多余的工作。但是当小部件需要应用外部的资源比如CSS、JS或者图片时会比较棘手，幸运的是，Yii提供了<a href="http://www.yiiframework.com/doc-2.0/guide-structure-assets.html">资源包</a>的管理，能够充分解决这个问题。</p>
+<p>当一个小部件只包含视图代码的时候跟视图是很相似的，事实上，在这种情况下，小部件与视图的唯一区别就是小部件是重用类，而视图只是应用中使用的普通PHP脚本。</p>
+<p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+
+</p>
+
+
+
+
+	<h4>Comments</h4>
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        var disqus_shortname = 'erictang'
+        var disqus_identifier = "yii2xue-xi-bi-ji-xi-lie-16-application-structure-widgetsying-yong-jie-gou-zhi-xiao-bu-jian.html";
+        var disqus_url = "http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-16-application-structure-widgetsying-yong-jie-gou-zhi-xiao-bu-jian.html";
+
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</article>
+        </div>
+        <!-- End Main Content -->
+
+        <!-- Sidebar -->
+        <aside class="large-3 columns">
+            <h5 class="sidebar-title">Site</h5>
+            <ul class="side-nav">
+                <li><a href="http://jeepxiaozi.github.io/archives.html">Archives</a>
+                    <li><a href="http://jeepxiaozi.github.io/tags.html">Tags</a>              </ul>
+
+            <h5 class="sidebar-title">Categories</h5>
+            <ul class="side-nav">
+                <li><a href="http://jeepxiaozi.github.io/category/android-develop.html">Android Develop</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/git.html">Git</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/ios-develop.html">iOS Develop</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo.html">技术生活</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/markdownxie-zuo.html">Markdown写作</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/multicopter.html">MultiCopter</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/pages.html">Pages</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/server-develop.html">Server Develop</a>
+                </li>
+            </ul>
+             <h5 class="sidebar-title">Links</h5>
+            <ul class="side-nav">
+                <li><a href="http://www.linuxzen.com">cold's world</a>
+                </li>
+                <li><a href="http://www.icnws.com/">城南往事小站</a>
+                </li>
+                <li><a href="http://wellmakers.com">电子匠人</a>
+                </li>
+                <li><a href="http://androidcat.com/">AndroidCat</a>
+                </li>
+            </ul>
+             <h5 class="sidebar-title">Social</h5>
+            <ul class="side-nav social">
+                <li><a href="https://twitter.com/jeepxiaoxiaozi">twitter</a>
+                </li>
+                <li><a href="https://github.com/jeepxiaozi">GitHub</a>
+                </li>
+                <li><a href="http://weibo.com/u/1375170263/">Weibo</a>
+                </li>
+            </ul>
+
+        </aside>
+        <!-- End Sidebar -->
+
+    </div>
+    <!-- End Main Content and Sidebar -->
+
+
+    <!-- Footer -->
+    <footer class="row">
+        <div class="large-12 columns">
+            <hr />
+            <div class="row">
+                <div class="large-6 columns">
+                    <p><a href="http://jeepxiaozi.github.io">一把汤勺</a> &copy; EricTang 2016 
+ 
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1254253569'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s95.cnzz.com/z_stat.php%3Fid%3D1254253569%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));</script>
+                 </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

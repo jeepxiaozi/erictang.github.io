@@ -49,6 +49,42 @@
 
 
             <article>
+                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-6-generating-code-with-giishi-yong-giisheng-cheng-dai-ma.html"><h3 class="article-title">Yii2学习笔记系列6——Generating Code With Gii（使用Gii生成代码）</h3></a>
+<h6 class="subheader" title="2016-04-09T15:56:05+08:00">六 09 四月 2016
+</h6>
+
+
+<h3>Yii2笔记系列6——Generating Code With Gii（使用Gii生成代码）</h3>
+<p>在上一篇学习笔记中，我们学习了如何连接数据库以及如何编写查询代码来分页读取数据库记录，这篇我们来学习一下如何通过Gii生成这些功能的代码。使用Gii生成代码非常简单，只要按照Gii页面上的介绍信息输入正确的信息即可。</p>
+<p>本篇中，我们将要学习到的知识点有：</p>
+<ul>
+<li>在应用中开启Gii</li>
+<li>使用Gii生成活动记录类</li>
+<li>使用Gii生成数据表操作的增查删改（CRUD）代码</li>
+<li>自定义Gii生成的代码</li>
+</ul>
+<h4>开启Gii</h4>
+<p>Gii是Yii中的一个模块，可以通过<code>yii\base\Application::modules</code>属性开启它，通常的，在<code>config/web.php</code>文件中会有以下的配置代码：</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nx">YII_ENV_DEV</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// configuration adjustments for &#39;dev&#39; environment</span>
+    <span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;bootstrap&#39;</span><span class="p">][]</span> <span class="o">=</span> <span class="s1">&#39;debug&#39;</span><span class="p">;</span>
+    <span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;modules&#39;</span><span class="p">][</span><span class="s1">&#39;debug&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;yii\debug ...</span></pre></div><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-6-generating-code-with-giishi-yong-giisheng-cheng-dai-ma.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-6-generating-code-with-giishi-yong-giisheng-cheng-dai-ma.html">Read More</a>
+                <hr  class="gradient"/>
+            </article>
+
+        
+
+
+            <article>
                 <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-5-working-with-databaseshi-yong-shu-ju-ku.html"><h3 class="article-title">Yii2学习笔记系列5——Working With Database（使用数据库）</h3></a>
 <h6 class="subheader" title="2016-04-08T23:09:45+08:00">五 08 四月 2016
 </h6>
