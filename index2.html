@@ -49,6 +49,35 @@
 
 
             <article>
+                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-7-application-structure-overviewying-yong-jie-gou-zhi-zong-lan.html"><h3 class="article-title">Yii2学习笔记系列7——Application Structure-Overview（应用结构之总览）</h3></a>
+<h6 class="subheader" title="2016-04-10T15:19:21+08:00">日 10 四月 2016
+</h6>
+
+
+<h3>Yii2学习笔记系列7——Application Structure-Overview（应用结构之总览）</h3>
+<p>在上一篇中我们学习了如何使用Gii来生成常用的CRUD功能代码，对于入门来说是足够了的，但是远远不能应对开发，为了能够更好的使用Yii进行程序开发，我们需要对Yii应用有足够深入的了解，从这篇开始，我们将会深入学习，了解Yii的应用结构，包括应用的结构组成、入口脚本、组件、控制器、模型、视图等等。</p>
+<h4>总览</h4>
+<p>Yii是通过MVC设计模式来组织的应用，即Model（模型）、View（视图）、Controller（控制器），模型代表数据、业务逻辑和规则；视图展示模型的输出；控制器接受输入并将其转换为模型和视图命令。</p>
+<p>除了模型、视图和控制器之外，Yii应用主要还包括以下部分：</p>
+<ul>
+<li><a href="http://www.yiiframework.com/doc-2.0/guide-structure-entry-scripts.html">入口脚本</a>： 终端用户能够直接访问的PHP脚本，在Yii中指的是<code>web/index.php</code>文件</li>
+<li><a href="http://www.yiiframework.com/doc-2.0/guide-structure-applications.html">应用</a>： 能够在全局范围内被访问的对象，用以管理协调组件来完成请求</li>
+<li><a href="http://www.yiiframework.com/doc-2.0/guide-structure-application-components.html">应用组件</a>： 在应用中注册的对象，提供各种功能来完成请求</li>
+<li><a href="http://www.yiiframework.com/doc-2.0/guide-structure-modules.html">模块</a>： 包含完整MVC结构的独立包，一个应用可以包含N多个模块</li>
+<li><a href="http://www.yiiframework.com/doc-2.0/guide-structure-filters.html">过滤器 ...</a></li></ul><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-7-application-structure-overviewying-yong-jie-gou-zhi-zong-lan.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-7-application-structure-overviewying-yong-jie-gou-zhi-zong-lan.html">Read More</a>
+                <hr  class="gradient"/>
+            </article>
+
+        
+
+
+            <article>
                 <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-6-generating-code-with-giishi-yong-giisheng-cheng-dai-ma.html"><h3 class="article-title">Yii2学习笔记系列6——Generating Code With Gii（使用Gii生成代码）</h3></a>
 <h6 class="subheader" title="2016-04-09T15:56:05+08:00">六 09 四月 2016
 </h6>
@@ -331,34 +360,6 @@ mv composer.phar /usr/local/bin/composer
 
 
 <p><a href="http://jeepxiaozi.github.io/css3zhong-de-transform.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/css3zhong-de-transform.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
-
-        
-
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/sheng-cheng-sslzheng-shu.html"><h3 class="article-title">生成SSL证书</h3></a>
-<h6 class="subheader" title="2015-05-22T15:08:42+08:00">五 22 五月 2015
-</h6>
-
-
-<p>最近在忙活公司的事情，所以博客更新少了，但还是尽量有时间把自己平时的一些笔记整理记录下来。这里之所以把SSL证书的创建过程记录一下，至于用处嘛，是打算自己写一个iOS的内网Daily Build和分发。闲话不表，我们来看具体的步骤。</p>
-<h5>准备工作</h5>
-<p>首先，先创建一个文件夹，我们这里取名叫demoCA，然后参考openssl.cfg/openssl.cnf文件，不确定为啥命名是这样儿的，可以打开openssl.cnf看看内容就清楚了，按照自己的需要设置证书要用的目的之类的，当然，这里我们无需自己设置，可以直接使用默认的。然后我们在demoCA目录下，分别创建certs、newcerts文件夹，并且创建一个空白的index.txt文件和一个serial文件，在serial文件中填充任意的16进制数字，如0000，准备工作，基本到这里就结束了，接下来我们开始正式生成SSL证书。</p>
-<h5>开始生成SSL证书</h5>
-<h6>1. 首先，生成服务器端的私钥（key文件）：</h6>
-<div class="highlight"><pre><span></span><span class="nv">$openssl</span> genrsa -des3 -out server.key 1024
-</pre></div>
-
-
-<p>之后会提示输入密码，这个密码是用于加密这个key文件的，其中参数des3是加密的算法，也可以选择其它的例如aes算法 ...</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/server-develop.html">Server Develop</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/sheng-cheng-sslzheng-shu.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/sheng-cheng-sslzheng-shu.html">Read More</a>
                 <hr  class="gradient"/>
             </article>
 

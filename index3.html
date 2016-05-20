@@ -49,6 +49,34 @@
 
 
             <article>
+                <a href="http://jeepxiaozi.github.io/sheng-cheng-sslzheng-shu.html"><h3 class="article-title">生成SSL证书</h3></a>
+<h6 class="subheader" title="2015-05-22T15:08:42+08:00">五 22 五月 2015
+</h6>
+
+
+<p>最近在忙活公司的事情，所以博客更新少了，但还是尽量有时间把自己平时的一些笔记整理记录下来。这里之所以把SSL证书的创建过程记录一下，至于用处嘛，是打算自己写一个iOS的内网Daily Build和分发。闲话不表，我们来看具体的步骤。</p>
+<h5>准备工作</h5>
+<p>首先，先创建一个文件夹，我们这里取名叫demoCA，然后参考openssl.cfg/openssl.cnf文件，不确定为啥命名是这样儿的，可以打开openssl.cnf看看内容就清楚了，按照自己的需要设置证书要用的目的之类的，当然，这里我们无需自己设置，可以直接使用默认的。然后我们在demoCA目录下，分别创建certs、newcerts文件夹，并且创建一个空白的index.txt文件和一个serial文件，在serial文件中填充任意的16进制数字，如0000，准备工作，基本到这里就结束了，接下来我们开始正式生成SSL证书。</p>
+<h5>开始生成SSL证书</h5>
+<h6>1. 首先，生成服务器端的私钥（key文件）：</h6>
+<div class="highlight"><pre><span></span><span class="nv">$openssl</span> genrsa -des3 -out server.key 1024
+</pre></div>
+
+
+<p>之后会提示输入密码，这个密码是用于加密这个key文件的，其中参数des3是加密的算法，也可以选择其它的例如aes算法 ...</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/server-develop.html">Server Develop</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/sheng-cheng-sslzheng-shu.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/sheng-cheng-sslzheng-shu.html">Read More</a>
+                <hr  class="gradient"/>
+            </article>
+
+        
+
+
+            <article>
                 <a href="http://jeepxiaozi.github.io/yi-dian-er-gan-kai-du-cheng-xu-yuan-bi-du-de-zhi-ye-gui-hua-shu.html"><h3 class="article-title">一点儿感慨——读《程序员必读的职业规划书》</h3></a>
 <h6 class="subheader" title="2015-05-17T16:01:16+08:00">日 17 五月 2015
 </h6>
@@ -295,30 +323,6 @@ android {
 
 
 <p><a href="http://jeepxiaozi.github.io/zheng-shi-qi-yong-zi-ji-de-github-pageszuo-wei-xin-de-bei-yong-ji-zhu-bo-ke.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/zheng-shi-qi-yong-zi-ji-de-github-pageszuo-wei-xin-de-bei-yong-ji-zhu-bo-ke.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
-
-        
-
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/bo-ke-dan-sheng-ji.html"><h3 class="article-title">博客诞生记</h3></a>
-<h6 class="subheader" title="2015-02-05T22:56:19+08:00">四 05 二月 2015
-</h6>
-
-
-<p>本来我这么懒惰的人，写博客大多都是在CSDN或者博客园，CSDN更多一些吧，但最近接连两天的被封号让我表示很蛋疼了，起因就是我转载小伙伴的博客，据CSDN客服人员的回复说是因为我的博客里有“敏感词”。。。T_T! 敏感词，好吧，通篇读了好多遍了，没看到一篇关于四轴飞行器的博客到底哪里有敏感词了，唔对，CSDN客服表示说我们没法儿透露敏感词给您。。。然后我说呵呵。。。</p>
-<p>然后我就没招儿了，而且加上老是在CSDN写博客吧，也没啥意思了，受到的限制还多，算了，懒也没有办法啊，还是要学习一下新东西的，加上最近也经常用Markdown写笔记，cold好基友他们也大多用GitHub Pages，所以嘞，干脆用起来好了，这个算是前言，不是重点，简单记录一下博客的诞生吧。</p>
-<p>该博客采用的是Markdown形式编写，由静态博客工具Pelican生成，部署在GitHub Pages上。</p>
-<p>参考链接:<a href="http://www.linuxzen.com/shi-yong-pelicanda-zao-jing-tai-bo-ke.html" title="Title">使用Pelican打造静态博客-cold's wold</a></p>
-<h3>Pelican介绍</h3>
-<p>Pelican是一套使用Python编写的开源静态博客生成工具，它可以让你添加文章和创建页面，可以使用Markdown reStructuredText 和 AsiiDoc 等不同的格式来抒写博客，我个人对Markdown的格式也比较喜欢，它可以让你更专注在博客的内容上，而且本身也特别简洁，嗯 ...</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo.html">技术生活</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/bo-ke-dan-sheng-ji.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/bo-ke-dan-sheng-ji.html">Read More</a>
                 <hr  class="gradient"/>
             </article>
 
