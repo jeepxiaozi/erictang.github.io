@@ -5,7 +5,7 @@
     <!-- Set the viewport width to device width for mobile -->
     <meta name="viewport" content="width=device-width" />
 
-    <title>一把汤勺 - PHP Develop</title>
+    <title>Yii2学习笔记系列18——Application Structure-Extensions（应用结构之扩展）</title>
 
     <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/normalize.css" />
     <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/foundation.min.css" />
@@ -44,16 +44,17 @@
 
         <!-- Main Blog Content -->
         <div class="large-9 columns">
-        
-        
+<article>
+    <header>
+        <h3 class="article-title"><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-18-application-structure-extensionsying-yong-jie-gou-zhi-kuo-zhan.html" rel="bookmark"
+        title="Permalink to Yii2学习笔记系列18——Application Structure-Extensions（应用结构之扩展）">Yii2学习笔记系列18——Application Structure-Extensions（应用结构之扩展）</a></h3>
+    </header>
 
-            <article>
-                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-18-application-structure-extensionsying-yong-jie-gou-zhi-kuo-zhan.html"><h3 class="article-title">Yii2学习笔记系列18——Application Structure-Extensions（应用结构之扩展）</h3></a>
 <h6 class="subheader" title="2016-05-21T15:55:44+08:00">六 21 五月 2016
 </h6>
 
 
-<h3>扩展</h3>
+    <h3>扩展</h3>
 <p>扩展专门设计的可以在Yii应用中随时被拿来使用并且可以重新发布的软件包，例如，<a href="https://github.com/yiisoft/yii2-debug">yiisoft/yii2-debug</a>扩展可以实现在你的应用的每个页面底部添加一个用于调试的工具栏，帮助你简单的抓取页面生成的情况。你可以使用扩展来加速你的软件开发进程，你也可以将你的代码打包成扩展来分享给他人使用。</p>
 <blockquote>
 <p>补充：本文中我们使用的术语“扩展”特指Yii软件包，而术语“软件包”和“库”特指Yii专用，而非通常意义的软件包。</p>
@@ -296,335 +297,29 @@
 <li><a href="https://github.com/yiisoft/yii2-sphinx">yiisoft/yii2-sphinx</a>：提供了对<a href="http://sphinxsearch.com/">Sphinx</a>的使用支持，包含基本的查询、活动记录、代码生成等特性。</li>
 <li><a href="https://github.com/yiisoft/yii2-swiftmailer">yiisoft/yii2-swiftmailer</a>：提供了基于<a href="http://swiftmailer.org/">swiftmailer</a>的邮件发送功能。</li>
 <li><a href="https://github.com/yiisoft/yii2-twig">yiisoft/yii2-twig</a>：提供了基于<a href="http://twig.sensiolabs.org/">Twig</a>的模板引擎。</li>
-</ul><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-18-application-structure-extensionsying-yong-jie-gou-zhi-kuo-zhan.html#disqus_thread">comments</a></p>            </article>
-
-
-                <hr  class="gradient"/>
-
-
-        
-
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-17-application-structure-assetsying-yong-jie-gou-zhi-qian-duan-zi-yuan.html"><h3 class="article-title">Yii2学习笔记系列17——Application Structure-Assets（应用结构之前端资源）</h3></a>
-<h6 class="subheader" title="2016-05-16T10:07:33+08:00">一 16 五月 2016
-</h6>
-
-
-<h3>资源</h3>
-<p>Yii中的资源指的是与Web页面相关的文件，它可以是CSS、JS、图片或者视频文件等等。前端资源一般存放在Web可以访问的目录下并且由Web服务器直接提供。</p>
-<p>一个更好的办法就是通过程序来管理资源。例如，当我们在页面中使用<a href="http://www.yiiframework.com/doc-2.0/yii-jui-datepicker.html">yii\jui\DatePicker</a>小部件时，程序不会让你手动去定位所需要的CSS、JS文件等的位置，而是自动引入。当你将小部件升级到一个新版本时，程序会自动使用更新版本的资源文件。在本教程中，我们将会讲解Yii提供的强大的资源管理功能。</p>
-<h4>资源包</h4>
-<p>Yii在资源包中管理资源，一个所谓的资源包，简单的说就是放在一个目录下的资源集合，当我们在一个视图中注册一个资源包时，它会将CSS和JS文件包含到要渲染的Web页面中。</p>
-<h4>定义资源包</h4>
-<p>资源包是继承自<a href="http://www.yiiframework.com/doc-2.0/yii-web-assetbundle.html">yii\web\AssetBundle</a>的PHP类。资源包的包名仅仅是对应的完整的PHP类名（不包含前面的反斜杠），并且资源包类应该被自动加载。通常它会指明资源所在的位置、CSS和JS文件包含的内容以及该资源包如何依赖其他的资源包。</p>
-<p>下面的代码定义<a href="http://www.yiiframework.com/doc-2.0/guide-start-installation.html">基础项目模板</a>中的主要资源包：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-
-<span class="k">namespace</span> <span class="nx">app\assets</span><span class="p">;</span>
-
-<span class="k">use</span> <span class="nx">yii\web\AssetBundle</span><span class="p">;</span>
-
-<span class="k">class</span> <span class="nc">AppAsset ...</span></pre></div><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-17-application-structure-assetsying-yong-jie-gou-zhi-qian-duan-zi-yuan.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-17-application-structure-assetsying-yong-jie-gou-zhi-qian-duan-zi-yuan.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
-
-        
-
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-16-application-structure-widgetsying-yong-jie-gou-zhi-xiao-bu-jian.html"><h3 class="article-title">Yii2学习笔记系列16——Application Structure-Widgets（应用结构之小部件）</h3></a>
-<h6 class="subheader" title="2016-05-15T15:57:05+08:00">日 15 五月 2016
-</h6>
-
-
-<h3>小部件</h3>
-<p>小部件是视图中可以重复使用的构建单元，用于以面向对象的方式创建复杂的并且可以配置的用户接口元素。例如，一个日期小部件会生成一个允许用户选择他们想要输入的日期的漂亮组件，而我们要做的只是把如下的代码插入到视图中即可：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="k">use</span> <span class="nx">yii\jui\DatePicker</span><span class="p">;</span>
-<span class="cp">?&gt;</span><span class="x"></span>
-<span class="cp">&lt;?</span><span class="o">=</span> <span class="nx">DatePicker</span><span class="o">::</span><span class="na">widget</span><span class="p">([</span><span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;date&#39;</span><span class="p">])</span> <span class="cp">?&gt;</span><span class="x"></span>
-</pre></div>
-
-
-<p>Yii提供了许多优秀的小部件，比如<a href="http://www.yiiframework.com/doc-2.0/yii-widgets-activeform.html">activeForm</a>、<a href="http://www.yiiframework.com/doc-2.0/yii-widgets-menu.html">menu</a>、<a href="http://www.yiiframework.com/doc-2.0/guide-widget-jui.html">jQuery UI widgets</a>、<a href="http://www.yiiframework.com/doc-2.0/guide-widget-bootstrap.html">Twitter Bootstrap widgets</a>。下面我们会讲解关于小部件的基础只是，如果你想了解某个小部件请参考对应的API文档。</p>
-<h4>使用小部件</h4>
-<p>小部件主要在视图中使用。我们可以通过调用<code>yii\base\Widget::widget()</code>方法在视图中使用小部件，该方法接收一个配置数组用于初始化小部件并且返回小部件的渲染结果。例如，如下示例代码插入一个配置使用俄语并且输入的值会作为<code>$model</code>模型的<code>from_date</code>属性的日期小部件：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="k">use</span> <span class="nx">yii\jui\DatePicker</span><span class="p">;</span>
-<span class="cp">?&gt;</span><span class="x"></span>
-<span class="cp">&lt;?</span><span class="o">=</span> <span class="nx">DatePicker</span><span class="o">::</span><span class="na">widget</span><span class="p">([</span>
-    <span class="s1">&#39;model ...</span></pre></div><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-16-application-structure-widgetsying-yong-jie-gou-zhi-xiao-bu-jian.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-16-application-structure-widgetsying-yong-jie-gou-zhi-xiao-bu-jian.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
-
-        
-
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-15-application-structure-filtersying-yong-jie-gou-zhi-guo-lu-qi.html"><h3 class="article-title">Yii2学习笔记系列15——Application Structure-Filters（应用结构之过滤器）</h3></a>
-<h6 class="subheader" title="2016-05-13T13:25:08+08:00">五 13 五月 2016
-</h6>
-
-
-<h3>过滤器</h3>
-<p>过滤器是控制器动作执行之前或之后执行的对象，例如，访问控制过滤器在动作执行之前运行以确保只有具备权限的终端用户才能访问，内容压缩过滤器在动作执行之后发送给终端用户之前运行以压缩响应内容。</p>
-<p>过滤器可能包含 预过滤（过滤逻辑在动作之前）或 后过滤（过滤逻辑在动作之后），也可能同时包含两者。</p>
-<h4>使用过滤器</h4>
-<p>过滤器本质上是一类特殊的行为，所以使用 过滤器 和使用 行为 一样。我们可以通过在控制器类中重写yii\base\Controller::behaviors()方法来声明过滤器，如下所示：</p>
-<div class="highlight"><pre><span></span><span class="x">public function behaviors()</span>
-<span class="x">{</span>
-<span class="x">    return [</span>
-<span class="x">        [</span>
-<span class="x">            &#39;class&#39; =&gt; &#39;yii\filters\HttpCache&#39;,</span>
-<span class="x">            &#39;only&#39; =&gt; [&#39;index&#39;, &#39;view&#39;],</span>
-<span class="x">            &#39;lastModified&#39; =&gt; function ($action, $params) {</span>
-<span class="x">                $q = new \yii\db\Query();</span>
-<span class="x">                return $q-&gt;from(&#39;user&#39;)-&gt;max ...</span></pre></div><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-15-application-structure-filtersying-yong-jie-gou-zhi-guo-lu-qi.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-15-application-structure-filtersying-yong-jie-gou-zhi-guo-lu-qi.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
-
-        
-
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-14-application-structure-modulesying-yong-jie-gou-zhi-mo-kuai.html"><h3 class="article-title">Yii2学习笔记系列14——Application Structure-Modules（应用结构之模块）</h3></a>
-<h6 class="subheader" title="2016-05-11T22:29:18+08:00">三 11 五月 2016
-</h6>
-
-
-<h3>模块</h3>
-<p>模块是独立的软件单元，由模型、视图、控制器和其他支持组件组成，终端用户可以访问在应用主体中已安装的模块的控制器，模块被当成小应用主体来看待，但是和应用主体不同的是，模块不能被单独部署，必须属于某个应用主体。</p>
-<h4>创建模块</h4>
-<p>模块被组织成一个称为yii\base\Module::basePath的目录，在该目录中有子目录如<code>controllers</code>、<code>models</code>、<code>views</code>，分别对应控制器、模型、视图。如下是一个模型的目录结构：</p>
-<div class="highlight"><pre><span></span><span class="n">forum</span><span class="o">/</span>
-    <span class="n">Module</span><span class="p">.</span><span class="n">php</span>                   <span class="err">模块类文件</span>
-    <span class="n">controllers</span><span class="o">/</span>                 <span class="err">包含控制器类文件</span>
-        <span class="n">DefaultController</span><span class="p">.</span><span class="n">php</span>    <span class="k">default</span> <span class="err">控制器类文件</span>
-    <span class="n">models</span><span class="o">/</span>                      <span class="err">包含模型类文件</span>
-    <span class="n">views</span><span class="o">/</span>                       <span class="err">包含控制器视图文件和布局文件</span>
-        <span class="n">layouts</span><span class="o">/</span>                 <span class="err">包含布局文件</span>
-        <span class="k">default</span><span class="o">/</span>                 <span class="err">包含</span><span class="n">DefaultController</span><span class="err">控制器视图文件</span>
-            <span class="n">index</span><span class="p">.</span><span class="n">php</span>            <span class="n">index</span><span class="err">视图文件</span>
-</pre></div>
-
-
-<h5>模块类</h5>
-<p>每个模块都有一个继承yii\base ...</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-14-application-structure-modulesying-yong-jie-gou-zhi-mo-kuai.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-14-application-structure-modulesying-yong-jie-gou-zhi-mo-kuai.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
-
-        
-
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-13-application-structure-viewsying-yong-jie-gou-zhi-shi-tu.html"><h3 class="article-title">Yii2学习笔记系列13——Application Structure-Views（应用结构之视图）</h3></a>
-<h6 class="subheader" title="2016-05-10T09:32:11+08:00">二 10 五月 2016
-</h6>
-
-
-<h3>视图</h3>
-<p>视图是MVC设计模式的一部分，它是负责向终端用户展示数据的代码。在一个Web应用程序中，通常需要根据视图模板来创建视图，视图模板是包含HTML代码和展示类的PHP代码的PHP脚本文件。它通过yii\web\View应用组件来管理，该组件主要提供通用方法帮助视图构造和渲染，简单起见，我们称视图模板或者视图模板文件为视图。</p>
-<h4>创建视图</h4>
-<p>如上面所述，视图是包含HTML和PHP代码的PHP脚本文件，下面就是一个展示登录表单的视图，如你所见，PHP代码用来生成动态的内容例如页面标题和表单，HTML代码则负责把它组织成一个漂亮的HTML页面。</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="k">use</span> <span class="nx">yii\helpers\Html</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">yii\widgets\ActiveForm</span><span class="p">;</span>
-
-<span class="cm">/* @var $this yii\web\View */</span>
-<span class="cm">/* @var $form yii\widgets\ActiveForm */</span>
-<span class="cm">/* @var $model app\models\LoginForm */</span>
-
-<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">title</span> <span class="o">=</span> <span class="s1">&#39;Login&#39;</span><span class="p">;</span>
-<span class="cp">?&gt;</span><span class="x"></span>
-<span class="x">&lt;h1&gt;</span><span class="cp">&lt;?</span><span class="o">=</span> <span class="nx">Html</span><span class="o">::</span><span class="na">encode</span><span class="p">(</span><span class="nv">$this ...</span></pre></div><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-13-application-structure-viewsying-yong-jie-gou-zhi-shi-tu.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-13-application-structure-viewsying-yong-jie-gou-zhi-shi-tu.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
-
-        
-
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-12-application-structure-modelsying-yong-jie-gou-zhi-mo-xing.html"><h3 class="article-title">Yii2学习笔记系列12——Application Structure-Models（应用结构之模型）</h3></a>
-<h6 class="subheader" title="2016-04-17T16:50:19+08:00">日 17 四月 2016
-</h6>
-
-
-<h3>模型</h3>
-<p>模型是MVC设计模式中的一部分，是代表业务数据、规则和逻辑的对象。我们可以通过继承yii\base\Model或它的子类定义模型类，基类yii\base\Model支持许多实用的特性：</p>
-<ul>
-<li>属性（Attributes）：代表业务数据，可以像普通类属性或者数组一样被访问；</li>
-<li>属性标签（Attribute labels）：为属性指定的展示标签</li>
-<li>块赋值（Massive assignment）：支持一步内给多个属性同时赋值</li>
-<li>验证规则（Validation rules）：确保输入的数据都是通过了验证规则的</li>
-<li>数据导出（Data Exporting）：允许模型数据导出为自定义格式的数组</li>
 </ul>
-<p><code>Model</code>类也是更多高级模型例如Active Record活动记录类的基类，更多关于高级模型的详情请参考相关手册。</p>
-<p>注意：模型并不强制一定要继承yii\base\Model，但是由于很多组件支持yii\base\Model，所以最好使用它作为模型基类。</p>
-<h4>属性</h4>
-<p>模型通过属性来代表业务数据，每个属性都像是模型的公有可访问属性，yii\base\Modell::attributes()方法制定了模型类包含的属性 ...</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+<p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
 
 </p>
 
 
 
-<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-12-application-structure-modelsying-yong-jie-gou-zhi-mo-xing.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-12-application-structure-modelsying-yong-jie-gou-zhi-mo-xing.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
 
-        
+	<h4>Comments</h4>
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        var disqus_shortname = 'erictang'
+        var disqus_identifier = "yii2xue-xi-bi-ji-xi-lie-18-application-structure-extensionsying-yong-jie-gou-zhi-kuo-zhan.html";
+        var disqus_url = "http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-18-application-structure-extensionsying-yong-jie-gou-zhi-kuo-zhan.html";
 
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-11-application-structure-controllersying-yong-jie-gou-zhi-kong-zhi-qi.html"><h3 class="article-title">Yii2学习笔记系列11——Application Structure-Controllers（应用结构之控制器）</h3></a>
-<h6 class="subheader" title="2016-04-15T14:37:52+08:00">五 15 四月 2016
-</h6>
-
-
-<h3>控制器</h3>
-<p>控制器是MVC设计模式的一部分，继承自yii\base\Controller并且负责处理请求生成响应。具体的来说，当控制器从应用主体接管控制后会分析请求数据并传送到模型，将模型结果注入到视图中，并且最终生成输出的响应信息。</p>
-<h4>操作</h4>
-<p>“操作”是执行终端用户请求的最基础的单元，一个控制器中可以包含一个或多个操作。</p>
-<p>如下示例展示了一个名为<code>post</code>的控制器，其中包含两个操作：<code>view</code>和<code>create</code>。</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="k">namespace</span> <span class="nx">app\controllers</span><span class="p">;</span>
-
-<span class="k">use</span> <span class="nx">Yii</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">app\models\Post</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">yii\web\Controller</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">yii\web\NotFoundHttpException</span><span class="p">;</span>
-
-<span class="k">class</span> <span class="nc">PostController</span> <span class="k">extends</span> <span class="nx">Controller</span>
-<span class="p">{</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">actionView</span><span class="p">(</span><span class="nv">$id</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="nv">$model</span> <span class="o">=</span> <span class="nx">Post</span><span class="o">::</span><span class="na">findOne</span><span class="p">(</span><span class="nv">$id ...</span></pre></div><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-11-application-structure-controllersying-yong-jie-gou-zhi-kong-zhi-qi.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-11-application-structure-controllersying-yong-jie-gou-zhi-kong-zhi-qi.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
-
-        
-
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-10-application-structure-application-componentsying-yong-jie-gou-zhi-ying-yong-zu-jian.html"><h3 class="article-title">Yii2学习笔记系列10——Application Structure-Application Components（应用结构之应用组件）</h3></a>
-<h6 class="subheader" title="2016-04-14T13:35:13+08:00">四 14 四月 2016
-</h6>
-
-
-<h4>应用组件</h4>
-<p>应用主体都是<a href="http://www.yiiframework.com/doc-2.0/guide-concept-service-locator.html">服务定位器</a>，他们部署一系列的应用组件，用来提供可以处理请求的多个服务，例如，<code>urlManager</code>组件负责处理网页请求路由到对应的控制器，<code>db</code>组件提供数据库相关服务等。</p>
-<p>在一个应用主体中，每个应用组件都包含一个唯一的ID用以区分其他的应用组件。你可以通过如下表达式访问应用组件：</p>
-<div class="highlight"><pre><span></span><span class="x">\Yii::$app-&gt;componentID</span>
-</pre></div>
-
-
-<p>例如你可以通过<code>\Yii::$app-&gt;db</code>获取数据库连接，通过<code>\Yii::$app-&gt;cache</code>获取已经注册到应用的yii\caching\Cache。</p>
-<p>一个应用组件实例会在通过上述表达式第一次访问的时候创建，后续访问的时候将会返回同一个组件实例。</p>
-<p>应用组件可以是任意对象，你可以通过配置应用配置文件中的<code>yii\base\Application::$components</code>属性来注册组件，例如：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="p">[</span>
-    <span class="s1">&#39;components&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
-        <span class="c1">// 通过类名注册cache组件</span>
-        <span class="s1">&#39;cache&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;yii\caching\ApcCache&#39;</span><span class="p">,</span>
-
-        <span class="c1">//通过配置数组注册db组件</span>
-        <span class="s1">&#39;db&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
-            <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;yii\db ...</span></pre></div><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-10-application-structure-application-componentsying-yong-jie-gou-zhi-ying-yong-zu-jian.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-10-application-structure-application-componentsying-yong-jie-gou-zhi-ying-yong-zu-jian.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
-
-        
-
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-9-application-structure-applicationsying-yong-jie-gou-zhi-ying-yong.html"><h3 class="article-title">Yii2学习笔记系列9——Application Structure-Applications（应用结构之应用）</h3></a>
-<h6 class="subheader" title="2016-04-13T21:29:17+08:00">三 13 四月 2016
-</h6>
-
-
-<h3>Yii2学习笔记系列9——Application Structure-Applications（应用结构之应用）</h3>
-<h4>应用主体</h4>
-<p>应用主体是管理Yii应用系统整体结构和声明周期的对象，每个Yii应用系统只能包含一个应用主体，应用主体在入口脚本中创建，并且可以通过表达式<code>\Yii::$app</code>全局范围内访问。</p>
-<p>Yii有两种应用主体：<code>yii\web\Application</code>和<code>yii\console\Application</code>，分别用来处理网页请求和控制台请求。</p>
-<h5>应用主体配置</h5>
-<p>如下所示，当入口脚本创建了一个应用主体，它会加载一个配置文件并传给应用主体。</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-
-<span class="k">require</span><span class="p">(</span><span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/../vendor/autoload.php&#39;</span><span class="p">);</span>
-<span class="k">require</span><span class="p">(</span><span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/../vendor/yiisoft/yii2/Yii.php&#39;</span><span class="p">);</span>
-
-<span class="c1">// 加载应用主体配置</span>
-<span class="nv">$config</span> <span class="o">=</span> <span class="k">require</span><span class="p">(</span><span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/../config/web.php&#39;</span><span class="p">);</span>
-
-<span class="c1">// 实例化应用主体、配置应用主体</span>
-<span class="p">(</span><span class="k">new</span> <span class="nx">yii\web ...</span></pre></div><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-9-application-structure-applicationsying-yong-jie-gou-zhi-ying-yong.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-9-application-structure-applicationsying-yong-jie-gou-zhi-ying-yong.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
-
-            <!-- /#posts-list -->
-<div class="pagination-centered">
-<h6 class="subheader">Page 1 of 2</h6>
-
-<p>
-
-        <a href="http://jeepxiaozi.github.io/category/php-develop2.html">Next &raquo;</a>
-</p>
-</div>
-
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</article>
         </div>
         <!-- End Main Content -->
 

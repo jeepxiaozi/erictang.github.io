@@ -48,6 +48,270 @@
         
 
             <article>
+                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-18-application-structure-extensionsying-yong-jie-gou-zhi-kuo-zhan.html"><h3 class="article-title">Yii2学习笔记系列18——Application Structure-Extensions（应用结构之扩展）</h3></a>
+<h6 class="subheader" title="2016-05-21T15:55:44+08:00">六 21 五月 2016
+</h6>
+
+
+<h3>扩展</h3>
+<p>扩展专门设计的可以在Yii应用中随时被拿来使用并且可以重新发布的软件包，例如，<a href="https://github.com/yiisoft/yii2-debug">yiisoft/yii2-debug</a>扩展可以实现在你的应用的每个页面底部添加一个用于调试的工具栏，帮助你简单的抓取页面生成的情况。你可以使用扩展来加速你的软件开发进程，你也可以将你的代码打包成扩展来分享给他人使用。</p>
+<blockquote>
+<p>补充：本文中我们使用的术语“扩展”特指Yii软件包，而术语“软件包”和“库”特指Yii专用，而非通常意义的软件包。</p>
+</blockquote>
+<h4>使用扩展</h4>
+<p>想要使用一个扩展，你需要先安装它。大多数的扩展以<a href="https://getcomposer.org/">Composer</a>软件包的形式发布，这样儿的软件包可以通过以下简单的两步来完成安装：</p>
+<ol>
+<li>修改你的应用程序的<code>composer.json</code>文件，写明你要安装的扩展（Composer软件包）。</li>
+<li>运行<code>composer install</code>命令来安装指定的扩展。</li>
+</ol>
+<p>注意，如果没有安装Composer命令的话需要先进行安装。</p>
+<p>默认情况下，Composer会安装的是在<a href="https://packagist.org/">Packagist</a>（最大的开源Composer代码库）中注册过的软件包。你可以在Packagist中查找所需软件包，也可以<a href="https://getcomposer.org/doc/05-repositories.md#repository">创建你自己的代码库</a>并且配置Composer来使用该仓库。如果你是在开发私有扩展并且只想在你的项目内共享的话，这种方式就非常有用了。</p>
+<p>Composer安装的扩展保存在<code>BasePath/vendor</code>目录下，其中<code>BasePath</code>代指应用程序的<a href="http://www.yiiframework.com/doc-2.0/guide-structure-applications.html#basePath">基础路径</a>。因为Composer同时还是一个依赖管理器，当你使用Composer来安装一个软件包时，也会将该软件包所依赖的所有软件包也相应的安装。</p>
+<p>例如，想要安装<code>yiisoft/yii2-imagine</code>扩展，你需要先参照如下所示修改你的<code>composer.json</code>：</p>
+<div class="highlight"><pre><span></span>{
+    // ...
+    &quot;require&quot;: {
+        // ... 其他依赖
+        &quot;yiisoft/yii2-imagine&quot;: &quot;*&quot;
+    }
+}
+</pre></div>
+
+
+<p>安装完成后你应该可以在<code>BasePath/vendor</code>目录下看到<code>yiisoft/yii2-imagine</code>目录了，同时你也应该可以看到一个<code>imagine/imagine</code>目录，其中安装所依赖的软件包。</p>
+<blockquote>
+<p>补充： <code>yiisoft/yii2-imagine</code>是Yii开发团队开发和维护的一个核心扩展，所有核心扩展均由<a href="https://packagist.org/">Packagist</a>集中管理，命名为<code>yiisoft/yii2-xyz</code>，其中的<code>xyz</code>表示不同的扩展。</p>
+</blockquote>
+<p>现在你可以使用扩展了，它们就像是应用程序的一部分一样。下面的示例展示了如何使用<code>yiisoft/yii2-imagine</code>扩展提供的<code>yii\imagine\Image</code>类：</p>
+<div class="highlight"><pre><span></span><span class="x">use Yii;</span>
+<span class="x">use yii\imagine\Image;</span>
+
+<span class="x">// 生成一张缩略图</span>
+<span class="x">Image::thumbnail(&#39;@webroot/img/test-image.jpg&#39;, 120, 120)</span>
+<span class="x">    -&gt;save(Yii::getAlias(&#39;@runtime/thumb-test-image.jpg&#39;), [&#39;quality&#39; =&gt; 50]);</span>
+</pre></div>
+
+
+<blockquote>
+<p>补充： 扩展类由<a href="http://www.yiiframework.com/doc-2.0/guide-concept-autoloading.html">Yii class autoloader</a>自动加载。</p>
+</blockquote>
+<h5>手动安装扩展</h5>
+<p>在极少数情况下，你可能想要手动安装一些或者全部的扩展，而不是依赖Composer来安装。要做到这一点，你需要：</p>
+<ol>
+<li>下载扩展压缩包并且将其解压到<code>vendor</code>目录</li>
+<li>如果扩展提供了自动加载器类的话，安装它</li>
+<li>按照说明下载和安装所有的依赖扩展包</li>
+</ol>
+<p>如果扩展包中没有类的自动加载器但是该扩展包也遵循了<a href="http://www.php-fig.org/psr/psr-4/">PSR-4标准</a>的话，你可以使用Yii提供的类自动加载器来加载扩展类。你需要做的仅仅是为该扩展的根目录声明一个<a href="http://www.yiiframework.com/doc-2.0/guide-concept-aliases.html#defining-aliases">root alias</a>。例如，假设你已经在<code>vendor.mycompany/myext</code>目录下安装了一个扩展，并且扩展类在<code>myext</code>命名空间下，然后你就可以将如下的代码包含在你的应用程序配置文件中：</p>
+<div class="highlight"><pre><span></span><span class="x">[</span>
+<span class="x">    &#39;aliases&#39; =&gt; [</span>
+<span class="x">        &#39;@myext&#39; =&gt; &#39;@vendor/mycompany/myext&#39;,</span>
+<span class="x">    ],</span>
+<span class="x">]</span>
+</pre></div>
+
+
+<h4>创建扩展</h4>
+<p>当你想要把自己的代码分享给其他人使用的时候，你可能考虑创建扩展。扩展可以包含任何你想要的代码，比如一个帮助类、一个小部件、一个模块，等等。</p>
+<p>建议你按照<a href="https://getcomposer.org/">Composer</a>的条款创建一个扩展，以便更容易安装和方便他人使用，如上一章节的描述。</p>
+<p>以下是将扩展创建为一个Composer软件包的基本步骤：</p>
+<ol>
+<li>为你的扩展创建一个工程，并将它存放在版本控制库中，例如<a href="https://github.com/">github.com</a>，扩展的开发和维护工作都应该在这个工程中进行。</li>
+<li>在项目工程根目录下，创建Composer所需的composer.json文件，详情请参考后续的章节。</li>
+<li>在一个Composer仓库中注册你的扩展，比如<a href="https://packagist.org/">Packagist</a>，以便其他用户能够找到你的扩展并且使用Composer进行安装。</li>
+</ol>
+<h5><code>composer.json</code></h5>
+<p>每个Composer软件包根目录下都包含一个<code>composer.json</code>文件，该文件包含了软件包的元数据。你可以在<a href="https://getcomposer.org/doc/01-basic-usage.md#composer-json-project-setup">Composer手册</a>中找到该文件的完整说明。以下是<code>yiisoft/yii2-imagine</code>的<code>composer.json</code>内容：</p>
+<div class="highlight"><pre><span></span><span class="x">{</span>
+<span class="x">    // package name - 包名</span>
+<span class="x">    &quot;name&quot;: &quot;yiisoft/yii2-imagine&quot;,</span>
+
+<span class="x">    // package type - 包类型</span>
+<span class="x">    &quot;type&quot;: &quot;yii2-extension&quot;,</span>
+
+<span class="x">    &quot;description&quot;: &quot;The Image integration for Yii framework&quot;,</span>
+<span class="x">    &quot;keywords&quot;: [&quot;yii2&quot;, &quot;imagine&quot;, &quot;image&quot;, &quot;helper&quot;],</span>
+<span class="x">    &quot;license&quot;: &quot;BSD-D-Clause&quot;,</span>
+<span class="x">    &quot;support&quot;: {</span>
+<span class="x">        &quot;issues&quot;: &quot;https://github.com/yiisoft/yii2/issues?labels=ext%3Aimagine&quot;,</span>
+<span class="x">        &quot;forum&quot;: &quot;http://www.yiiframework.com/forum/&quot;,</span>
+<span class="x">        &quot;wiki&quot;: &quot;http://www.yiiframework.com/wiki/&quot;,</span>
+<span class="x">        &quot;irc&quot;: &quot;irc://irc.freenode.net/yii&quot;,</span>
+<span class="x">        &quot;source&quot;: &quot;https://github.com/yiisoft/yii2&quot;,</span>
+<span class="x">    },</span>
+<span class="x">    &quot;authors&quot;: [</span>
+<span class="x">        {</span>
+<span class="x">            &quot;name&quot;: &quot;Antonio Ramirez&quot;,</span>
+<span class="x">            &quot;email&quot;: &quot;amigo.cobos@gmail.com&quot;,</span>
+<span class="x">        }</span>
+<span class="x">    ],</span>
+<span class="x">    // package dependencies - 包依赖</span>
+<span class="x">    &quot;require&quot; : {</span>
+<span class="x">        &quot;yiisoft/yii2&quot;: &quot;*&quot;,</span>
+<span class="x">        &quot;imagine/imagine&quot;: &quot;v0.5.0&quot;,</span>
+<span class="x">    },</span>
+<span class="x">    // class autoloading specs - 类自动加载功能</span>
+<span class="x">    &quot;autoload&quot;: {</span>
+<span class="x">        &quot;psr-4&quot;: {</span>
+<span class="x">            &quot;yii\\imagine\\&quot;: &quot;&quot;</span>
+<span class="x">        }</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</pre></div>
+
+
+<h6>Package Name -  包名</h6>
+<p>每个Composer软件包都应当包含一个唯一的包名，用以跟其它的软件包区分。包名的格式是<code>vendorName/projectName</code>，例如包名<code>yiisoft/yii2-imagine</code>中，vendor名和project名分别是<code>yiisoft</code>和<code>yii2-imagine</code>。</p>
+<p>不要使用<code>yiisoft</code>作为你的vendor名，因为它被Yii的核心代码预留使用了。</p>
+<p>我们推荐使用<code>yii2-</code>作为你的包名的前缀，表示它是Yii2的扩展，例如<code>myname/yii2-mywidget</code>，以便用户辨别是否Yii2的扩展。</p>
+<h6>Package Type -  包类型</h6>
+<p>将你的扩展指明为<code>yii2-extension</code>类型很重要，便于在安装的时候能够被识别到是Yii扩展。</p>
+<p>当一个用户运行<code>composer install</code>命令来安装一个扩展的时候，<code>vendor/yiisoft/extension.php</code>文件会自动升级并包含新扩展的信息。从该文件中，Yii应用程序能够知道哪些扩展被安装了（可以通过<a href="http://www.yiiframework.com/doc-2.0/yii-base-application.html#$extensions-detail">yii\base\Application::extensions</a>访问）。</p>
+<h6>Dependencies -  依赖</h6>
+<p>你的扩展依赖于Yii（必须的），所以你应该将其（yiisoft/yii2）列在你的<code>composer.json</code>文件中的<code>require</code>部分。如果你的扩展还依赖其他的扩展或者第三方类库，你应该也把它们都列出来。确保你为每一个依赖包列出了适当的版本约束条件（比如<code>1.*</code>、<code>@stable</code>）等，当你发布一个稳定版本时，你所依赖的软件包也应当使用稳定版本。</p>
+<p>大多数的JS/CSS包是用<a href="http://bower.io/">Bower</a>来管理而非Composer，你可以使用<a href="https://github.com/francoispluchino/composer-asset-plugin">Composer asset插件</a>使其可以通过Composer来管理这类包。如果你的扩展依赖Bower软件包，你可以如下例所示那样儿简单的在<code>composer.json</code>中将其列出来：</p>
+<div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="err">//</span> <span class="err">package</span> <span class="err">dependencies</span> <span class="err">-</span> <span class="err">包依赖</span>
+    <span class="nt">&quot;require&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;bower-asset/jquery&quot;</span><span class="p">:</span> <span class="s2">&quot;&gt;=1.11.*&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>上述代码表明该扩展依赖于<code>jquery</code> Bower包，一般来说，你可以在<code>composer.json</code>中通过<code>bower-asset/PackageName</code>指定Bower包，通过<code>npm-asset/PackageName</code>指定NPM包。当Composer安装Bower和NPM软件包时，会默认分别安装到<code>@vendor/bower/PackageName</code>和<code>@vendor/npm/Packages</code>这两个目录下，分别可以用<code>@bower/PackageName</code>和<code>@npm/PackageName</code>别名指向。</p>
+<p>更多关于资源管理的详情，请参考<a href="http://www.yiiframework.com/doc-2.0/guide-structure-assets.html#bower-npm-assets">Assets</a>章节。</p>
+<h6>Class Autoloading -  类自动加载</h6>
+<p>为了让你的类能够被Yii或者Composer类自动加载器自动加载，你应该在<code>composer.json</code>文件中指定<code>autoload</code>条目，如下所示：</p>
+<div class="highlight"><pre><span></span>{
+    // ....
+
+    &quot;autoload&quot;: {
+        &quot;psr-4&quot;: {
+            &quot;yii\\imagine\\&quot;: &quot;&quot;
+        }
+    }
+}
+</pre></div>
+
+
+<p>你可以列出一个或多个根命名空间以及他们相应的文件路径。</p>
+<p>当扩展安装到应用中后，Yii能够为每个所列出的根命名空间创建一个指向命名空间对应的目录的别名。例如，上述的<code>autoload</code>条目声明将对应别名<code>@yii/imagine</code>。</p>
+<h5>推荐的做法</h5>
+<p>由于扩展意味着会被其他人使用，所以你在开发过程中通常需要额外的付出，下面我们介绍一些通用的以及推荐的做法，以便帮助你创建高质量的扩展。</p>
+<h6>命名空间</h6>
+<p>为了避免命名冲突以及可以使你的扩展中的类能够被自动加载，你的泪应当使用命名空间，并且遵循<a href="http://www.php-fig.org/psr/psr-4/">PSR-4标准</a>和<a href="http://www.php-fig.org/psr/psr-0/">PSR-0标准</a>来命名你的扩展中的类。</p>
+<p>你的泪的命名空间应该以<code>vendorName\extensionName</code>，其中<code>extensionName</code>和项目名相同，除了它没有<code>yii2-</code>前缀。例如，对<code>yiisoft/yii2-imagine</code>扩展来说，我们用<code>yii\imagine</code>作为它的类的命名空间。</p>
+<p>不要使用<code>yii</code>、<code>yii2</code>或者<code>yiisoft</code>作为你的vendor名，这些名称已经被Yii核心代码预留使用了。</p>
+<h6>引导启动类</h6>
+<p>有时你可能想要你的扩展能够在应用程序的<a href="http://www.yiiframework.com/doc-2.0/guide-runtime-bootstrapping.html">引导启动过程</a>阶段执行一些代码。例如，你的扩展可能需要响应应用程序的<code>beginRequest</code>事件来做一些环境设置工作。除了可以明确地指导使用你的扩展的用户将你的事件处理代码附加到beginRequest事件上，一个更好的方式就是让该过程自动化处理。</p>
+<p>为了实现这个目标，你可以创建一个所谓的bootstrapping class（启动引导类）实现yii\base\BootstrapInterface接口。例如，</p>
+<div class="highlight"><pre><span></span><span class="x">namespace myname\mywidget;</span>
+
+<span class="x">use yii\base\BootstrapInterface;</span>
+<span class="x">use yii\base\Application;</span>
+
+<span class="x">class MyBootstrapClass implements BootstrapInterface</span>
+<span class="x">{</span>
+<span class="x">    public function bootstrap($app)</span>
+<span class="x">    {</span>
+<span class="x">        $app-&gt;on(Application::EVENT_BEFORE_REQUEST, function() {</span>
+<span class="x">            // 做点什么</span>
+<span class="x">        });</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</pre></div>
+
+
+<p>然后将这个类在<code>composer.json</code>文件中列出来，如下所示：</p>
+<div class="highlight"><pre><span></span>{
+    // ...
+
+    &quot;extra&quot;: {
+        &quot;bootstrap&quot;: &quot;myname\\mywidget\\MyBootstrapClass&quot;
+    }
+}
+</pre></div>
+
+
+<p>当这个扩展安装到应用后，Yii将在每一个请求的引导启动过程中自动实例化并调用其yii\base\BootstrapInterface::bootstrap()方法。</p>
+<h6>使用数据库</h6>
+<p>你的扩展可能需要使用数据库，不要认为使用你的扩展的应用程序总是会使用<code>Yii::$db</code>作为数据库连接。你应该在需要访问数据库的类中声明一个<code>db</code>属性，该属性允许使用你的扩展的用户可以自定义扩展所需要使用的数据库连接。例如，你可以参考<a href="http://www.yiiframework.com/doc-2.0/yii-caching-dbcache.html">yii\caching\DbCache</a>类看一下它是如何声明和使用<code>db</code>属性的。</p>
+<p>如果你的扩展需要创建特定的数据库表，或者修改数据库表结构，你应该：</p>
+<ul>
+<li>提供<a href="http://www.yiiframework.com/doc-2.0/guide-db-migrations.html">数据迁移</a>来操作数据库，而不是使用SQL文本文件</li>
+<li>尽量使迁移文件适用于不同的DBMS</li>
+<li>在迁移文件中避免使用<a href="http://www.yiiframework.com/doc-2.0/guide-db-active-record.html">Active Record</a></li>
+</ul>
+<h6>使用Assets</h6>
+<p>如果你的扩展是一个小部件或者一个模块，它可能需要使用一些<a href="http://www.yiiframework.com/doc-2.0/guide-structure-assets.html">Assets</a>。例如，一个模块可能会展示一些包含图片、JS和CSS的页面。由于扩展的文件都放在同一个目录下，安装后无法通过Web访问，你有两种方式可以使得这些asset文件目录通过Web被访问到：</p>
+<ul>
+<li>让扩展的使用者手动将这些资源文件拷贝到特定的可以通过Web访问的文件夹下</li>
+<li>声明一个<a href="http://www.yiiframework.com/doc-2.0/guide-structure-assets.html">资源包</a>并且依靠asset发布机制自动将这些文件（资源包中列出的文件）拷贝到可以通过Web访问的文件夹</li>
+</ul>
+<p>我们推荐你使用第二种方式以便你的扩展更加易用，更详细的关于如何处理assets的细节请参阅<a href="http://www.yiiframework.com/doc-2.0/guide-structure-assets.html">资源</a>一节。</p>
+<h6>国际化和本地化</h6>
+<p>你的扩展可能需要在支持不同语言的应用中使用，因此，如果你的扩展想要显示内容给终端用户，你应当尝试实现<a href="http://www.yiiframework.com/doc-2.0/guide-tutorial-i18n.html">国际化和本地化</a>，特别是：</p>
+<ul>
+<li>如果扩展显示面向最终用户的消息，这些消息应该被<code>Yii::t()</code>方法包裹起来以便他们可以被翻译。只给开发者参考的信息（如内部异常信息）等不需要做翻译。</li>
+<li>如果扩展显示数字、日期等，你应该用yii\i18n\Formatter中适当的格式化规则做格式化处理。</li>
+</ul>
+<p>更多详情请参考<a href="http://www.yiiframework.com/doc-2.0/guide-tutorial-i18n.html">国际化</a>一节。</p>
+<h6>测试</h6>
+<p>你肯定想让你的扩展可以顺畅无瑕疵的运行并且不会给使用者带来麻烦，想要实现这个目标，你需要在发布你的扩展之前进行测试。</p>
+<p>建议你创建各种测试用例来覆盖测试你的扩展代码，而非仅仅通过手工测试。每次你发布新版本的扩展之前都可以简单的运行一下这些测试用例确保一切正常。Yii提供了测试支持，可以让你更容易的编写单元测试、验收测试和功能测试。详情请参考<a href="http://www.yiiframework.com/doc-2.0/guide-test-overview.html">测试</a>一节。</p>
+<h6>版本控制</h6>
+<p>你应该为每一个扩展定一个版本号（如<code>1.0.1</code>），我们推荐版本号命名时参照<a href="http://semver.org/">semantic versioning</a>来决定用什么样儿的版本号。</p>
+<h6>发布</h6>
+<p>想让其他人知道你的扩展，你应该公开发布。</p>
+<p>如果你是第一次发布一个扩展，你应该在Composer仓库（例如<a href="https://packagist.org/">Packgist</a>）中将其进行注册。之后，你只需在版本管理库中创建一个标签（例如<code>v1.0.1</code>），然后通知Composer代码库，其他人就能够查找到这个新的发布版本了，并且可以通过Composer代码库安装和更新该扩展。</p>
+<p>在发布你的扩展的时候，除了代码文件，你还应该考虑包含如下内容，以帮助使用者更好地了解和使用你的扩展：</p>
+<ul>
+<li>根目录下的README文件：它用来描述你的扩展能做什么以及如何安装和使用。我们建议你采用<a href="http://daringfireball.net/projects/markdown/">Markdown</a>格式并且将其命名为<code>readme.md</code></li>
+<li>根目录下的修改日志文件：它列举每个版本的发布都做了哪些更改。该文件可以用Markdown格式编写并命名为<code>changelog.md</code></li>
+<li>根目录下的升级文件：它给出如何从旧版本升级该扩展的指导，该文件可以用Markdown格式编写并命名为<code>upgrade.md</code></li>
+<li>入门指南、演示代码、截图等：如果你的扩展提供了许多功能并且无法在readme文件中完整描述时，可以用这些文件</li>
+<li>API文档：你的代码应该文档齐全并且允许其他人更容易阅读和理解。你可以参考<a href="https://github.com/yiisoft/yii2/blob/master/framework/base/Object.php">Object class file</a>来学习如何为你的代码写文档</li>
+</ul>
+<blockquote>
+<p>补充：你的代码注释可以以Markdown格式编写。<code>yiisoft/yii2-apidoc</code>扩展提供了从你的代码注释生成漂亮的API文档的功能。</p>
+<p>补充：虽然不做具体要求，但我们还是建议你的扩展遵循某个编码规范，你可以参考<a href="https://github.com/yiisoft/yii2/wiki/Core-framework-code-style">核心框架代码规范</a>。</p>
+</blockquote>
+<h4>核心扩展</h4>
+<p>Yii提供了以下的核心扩展，由Yii开发团队开发和维护，这些扩展全都在<a href="https://packagist.org/">Packagist</a>中注册，并且像<a href="http://www.yiichina.com/doc/guide/2.0/structure-extensions#using-extensions">使用扩展</a>章节中描述的那样容易安装。</p>
+<ul>
+<li><a href="https://github.com/yiisoft/yii2-apidoc">yiisoft/yii2-apidoc</a>：提供了一个可扩展的并且高可用性的API文档生成器。核心框架的API文档也是用它生成的。</li>
+<li><a href="https://github.com/yiisoft/yii2-authclient">yiisoft/yii2-authclient</a>：提供一系列常用的认证客户端，例如Facebook OAuth2 客户端、Github OAuth2 客户端。</li>
+<li><a href="https://github.com/yiisoft/yii2-bootstrap">yiisoft/yii2-bootstrap</a>：提供了一系列的小部件，包括<a href="http://getbootstrap.com/">Bootstrap</a>组件和插件。</li>
+<li><a href="https://github.com/yiisoft/yii2-codeception">yiisoft/yii2-codeception</a>：提供了基于<a href="http://codeception.com/">Codeception</a>的测试支持。</li>
+<li><a href="https://github.com/yiisoft/yii2-debug">yiisoft/yii2-debug</a>：提供了对Yii应用的调试支持，当使用该扩展时，在每个页面底部将显示一个调试工具条，该扩展还提供了一个独立的页面用以显示更详细的调试信息。</li>
+<li><a href="https://github.com/yiisoft/yii2-elasticsearch">yiisoft/yii2-elasticsearch</a>：提供对<a href="https://www.elastic.co/">Elasticsearch</a>的支持，它包含基本的查询/搜索支持，并且实现了<a href="http://www.yiiframework.com/doc-2.0/guide-db-active-record.html">Active Record</a>模式并且允许你将活动记录保存在Elasticsearch中。</li>
+<li><a href="https://github.com/yiisoft/yii2-faker">yiisoft/yii2-faker</a>：提供了对使用<a href="https://github.com/fzaninotto/Faker">Faker</a>的支持并且能够为你生成测试数据。</li>
+<li><a href="https://github.com/yiisoft/yii2-gii">yiisoft/yii2-gii</a>：提供一个基于Web页面的代码生成器，具有高可扩展性，并且可以用来快速生成模型、表单、模板、CRUD等。</li>
+<li><a href="https://github.com/yiisoft/yii2-imagine">yiisoft/yii2-imagine</a>：提供了基于<a href="http://imagine.readthedocs.org/">Imagine</a>的常用的图像处理功能。</li>
+<li><a href="https://github.com/yiisoft/yii2-jui">yiisoft/yii2-jui</a>：提供了一套基于<a href="http://jqueryui.com/">JQuery UI</a>封装的组件。</li>
+<li><a href="https://github.com/yiisoft/yii2-mongodb">yiisoft/yii2-mongodb</a>：提供了对<a href="http://www.mongodb.org/">MongoDB</a>的使用支持，它包含基本的查询、活动记录、数据迁移、缓存、代码生成等特性。</li>
+<li><a href="https://github.com/yiisoft/yii2-redis">yiisoft/yii2-redis</a>：提供了对<a href="http://redis.io/">Redis</a>的使用支持，包含基本的查询、活动记录、缓存等特性。</li>
+<li><a href="https://github.com/yiisoft/yii2-smarty">yiisoft/yii2-smarty</a>：提供了基于<a href="http://www.smarty.net/">Smarty</a>的模板引擎。</li>
+<li><a href="https://github.com/yiisoft/yii2-sphinx">yiisoft/yii2-sphinx</a>：提供了对<a href="http://sphinxsearch.com/">Sphinx</a>的使用支持，包含基本的查询、活动记录、代码生成等特性。</li>
+<li><a href="https://github.com/yiisoft/yii2-swiftmailer">yiisoft/yii2-swiftmailer</a>：提供了基于<a href="http://swiftmailer.org/">swiftmailer</a>的邮件发送功能。</li>
+<li><a href="https://github.com/yiisoft/yii2-twig">yiisoft/yii2-twig</a>：提供了基于<a href="http://twig.sensiolabs.org/">Twig</a>的模板引擎。</li>
+</ul><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-18-application-structure-extensionsying-yong-jie-gou-zhi-kuo-zhan.html#disqus_thread">comments</a></p>            </article>
+
+
+                <hr  class="gradient"/>
+
+
+        
+
+
+            <article>
                 <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-17-application-structure-assetsying-yong-jie-gou-zhi-qian-duan-zi-yuan.html"><h3 class="article-title">Yii2学习笔记系列17——Application Structure-Assets（应用结构之前端资源）</h3></a>
 <h6 class="subheader" title="2016-05-16T10:07:33+08:00">一 16 五月 2016
 </h6>
@@ -67,442 +331,15 @@
 
 <span class="k">use</span> <span class="nx">yii\web\AssetBundle</span><span class="p">;</span>
 
-<span class="k">class</span> <span class="nc">AppAsset</span> <span class="k">extends</span> <span class="nx">AssetBundle</span>
-<span class="p">{</span>
-    <span class="k">public</span> <span class="nv">$basePath</span> <span class="o">=</span> <span class="s1">&#39;@webroot&#39;</span><span class="p">;</span>
-    <span class="k">public</span> <span class="nv">$baseUrl</span> <span class="o">=</span> <span class="s1">&#39;@web&#39;</span><span class="p">;</span>
-    <span class="k">public</span> <span class="nv">$css</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="s1">&#39;css/site.css&#39;</span><span class="p">,</span>
-    <span class="p">];</span>
-    <span class="k">public</span> <span class="nv">$js</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">];</span>
-    <span class="k">public</span> <span class="nv">$depends</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="s1">&#39;yii\web\YiiAsset&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;yii\bootstrap\BootstrapAsset&#39;</span><span class="p">,</span>
-    <span class="p">];</span>
-<span class="p">}</span>
-</pre></div>
-
-
-<p>上述的<code>AppAsset</code>类指明了资源文件位于<code>@webroot</code>目录下并且相应的URL是<code>@web</code>；该资源包包含了一个CSS文件<code>css/site.css</code>并且没有包含JS文件；该资源包依赖其它两个资源包：<a href="http://www.yiiframework.com/doc-2.0/yii-web-yiiasset.html">yii\web\YiiAsset</a> 和 <a href="http://www.yiiframework.com/doc-2.0/yii-bootstrap-bootstrapasset.html">yii\bootstrap\BootstrapAsset</a> 。下面是更多关于<a href="http://www.yiiframework.com/doc-2.0/yii-web-assetbundle.html">yii\web\AssetBundle</a>属性的详情：</p>
-<ul>
-<li>yii\web\AssetBundle::sourcePath：指定资源包中包含资源文件的根目录，当根目录不能通过Web访问时需要设置该值，否则，我们需要设置yii\web\AssetBundle::basePath 属性和yii\web\AssetBundle::baseUrl 属性，可以使用路径别名。</li>
-<li>yii\web\AssetBundle::basePath：指定资源包中可以通过Web访问的包含资源文件的目录，当我们指定sourcePath属性时，资源管理器会将资源包中的资源发布到可以通过Web访问的目录下并且相应的重写这个属性。</li>
-<li>yii\web\AssetBundle::baseUrl：指定对应到yii\web\AssetBundle::basePath目录的URL，和yii\web\AssetBundle::basePath类似，如果我们指定了yii\web\AssetBundle::sourcePath 属性，资源管理器会发布资源并相应的重写该属性，可以使用路径别名。</li>
-<li>
-<p>yii\web\AssetBundle::js：一个包含了资源包中JS文件的数组。注意，只能使用正斜杠“/”作为目录分隔符，每个JS文件可以是以下两种格式之一：</p>
-<ul>
-<li>表示本地JS文件的相对路径（例如， <code>js/main.js</code>），实际的文件路径应该在相对路径前面加上yii\web\AssetManager::basePath，实际的文件URL应该在该路径前面加上yii\web\AssetManager::baseUrl。</li>
-<li>
-<p>表示外部JS文件资源的绝对路径，例如：</p>
-<p>http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js 或者 //ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js。    <br />
-<em> yii\web\AssetBundle::css：一个包含该资源包中CSS样式文件的数组，具体的格式跟yii\web\AssetBundle::js相同。
-</em> yii\web\AssetBundle::depends：一个包含当前资源包所依赖的资源包的列表的数组（后续有详细介绍）。
-<em> yii\web\AssetBundle::jsOptions：在调用yii\web\View::registerJsFile()方法注册每个JS文件的时候，指定传递到该方法的参数选项。
-</em> yii\web\AssetBundle::cssOptions：在调用yii\web\View::registerCssFile()方法注册每个CSS文件时，指定传递到该方法的参数选项。
-* yii\web\AssetBundle::publishOptions：在调用yii\web\AssetManager::publish()发布该资源包文件到Web目录时，指定传递到该方法的参数选项，只有在指定了yii\web\AssetBundle::sourcePath属性时有效</p>
-</li>
-</ul>
-</li>
-</ul>
-<h5>资源位置</h5>
-<p>资源可以按照他们存放的位置分为：</p>
-<ul>
-<li>源资源：源资源文件和PHP源代码放在一起，不能被Web直接访问，为了在一个页面中使用源资源，需要将其拷贝到Web目录中转换成所谓的发布资源。</li>
-<li>发布资源：资源文件存放在可以直接通过Web访问的Web目录中。</li>
-<li>外部资源：资源文件放在与我们的Web应用不同的Web服务器上。</li>
-</ul>
-<p>当定义资源包类的时候，如果我们指定了yii\web\AssetBundle::sourcePath属性，就表示任何使用相对路径的资源都会被当做源资源；如果没有指定该属性，就表示这些资源是发布资源（因此我们需要指定yii\web\AssetBundle::basePath 和 yii\web\AssetBundle::baseUrl属性，以便Yii能够确定他们的位置）。</p>
-<p>推荐将资源文件放到Web目录以避免不必要的发布资源过程，这就是之前的例子指定yii\web\AssetBundle::basePath而不是yii\web\AssetBundle::sourcePath的原因。</p>
-<p>对于<a href="http://www.yiiframework.com/doc-2.0/guide-structure-extensions.html">扩展</a>来说，由于他们的资源和源代码都存放在不能通过Web访问的目录下，所以在定义资源包类时必须制定yii\web\AssetBundle::sourcePath属性。</p>
-<blockquote>
-<p>注意：不要使用<code>@webroot/assets</code>作为yii\web\AssetBundle::sourcePath属性，该目录默认被yii\web\AssetManager资源管理器存储发布后的资源文件，因此，该路径下的所有内容都会被认为是临时文件并且可以被删除。</p>
-</blockquote>
-<h5>资源依赖</h5>
-<p>当我们在一个Web页面中引入多个CSS或者JS文件时，他们必须按照一定的顺序以避免属性重写问题。例如，如果你在Web页面中使用了一个jQuery UI组件，你必须要保证jQuery的JS文件要在jQuery UI的JS文件引入前引入。我们称这种资源先后次序为资源依赖。</p>
-<p>资源依赖主要是通过yii\web\AssetBundle::depends属性来指定的，在<code>AppAsset</code>示例中，资源包依赖其他两个资源包：yii\web\YiiAsset和yii\bootstrap\BootstrapAsset，也就是该资源包的CSS和JS文件一定要在这两个依赖包的文件被引入之后再引入才行。</p>
-<p>资源依赖关系是可以传递的，如果A依赖B，B又依赖C，那么A也依赖C。</p>
-<h5>资源选项</h5>
-<p>我们可以通过指定yii\web\AssetBundle::cssOptions和yii\web\AssetBundle::jsOptions属性来自定义CSS和JS文件在页面中的引入方式，当视图中引入CSS和JS文件时，这两个属性的值可以分别通过<a href="http://www.yiiframework.com/doc-2.0/yii-web-view.html#registerCssFile()-detail">yii\web\View::registerCssFile()</a>方法和<a href="http://www.yiiframework.com/doc-2.0/yii-web-view.html#registerJsFile()-detail">yii\web\View::registerJsFile()</a>方法分别传递进去。</p>
-<blockquote>
-<p>注意：我们在资源包类中设置的选项会被应用到资源包内的每个CSS/JS，如果你想针对不同的文件采用不同的选项配置，那么你应该创建单独的资源包，并且针对每个资源包应用一组选项配置。</p>
-</blockquote>
-<p>例如，在IE9及更低的版本下需要引入一个CSS文件，我们可以使用如下的选项：</p>
-<div class="highlight"><pre><span></span><span class="x">public $cssOptions = [&#39;condition&#39; =&gt; &#39;lte IE9&#39;];</span>
-</pre></div>
-
-
-<p>这样儿会使资源包中的一个CSS文件被引用到如下的HTML标签中：</p>
-<div class="highlight"><pre><span></span><span class="c">&lt;!--[if lte IE9]&gt;</span>
-<span class="c">&lt;link rel=&quot;stylesheet&quot; href=&quot;path/to/foo.css&quot;&gt;</span>
-<span class="c">&lt;![endif]--&gt;</span>
-</pre></div>
-
-
-<p>为生成的CSS链接添加<code>&lt;noscript&gt;</code>标签，你可以像如下这种方式来配置<code>cssOptions</code>：</p>
-<div class="highlight"><pre><span></span><span class="x">public $cssOptions = [&#39;noscript&#39; =&gt; true];</span>
-</pre></div>
-
-
-<p>想要在页面头部引入一个JS文件的话（默认情况下，JS文件会在页面body体结束处被引入），使用如下的选项：</p>
-<div class="highlight"><pre><span></span><span class="x">public $jsOptions = [&#39;position&#39; =&gt; \yii\web\View::POS_HEAD];</span>
-</pre></div>
-
-
-<p>默认情况下，当一个资源包被发布的时候，<a href="http://www.yiiframework.com/doc-2.0/yii-web-assetbundle.html#$sourcePath-detail">yii\web\AssetBundle::sourcePath</a>属性指定的目录下的所有内容都会被发布。你可以通过配置<a href="http://www.yiiframework.com/doc-2.0/yii-web-assetbundle.html#$publishOptions-detail">yii\web\AssetManager::publish()</a>属性来自定义这一行为。例如，为了发布<a href="http://www.yiiframework.com/doc-2.0/yii-web-assetbundle.html#$sourcePath-detail">yii\web\AssetBundle::sourcePath</a>目录下的一个或者几个子目录，你可以通过在资源包类中加入如下代码：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="k">namespace</span> <span class="nx">app\assets</span><span class="p">;</span>
-
-<span class="k">use</span> <span class="nx">yii\web\AssetBundle</span><span class="p">;</span>
-
-<span class="k">class</span> <span class="nc">FontAwesomeAsset</span> <span class="k">extends</span> <span class="nx">AssetBundle</span>
-<span class="p">{</span>
-    <span class="k">public</span> <span class="nv">$sourcePath</span> <span class="o">=</span> <span class="s1">&#39;@bower/font-awesome&#39;</span><span class="p">;</span> 
-    <span class="k">public</span> <span class="nv">$css</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="s1">&#39;css/font-awesome.min.css&#39;</span><span class="p">,</span>
-    <span class="p">];</span>
-    <span class="k">public</span> <span class="nv">$publishOptions</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="s1">&#39;only&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
-            <span class="s1">&#39;fonts/&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;css/&#39;</span><span class="p">,</span>
-        <span class="p">]</span>
-    <span class="p">];</span>
-<span class="p">}</span>
-</pre></div>
-
-
-<p>上述示例为<a href="http://fontawesome.io/">"fontawesome" package</a>定义了一个资源包，通过制定<code>only</code>选项，只有<code>fonts</code>和<code>css</code>子目录会被发布。</p>
-<h5>Bower 和 NPM 资源</h5>
-<p>大多数的CSS/JS包都是通过<a href="http://bower.io/">Bower</a> 和/或 <a href="https://www.npmjs.org/">NPM</a>来管理。如果你的应用或者扩展使用了这样儿的一个包，那么推荐你使用如下的步骤来管理类库中的资源：</p>
-<ol>
-<li>修改你的应用或者扩展中的<code>composer.json</code>文件并且在<code>require</code>部分中列出所需的资源包。你应该使用<code>bower-asset/PackageName</code>（针对Bower包）或者<code>npm-asset/PackageName</code>（针对NPM包）指向相应的库。</li>
-<li>创建一个资源包类并且将你的应用或者扩展要用到的JS/CSS文件列出来。你需要将yii\web\AssetBundle::sourcePath属性设置为<code>@bower/PackageName</code>或者<code>@npm/PackageName</code>，因为Composer会根据该属性将Bower或者NPM包安装到对应的目录下。</li>
-</ol>
-<blockquote>
-<p>注意：有些包可能会将所有的文件存放在一个子目录下，如果是这种情况，你需要将yii\web\AssetBundle::sourcePath属性设置为该子目录的路径。例如，yii\web\JqueryAsset使用<code>@bower/jquery/dist</code>而不是<code>@bower/jquery</code>。</p>
-</blockquote>
-<h4>使用资源包</h4>
-<p>想要使用一个资源包，需要在视图中通过调用<a href="http://www.yiiframework.com/doc-2.0/yii-web-assetbundle.html#register()-detail">yii\web\AssetBundle::register()</a>方法将其进行注册。例如，在一个视图模板中，你可以通过类似如下的方式来注册一个资源包：</p>
-<div class="highlight"><pre><span></span><span class="x">use app\assets\AppAsset;</span>
-<span class="x">AppAsset::register($this); //$this变量代表当前的视图对象</span>
-</pre></div>
-
-
-<blockquote>
-<p>补充：yii\web\AssetBundle::register()方法返回一个包含了发布资源信息的资源包对象，例如basePath和baseUrl。</p>
-</blockquote>
-<p>如果你在其他地方注册一个资源包，你应该提供所需的视图对象。例如，如果你想要在一个小部件类中注册一个资源包，可以通过<code>$this-&gt;view</code>来获取视图对象。</p>
-<p>当我们向一个视图中注册一个资源包时，Yii会在幕后把所有的依赖资源包也进行注册，并且如果资源包位于不能通过Web访问的目录下，那么它会被发布到Web目录下。之后，当视图渲染页面时，它会为已注册的资源包中列出的CSS和JS文件分别生成<code>&lt;link&gt;</code>和<code>&lt;script&gt;</code>标签，这些标签的顺序由已注册的资源包之间的依赖关系以及<a href="http://www.yiiframework.com/doc-2.0/yii-web-assetbundle.html#$css-detail">yii\web\AssetBundle::css</a>和<a href="http://www.yiiframework.com/doc-2.0/yii-web-assetbundle.html#$js-detail">yii\web\AssetBundle::js</a>属性中列出的资源所决定。</p>
-<h5>定制资源包</h5>
-<p>Yii通过一个名为<code>assetManager</code>的应用组件来管理资源包，<code>assetManager</code>通过继承<a href="http://www.yiiframework.com/doc-2.0/yii-web-assetmanager.html">yii\web\AssetManager</a>。通过配置<a href="http://www.yiiframework.com/doc-2.0/yii-web-assetmanager.html#$bundles-detail">yii\web\AssetManager::bundles</a>属性可以实现定制资源包的动作。例如，<a href="http://www.yiiframework.com/doc-2.0/yii-web-jqueryasset.html">yii\web\JqueryAsset</a>资源包类默认使用已安装的Bower包下的<code>jquery.js</code>文件，但是为了提升性能，你可能想要使用google提供的版本，通过配置类似如下的代码可以实现这个需求：</p>
-<div class="highlight"><pre><span></span><span class="x">return [</span>
-<span class="x">    //.....</span>
-<span class="x">    &#39;components&#39; =&gt; [</span>
-<span class="x">        &#39;assetManager&#39; =&gt; [</span>
-<span class="x">            &#39;bundles&#39; =&gt; [</span>
-<span class="x">                &#39;yii\web\JqueryAsset&#39; =&gt; [</span>
-<span class="x">                    &#39;sourcePath&#39; =&gt; null, // 不发布该资源</span>
-<span class="x">                    &#39;js&#39; =&gt; [</span>
-<span class="x">                        &#39;//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js&#39;,</span>
-<span class="x">                    ],</span>
-<span class="x">                ],</span>
-<span class="x">            ],</span>
-<span class="x">        ],</span>
-<span class="x">    ],</span>
-<span class="x">];</span>
-</pre></div>
-
-
-<p>同样的，你也可以通过<code>yii\web\AssetManager::bundles</code>来配置多个资源包。数组的键是资源包的类名（不包含反斜杠），数组的值是对应的<a href="http://www.yiiframework.com/doc-2.0/guide-concept-configurations.html">配置数组</a>。</p>
-<blockquote>
-<p>提示：你可以在一个资源包中选择使用哪些资源包。下面的代码展示了如何在开发环境下使用<code>jquery.js</code>，在其他环境下使用<code>jquery.min.js</code>：</p>
-<p><code>php
-'yii\web\JqueryAsset' =&gt; [
-    'js' =&gt; [
-        YII_ENV_DEV ? 'jquery.js' : 'jquery.min.js'
-    ]
-],</code></p>
-</blockquote>
-<p>你可以通过将资源包名对应的值设置为<code>false</code>来禁用一个或多个资源包。当你在一个视图中注册一个被禁用掉了的资源包时，该资源包的所有依赖资源包都不会进行注册，当然，该资源包的任何资源也不会在页面渲染时被引入。例如，为了禁用<a href="http://www.yiiframework.com/doc-2.0/yii-web-jqueryasset.html">yii\web\JqueryAsset</a>，你可以使用如下的配置：</p>
-<div class="highlight"><pre><span></span><span class="x">return [</span>
-<span class="x">    // ...</span>
-<span class="x">    &#39;components&#39; =&gt; [</span>
-<span class="x">        &#39;assetManager&#39; =&gt; [</span>
-<span class="x">            &#39;bundles&#39; =&gt; [</span>
-<span class="x">                &#39;yii\web\JqueryAsset&#39; =&gt; false,</span>
-<span class="x">            ],</span>
-<span class="x">        ],</span>
-<span class="x">    ],</span>
-<span class="x">];</span>
-</pre></div>
-
-
-<p>你也可以通过将<a href="http://www.yiiframework.com/doc-2.0/yii-web-assetmanager.html#$bundles-detail">yii\web\AssetManager::bundles</a>属性设置为false来禁用所有的资源包。</p>
-<h5>资源部署</h5>
-<p>有时候你可能想要“修复”多个资源包中的错误/不兼容的资源包，例如，A资源包使用<code>jquery.min.js</code>的1.11.1版本，B资源包使用<code>jquery.js</code>的2.1.1版本，你可以分别调整两个资源包中的资源版本来解决这个问题，但是更简单的办法是使用资源部署特性来将资源修复为你想要的资源。为了实现这个目标，需要像如下这样儿来配置<a href="http://www.yiiframework.com/doc-2.0/yii-web-assetmanager.html#$assetMap-detail">yii\web\AssetManager::assetMap</a>属性：</p>
-<div class="highlight"><pre><span></span><span class="x">return [</span>
-<span class="x">    // ...</span>
-<span class="x">    &#39;components&#39; =&gt; [</span>
-<span class="x">        &#39;assetManager&#39; =&gt; [</span>
-<span class="x">            &#39;assetMap&#39; =&gt; [</span>
-<span class="x">                &#39;jquery.js&#39; =&gt; &#39;//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js&#39;,</span>
-<span class="x">            ],</span>
-<span class="x">        ],</span>
-<span class="x">    ],</span>
-<span class="x">];</span>
-</pre></div>
-
-
-<p>yii\web\AssetManager::assetMap的键是你想要“修复”的资源名，对应的值是预设的资源路径。当你在一个视图中注册一个资源包时，CSS数组和JS数组中每个相应的资源文件都会根据这个数组进行检查。如果能在资源文件的最后一部分（前缀是yii\web\AssetBundle::sourcePath）找到任何一个匹配的键值，那么键对应的值会替换相应的资源并且被注册到视图文件中。例如，资源文件<code>my/path/to/jquery.js</code>能够匹配<code>jquery.js</code>。</p>
-<blockquote>
-<p>注意：只有使用相对路径指定的资源才可以使用资源部署，目标资源路径应该要么是绝对的URL地址或者相对<a href="http://www.yiiframework.com/doc-2.0/yii-web-assetmanager.html#$basePath-detail">yii\web\AssetBundle</a>。</p>
-</blockquote>
-<h5>资源发布</h5>
-<p>前面提到过了，如果一个资源包所处的目录不能通过Web进行访问，当它被一个视图文件引用时，它的资源都会被拷贝到Web目录中，这个过程被称为“资源发布”，主要是由<a href="http://www.yiiframework.com/doc-2.0/yii-web-assetmanager.html">资源管理器</a>来完成的。</p>
-<p>默认情况下，资源会被发布到<code>@webroot/assets</code>，对应的URL是<code>@web/assets</code>，你可以通过设置basePath和baseUrl属性来定制。</p>
-<p>除了通过拷贝的方式发布资源，你还可以考虑软链接的方式，如果你的系统和Web服务器支持的话，可以通过设置<a href="http://www.yiiframework.com/doc-2.0/yii-web-assetmanager.html#$linkAssets-detail">linkAssets</a>为true来启用该特性。</p>
-<div class="highlight"><pre><span></span><span class="x">return [</span>
-<span class="x">    // ...</span>
-<span class="x">    &#39;components&#39; =&gt; [</span>
-<span class="x">        &#39;assetManager&#39; =&gt; [</span>
-<span class="x">            &#39;linkAssets&#39; =&gt; true,</span>
-<span class="x">        ],</span>
-<span class="x">    ],</span>
-<span class="x">];</span>
-</pre></div>
-
-
-<p>有了上面的配置，当资源包被发布时，资源管理器会创建一个链接到资源目录的软链接，这种方式要比拷贝资源文件快得多，并且可以确保资源文件总是最新的。</p>
-<h5>缓存清除</h5>
-<p>对于生产环境下的Web应用来说，开启HTTP缓存来缓存静态资源是一个常见的手段，但是这么做有个缺点，就是当你修改了一个资源，并且把它发布到生产环境下时，由于HTTP缓存问题，客户端可能还在使用旧版本。为了克服这个难题，你可能需要缓存清除特性（在2.0.3版本被引进），通过类似如下方式配置yii\web\AssetManager：</p>
-<div class="highlight"><pre><span></span><span class="x">return [</span>
-<span class="x">    // ...</span>
-<span class="x">    &#39;components&#39; =&gt; [</span>
-<span class="x">        &#39;assetManager&#39; =&gt; [</span>
-<span class="x">            &#39;appendTimestamp&#39; =&gt; true,</span>
-<span class="x">        ],</span>
-<span class="x">    ],</span>
-<span class="x">];</span>
-</pre></div>
-
-
-<p>通过这样做，每个发布的资源的URL都会被追加上它的最后修改时间。例如，<code>yii.js</code>的URL可能会像<code>"assets/5515a87c/yii.js?v= 1423448645"</code>，参数<code>v</code>代表<code>yii.js</code>文件最后被修改的时间。现在，如果你修改了资源文件，那么它的URL也会相应的改变，客户端也会因此去匹配最新的版本。</p>
-<h4>常用资源包</h4>
-<p>Yii核心代码定义了许多资源包，以下是其中最常用的，可能会在你的应用或者扩展中用到：</p>
-<ul>
-<li><a href="http://www.yiiframework.com/doc-2.0/yii-web-yiiasset.html">yii\web\YiiAsset</a>：它主要包含"yii.js"文件，该文件主要实现了模块化JS代码的功能。</li>
-<li><a href="http://www.yiiframework.com/doc-2.0/yii-web-jqueryasset.html">yii\web\JqueryAsset</a>：包含jQuery Bower包中的"jquery.js"文件</li>
-<li><a href="http://www.yiiframework.com/doc-2.0/yii-bootstrap-bootstrapasset.html">yii\bootstrap\BootstrapAsset</a>：包含Twitter的Bootstrap框架中的CSS文件</li>
-<li><a href="http://www.yiiframework.com/doc-2.0/yii-bootstrap-bootstrappluginasset.html">yii\bootstrap\BootstrapPluginAsset</a>：包含Twitter的Bootstrap框架中的JS文件来实支持Bootstrap JavaScript插件</li>
-<li><a href="http://www.yiiframework.com/doc-2.0/yii-jui-juiasset.html">yii\jui\JuiAsset</a>：包含jQuery UI库中的CSS和JS文件</li>
-</ul>
-<p>如果你的代码依赖jQuery、jQuery UI或者Bootstrap，你应该使用这些预定义好的资源包，而不是自己再次创建。如果这些默认的设置不能满足你的需求，你可以参考<a href="http://www.yiiframework.com/doc-2.0/guide-structure-assets.html#customizing-asset-bundles">自定义资源包</a></p>
-<h4>资源转换</h4>
-<p>除了直接编写CSS和JS代码，很多时候开发者们会使用扩展语法来编写，并且使用工具将它们转换为CSS/JS代码。例如，针对CSS代码，你可以使用<a href="http://lesscss.org/">LESS</a>或者<a href="http://sass-lang.com/">SCSS</a>，针对JS代码可以使用<a href="http://www.typescriptlang.org/">TypeScript</a>。</p>
-<p>你可以在资源包中的<a href="http://www.yiiframework.com/doc-2.0/yii-web-assetbundle.html#$css-detail">CSS</a>和<a href="http://www.yiiframework.com/doc-2.0/yii-web-assetbundle.html#$js-detail">JS</a>属性中列出所要使用的扩展语法，例如：</p>
-<div class="highlight"><pre><span></span><span class="x">class AppAsset extends AssetBundle</span>
-<span class="x">{   public $basePath = &#39;@webroot&#39;;</span>
-<span class="x">    public $baseUrl = &#39;@web&#39;;</span>
-<span class="x">    public $css = [</span>
-<span class="x">        &#39;css&#39; =&gt; &#39;css/site.less&#39;,</span>
-<span class="x">    ];</span>
-<span class="x">    public $js = [</span>
-<span class="x">        &#39;js&#39; =&gt; &#39;js/site.ts&#39;,</span>
-<span class="x">    ];</span>
-<span class="x">    public $depends = [</span>
-<span class="x">        &#39;yii\web\YiiAsset&#39;,</span>
-<span class="x">        &#39;yii\bootstrap\BootstrapAsset&#39;,</span>
-<span class="x">    ];</span>
-<span class="x">}</span>
-</pre></div>
-
-
-<p>当你在视图中注册这样儿的一个资源包时，资源管理器会运行预处理工具，将扩展语法转换成CSS/JS代码。</p>
-<p>Yii通过文件扩展名来确定资源应该属于哪种类型的扩展语法。默认情况下，Yii能够识别以下的扩展语法和文件扩展名：</p>
-<ul>
-<li><a href="http://lesscss.org/">LESS</a>：<code>.less</code></li>
-<li><a href="http://sass-lang.com/">SCSS</a>：<code>.scss</code></li>
-<li><a href="http://learnboost.github.io/stylus/">Stylus</a>：<code>. styl</code></li>
-<li><a href="http://coffeescript.org/">CoffeScript</a>：<code>.coffee</code></li>
-<li><a href="http://www.typescriptlang.org/">TypeScript</a>：<code>.ts</code></li>
-</ul>
-<p>Yii依赖已安装的预处理工具来转换资源。例如，想要使用<a href="http://lesscss.org/">LESS</a>，你应该先安装<code>less</code>预处理命令。</p>
-<p>你可以通过类似如下方式配置<a href="http://www.yiiframework.com/doc-2.0/yii-web-assetmanager.html#$converter-detail">yii\web\AssetManager::converter</a>来实现自定义预处理命令以及支持的扩展语法：</p>
-<div class="highlight"><pre><span></span><span class="x">return [</span>
-<span class="x">    &#39;components&#39; =&gt; [</span>
-<span class="x">        &#39;assetManager&#39; =&gt; [</span>
-<span class="x">            &#39;converter&#39; =&gt; [</span>
-<span class="x">                &#39;class&#39; =&gt; &#39;yii\web\AssetConverter&#39;,</span>
-<span class="x">                &#39;commands&#39; =&gt; [</span>
-<span class="x">                    &#39;less&#39; =&gt; [&#39;css&#39;, &#39;less {from} {to} --no-color&#39;],</span>
-<span class="x">                    &#39;ts&#39; =&gt; [&#39;js&#39;, &#39;tsc --out {to} {from}&#39;],</span>
-<span class="x">                ],</span>
-<span class="x">            ],</span>
-<span class="x">        ],</span>
-<span class="x">    ],</span>
-<span class="x">];</span>
-</pre></div>
-
-
-<p>如上所示，我们通过<a href="http://www.yiiframework.com/doc-2.0/yii-web-assetconverter.html#$commands-detail">yii\web\AssetConverter::commands</a>属性指定了支持的扩展语法，数组的键是文件扩展名（不包含反斜杠），数组的值是生成的资源文件扩展名以及实现资源转换的命令。命令中的<code>{from}</code>和<code>{to}</code>将会被替换成源资源文件路径和目标资源路径。</p>
-<blockquote>
-<p>补充：除了上述的方式，还有其他的方式来处理扩展语法。例如，你可以使用诸如<a href="http://gruntjs.com/">grunt</a>这样的构建工具来监控和自动转换扩展语法。在这种情况下，你需要使用编译后的CSS/JS文件而不是原始文件。</p>
-</blockquote>
-<h4>合并和压缩资源</h4>
-<p>一个Web页面可能需要包含许多CSS 和/或 JS文件，为了减少HTTP请求的次数以及这些文件的总的下载尺寸，通常的处理方式是合并并且压缩多个CSS/JS文件到一个或几个文件中，并且使用压缩后的文件而不是原文件。</p>
-<blockquote>
-<p>补充：合并和压缩资源通常是在生产模式下才需要，在开发模式下，使用原始的CSS/JS文件通常更方便调试。</p>
-</blockquote>
-<p>接下来，我们将要介绍一种合并压缩资源文件同时无需修改已有的应用程序代码的方法：</p>
-<ol>
-<li>找到你的应用中所有的你打算合并和压缩的资源包。</li>
-<li>将这些资源包分割成一个或几个分组，需要注意的是每个资源包只能属于一个分组。</li>
-<li>合并压缩每个组里的CSS到一个文件中，JS也采取同样的处理方式。</li>
-<li>为每个组重新定义一个新的资源包：<ul>
-<li>设置<a href="http://www.yiiframework.com/doc-2.0/yii-web-assetbundle.html#$css-detail">yii\web\AssetBundle::css</a>和<a href="http://www.yiiframework.com/doc-2.0/yii-web-assetbundle.html#$js-detail">yii\web\AssetBundle::js</a>属性分别为压缩后的CSS和JS文件</li>
-<li>自定义每个组的资源包，将每个组的yii\web\AssetBundle::css和yii\web\AssetBundle::js属性设置为空，并且将他们的yii\web\AssetBundle::depends属性设置为新创建的资源包</li>
-</ul>
-</li>
-</ol>
-<p>使用这种方式，当你在一个视图中注册一个资源包的时候，会自动触发原始包所属的资源包进行注册，然后页面会引入合并压缩后的文件而非原始文件。</p>
-<h5>示例</h5>
-<p>让我们来用一个示例讲解一下上述的方式：</p>
-<p>假设你的应用有两个页面，X和Y。X页面使用资源包A，B和C，Y页面使用资源包B，C和D。你有两种方式来划分这些资源包，一种是讲所有的资源包放在一个组里；另一种是将A、B、C放在X组，将B、C、D放在Y组织。哪种方式更好？这个要看情况。第一种方式，两个页面都使用相同的合并压缩过的CSS/JS文件，可以使得HTTP缓存更高效，然而由于所有的资源包都包含在一个组里，合并压缩后的CSS/JS文件的体积会比较大，从而导致传输的时间也会增加。在这个示例中，我们使用第一种方式，也就是在一个组中包含所有的资源包：</p>
-<blockquote>
-<p>补充：将资源包分割成不同的分组并不是毫无意义的，它通常需要分析不同的页面上的各种资源的实际流量数据。简单起见，我们通常会先从一个分组开始做。</p>
-</blockquote>
-<p>使用已有的工具（例如<a href="https://developers.google.com/closure/compiler/">Closure Compiler</a>、<a href="https://github.com/yui/yuicompressor/">YUI Compressor</a>）来合并和压缩CSS/JS文件，需要注意的是合并后的文件满足资源包内的先后依赖关系。例如，如果包A依赖包B，包B依赖包C和包D，那么资源文件以C和D开头，然后是B，最后是A。</p>
-<p>经过合并和压缩之后，我们得到了一个CSS文件和一个JS文件，假设他们的名字分别是<code>all-xyz.css</code>和<code>all-xyz.js</code>，为了防止HTTP缓存问题这里xyz可以是时间戳或者哈希值来保证其唯一性。</p>
-<p>接下来我们就只差最后一步了，在应用程序配置文件中通过类似如下的代码来配置<a href="http://www.yiiframework.com/doc-2.0/yii-web-assetmanager.html">资源管理器</a>：</p>
-<div class="highlight"><pre><span></span><span class="x">return [</span>
-<span class="x">    &#39;components&#39; =&gt; [</span>
-<span class="x">        &#39;assetManager&#39; =&gt; [</span>
-<span class="x">            &#39;bundles&#39; =&gt; [</span>
-<span class="x">                &#39;all&#39; =&gt; [</span>
-<span class="x">                    &#39;class&#39; =&gt; &#39;yii\web\AssetBundle&#39;,</span>
-<span class="x">                    &#39;basePath&#39; =&gt; &#39;@webroot/assets&#39;,</span>
-<span class="x">                    &#39;baseUrl&#39; =&gt; &#39;@web/asset&#39;,</span>
-<span class="x">                    &#39;css&#39; =&gt; [&#39;all-xyz.css&#39;],</span>
-<span class="x">                    &#39;js&#39; =&gt; [&#39;all-xyz.js&#39;],</span>
-<span class="x">                ],</span>
-<span class="x">                &#39;A&#39; =&gt; [&#39;css&#39; =&gt; [], &#39;js&#39; =&gt; [], &#39;depends&#39; =&gt; [&#39;all&#39;]],</span>
-<span class="x">                &#39;B&#39; =&gt; [&#39;css&#39; =&gt; [], &#39;js&#39; =&gt; [], &#39;depends&#39; =&gt; [&#39;all&#39;]],</span>
-<span class="x">                &#39;C&#39; =&gt; [&#39;css&#39; =&gt; [], &#39;js&#39; =&gt; [], &#39;depends&#39; =&gt; [&#39;all&#39;]],</span>
-<span class="x">                &#39;D&#39; =&gt; [&#39;css&#39; =&gt; [], &#39;js&#39; =&gt; [], &#39;depends&#39; =&gt; [&#39;all&#39;]],</span>
-<span class="x">            ],</span>
-<span class="x">        ],</span>
-<span class="x">    ],</span>
-<span class="x">];</span>
-</pre></div>
-
-
-<p>如<a href="http://www.yiiframework.com/doc-2.0/guide-structure-assets.html#customizing-asset-bundles">自定义资源包</a>一节中所述，上述配置改变了每个资源包的默认行为。其中，资源包A、B、C、D不再包含任何的资源文件，他们现在都依赖于包含了压缩后的<code>all-xyz.css</code>和<code>all-xyz.js</code>的名为<code>all</code>的资源包。因此，对于X页面来说，不再需要引入A、B、C、D这几个资源包中的原始文件，只需要引入这两个压缩后的文件即可，Y页面也是同理。</p>
-<p>最后还有个更好的方式来处理上述文件，除了直接修改应用程序的配置源文件，你可以将自定义包数组放到一个文件，在应用配置中根据条件来选择性的包含该文件，例如：</p>
-<div class="highlight"><pre><span></span><span class="x">return [</span>
-<span class="x">    &#39;components&#39; =&gt; [</span>
-<span class="x">        &#39;assetManager&#39; =&gt; [</span>
-<span class="x">            &#39;bundles&#39; =&gt; require(__DIR__ . &#39;/&#39; . (YII_ENV_PROD ? &#39;assets-prodphp&#39; : &#39;&#39;assets-dev.php)),</span>
-<span class="x">        ],</span>
-<span class="x">    ],</span>
-<span class="x">];</span>
-</pre></div>
-
-
-<p>上述代码表示，生产环境下的资源包配置数组保存在<code>assets-prod.php</code>文件下，非生产环境下则保存在<code>assets-dev.php</code>。</p>
-<h5>使用<code>asset</code>命令</h5>
-<p>Yii提供了一个<code>asset</code>命令来实现上述操作的自动化处理。</p>
-<p>为了使用该命令，应该先创建一个配置文件设置哪些资源包要以何种方式组合，可以使用<code>asset/template</code>子命令来生成一个模板，然后将其修改成你想要的。</p>
-<div class="highlight"><pre><span></span>yii asset/template assets.php
-</pre></div>
-
-
-<p>该命令在当前目录下生成一个<code>assets.php</code>文件，文件内容如下所示：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="sd">/**</span>
-<span class="sd"> * Configuration file for the &quot;yii asset&quot; console command.</span>
-<span class="sd"> * Note that in the console environment, some path aliases like &#39;@webroot&#39; and &#39;@web&#39; may not exist.</span>
-<span class="sd"> * Please define these missing path aliases.</span>
-<span class="sd"> */</span>
-<span class="k">return</span> <span class="p">[</span>
-    <span class="c1">// Adjust command/callback for JavaScript files compressing:</span>
-    <span class="s1">&#39;jsCompressor&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;java -jar compiler.jar --js {from} --js_output_file {to}&#39;</span><span class="p">,</span>
-    <span class="c1">// Adjust command/callback for CSS files compressing:</span>
-    <span class="s1">&#39;cssCompressor&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;java -jar yuicompressor.jar --type css {from} -o {to}&#39;</span><span class="p">,</span>
-    <span class="c1">// The list of asset bundles to compress:</span>
-    <span class="s1">&#39;bundles&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
-        <span class="c1">// &#39;yii\web\YiiAsset&#39;,</span>
-        <span class="c1">// &#39;yii\web\JqueryAsset&#39;,</span>
-    <span class="p">],</span>
-    <span class="c1">// Asset bundle for compression output:</span>
-    <span class="s1">&#39;targets&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
-        <span class="s1">&#39;all&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
-            <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;yii\web\AssetBundle&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;basePath&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;@webroot/assets&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;baseUrl&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;@web/assets&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;js&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;js/all-{hash}.js&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;css&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;css/all-{hash}.css&#39;</span><span class="p">,</span>
-        <span class="p">],</span>
-    <span class="p">],</span>
-    <span class="c1">// Asset manager configuration:</span>
-    <span class="s1">&#39;assetManager&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
-    <span class="p">],</span>
-<span class="p">];</span>
-</pre></div>
-
-
-<p>你应该修改这个文件并且在<code>bundles</code>属性中指明你想要组合的那些资源包，在<code>targets</code>选项中指明这些包如何分组，可以指定一个或多个分组。</p>
-<blockquote>
-<p>注意：使用<code>asset</code>命令并不是唯一的可以实现自动处理资源合并和压缩的方式，你也可以使用<a href="http://gruntjs.com/">grunt</a>来实现相同的目标。</p>
-</blockquote>
-<h5>资源包分组</h5>
-<p>在最后一项中，我们已经解释过如何将应用中的资源包合并到单个文件以减少HTTP请求，但实际中并不是一直都这样儿的。例如，想象一下，假设你的应用同时包含一个“前端”和一个“后端”，分别使用了不同的CSS和JS文件。在这种情况下，将前后端所用到的资源都组合到一个单文件中明显是不合理的，因为针对“前端”的资源不会被“后端”用到，同理，当“前端”的页面被请求时，将“后端”资源发送过去也是对网络带宽资源的一种浪费。</p>
-<p>为了解决上述问题，你可以将资源包划分成不同的分组并且为每组绑定不同的资源，如下代码显示了如何组织资源包：</p>
-<div class="highlight"><pre><span></span><span class="x">return [</span>
-<span class="x">    ...</span>
-<span class="x">    // 指定每组的输出资源包:</span>
-<span class="x">    &#39;targets&#39; =&gt; [</span>
-<span class="x">        &#39;allShared&#39; =&gt; [</span>
-<span class="x">            &#39;js&#39; =&gt; &#39;js/all-shared-{hash}.js&#39;,</span>
-<span class="x">            &#39;css&#39; =&gt; &#39;css/all-shared-{hash}.css&#39;,</span>
-<span class="x">            &#39;depends&#39; =&gt; [</span>
-<span class="x">                // 引入“前端”和“后端”共享的所有资源</span>
-<span class="x">                &#39;yii\web\YiiAsset&#39;,</span>
-<span class="x">                &#39;app\assets\SharedAsset&#39;,</span>
-<span class="x">            ],</span>
-<span class="x">        ],</span>
-<span class="x">        &#39;allBackEnd&#39; =&gt; [</span>
-<span class="x">            &#39;js&#39; =&gt; &#39;js/all-{hash}.js&#39;,</span>
-<span class="x">            &#39;css&#39; =&gt; &#39;css/all-{hash}.css&#39;,</span>
-<span class="x">            &#39;depends&#39; =&gt; [</span>
-<span class="x">                // 引入只针对“后端”的资源</span>
-<span class="x">                &#39;app\assets\AdminAsset&#39;</span>
-<span class="x">            ],</span>
-<span class="x">        ],</span>
-<span class="x">        &#39;allFrontEnd&#39; =&gt; [</span>
-<span class="x">            &#39;js&#39; =&gt; &#39;js/all-{hash}.js&#39;,</span>
-<span class="x">            &#39;css&#39; =&gt; &#39;css/all-{hash}.css&#39;,</span>
-<span class="x">            &#39;depends&#39; =&gt; [],// 引入只针对前端的资源 </span>
-<span class="x">        ],</span>
-<span class="x">    ],</span>
-<span class="x">    ...</span>
-<span class="x">];</span>
-</pre></div>
-
-
-<p>正如你看到的，资源包被划分成了三个分组：<code>allShared</code>、<code>allBackEnd</code>和<code>allFrontEnd</code>，每组都依赖一系列的资源包。例如，<code>allBackEnd</code>依赖<code>app\assets\AdminAsset</code>。当运行<code>asset</code>命令时，它会根据上面的描述来组合资源。</p>
-<blockquote>
-<p>补充：你可以将其中的一个目标资源包的<code>depends</code>选项置空，这样儿做的话，该资源包将会依赖所有其他没有被依赖的资源包。</p>
-</blockquote><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+<span class="k">class</span> <span class="nc">AppAsset ...</span></pre></div><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
 
 </p>
 
 
 
-<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-17-application-structure-assetsying-yong-jie-gou-zhi-qian-duan-zi-yuan.html#disqus_thread">comments</a></p>            </article>
-
-
+<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-17-application-structure-assetsying-yong-jie-gou-zhi-qian-duan-zi-yuan.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-17-application-structure-assetsying-yong-jie-gou-zhi-qian-duan-zi-yuan.html">Read More</a>
                 <hr  class="gradient"/>
-
+            </article>
 
         
 
@@ -775,44 +612,6 @@
 
 
 <p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-9-application-structure-applicationsying-yong-jie-gou-zhi-ying-yong.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-9-application-structure-applicationsying-yong-jie-gou-zhi-ying-yong.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
-
-        
-
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-8-application-structure-entry-scriptsying-yong-jie-gou-zhi-ru-kou-jiao-ben.html"><h3 class="article-title">Yii2学习笔记系列8——Application Structure-Entry Scripts（应用结构之入口脚本）</h3></a>
-<h6 class="subheader" title="2016-04-11T11:32:29+08:00">一 11 四月 2016
-</h6>
-
-
-<h3>Yii2学习笔记系列8——Application Structure-Entry Scripts（应用结构之入口脚本）</h3>
-<h4>入口脚本</h4>
-<p>入口脚本是应用启动流程中的第一步，一个应用只有一个入口脚本，终端用户的请求通过入口脚本实例化应用并将请求转发到应用。</p>
-<p>Yii中Web应用的入口脚本存放在终端用户可以访问的目录下，名为<code>index.php</code>，当然，我们也可以使用Web服务器定位到其他名称的文件。</p>
-<p>Yii中Console应用的入口脚本在应用根目录下，名为<code>yii</code>（格式为.php文件），该文件需要有执行权限，这样儿用户就可以通过命令<code>./yii &lt;route&gt; [arguments] [options]</code>来运行Console应用了。</p>
-<p>入口脚本主要用来完成以下的工作：</p>
-<ul>
-<li>定义全局常量；</li>
-<li>注册<a href="https://getcomposer.org/doc/01-basic-usage.md#autoloading">Composer自动加载器</a>；</li>
-<li>包含Yii类文件；</li>
-<li>加载应用配置；</li>
-<li>创建并配置一个应用的实例；</li>
-<li>调用<code>yii\base\Application::run()</code>来处理请求。</li>
-</ul>
-<h4>Web应用</h4>
-<p>以下是基础应用模板入口脚本的代码：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-
-<span class="c1">// 当部署到生产环境时，注释掉下面的两行</span>
-<span class="nb">defined</span><span class="p">(</span><span class="s1">&#39;YII_DEBUG&#39;</span><span class="p">)</span> <span class="k">or</span> <span class="nb">define</span><span class="p">(</span><span class="s1">&#39;YII_DEBUG ...</span></pre></div><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-8-application-structure-entry-scriptsying-yong-jie-gou-zhi-ru-kou-jiao-ben.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-8-application-structure-entry-scriptsying-yong-jie-gou-zhi-ru-kou-jiao-ben.html">Read More</a>
                 <hr  class="gradient"/>
             </article>
 
