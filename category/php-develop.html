@@ -48,6 +48,65 @@
         
 
             <article>
+                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-19-handling-requests-overviewqing-qiu-chu-li-zhi-gai-shu.html"><h3 class="article-title">Yii2学习笔记系列19——Handling Requests-Overview（请求处理之概述）</h3></a>
+<h6 class="subheader" title="2016-05-26T14:26:22+08:00">四 26 五月 2016
+</h6>
+
+
+<h3>概述</h3>
+<p>每次Yii应用程序处理一个请求的时候，它都会经历一个相同的流程：</p>
+<ol>
+<li>
+<p>用户提交指向<a href="http://www.yiiframework.com/doc-2.0/guide-structure-entry-scripts.html">入口脚本</a><code>web/index.php</code>的请求。</p>
+</li>
+<li>
+<p>入口脚本加载应用程序<a href="http://www.yiiframework.com/doc-2.0/guide-concept-configurations.html">配置</a>并且创建一个<a href="http://www.yiiframework.com/doc-2.0/guide-structure-applications.html">应用程序</a>的实例来处理请求。</p>
+</li>
+<li>
+<p>应用程序通过<a href="http://www.yiiframework.com/doc-2.0/guide-runtime-requests.html">request（请求）</a>应用组件来解析被请求的路由。</p>
+</li>
+<li>
+<p>应用程序创建一个<a href="http://www.yiiframework.com/doc-2.0/guide-structure-controllers.html">控制器</a>实例来处理请求。</p>
+</li>
+<li>
+<p>控制器创建一个<a href="http://www.yiiframework.com/doc-2.0/guide-structure-controllers.html">动作</a>实例并且为其执行访问过滤。</p>
+</li>
+<li>
+<p>如果任何一个<a href="http://www.yiiframework.com/doc-2.0/guide-structure-filters.html">过滤器</a>失败，动作取消。</p>
+</li>
+<li>
+<p>如果所有的过滤器通过，动作继续执行。</p>
+</li>
+<li>
+<p>action加载一个数据<a href="http://www.yiiframework.com/doc-2.0/guide-structure-models.html">模型</a>，一般从数据库中取得。</p>
+</li>
+<li>
+<p>action渲染一个<a href="http://www.yiiframework.com/doc-2.0/guide-structure-views.html">视图</a>，同时会加载数据模型。</p>
+</li>
+<li>
+<p>渲染后的结果返回给应用程序的<a href="http://www.yiiframework.com/doc-2.0/guide-runtime-responses.html">response（响应）</a>组件。</p>
+</li>
+<li>
+<p>响应组件将渲染后的结果返回到用户的浏览器。</p>
+</li>
+</ol>
+<p>以下示意图展示了一个应用程序如何处理一个请求：</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/request-lifecycle.png-img.normal" /></p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-19-handling-requests-overviewqing-qiu-chu-li-zhi-gai-shu.html#disqus_thread">comments</a></p>            </article>
+
+
+                <hr  class="gradient"/>
+
+
+        
+
+
+            <article>
                 <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-18-application-structure-extensionsying-yong-jie-gou-zhi-kuo-zhan.html"><h3 class="article-title">Yii2学习笔记系列18——Application Structure-Extensions（应用结构之扩展）</h3></a>
 <h6 class="subheader" title="2016-05-21T15:55:44+08:00">六 21 五月 2016
 </h6>
@@ -66,247 +125,15 @@
 </ol>
 <p>注意，如果没有安装Composer命令的话需要先进行安装。</p>
 <p>默认情况下，Composer会安装的是在<a href="https://packagist.org/">Packagist</a>（最大的开源Composer代码库）中注册过的软件包。你可以在Packagist中查找所需软件包，也可以<a href="https://getcomposer.org/doc/05-repositories.md#repository">创建你自己的代码库</a>并且配置Composer来使用该仓库。如果你是在开发私有扩展并且只想在你的项目内共享的话，这种方式就非常有用了。</p>
-<p>Composer安装的扩展保存在<code>BasePath/vendor</code>目录下，其中<code>BasePath</code>代指应用程序的<a href="http://www.yiiframework.com/doc-2.0/guide-structure-applications.html#basePath">基础路径</a>。因为Composer同时还是一个依赖管理器，当你使用Composer来安装一个软件包时，也会将该软件包所依赖的所有软件包也相应的安装。</p>
-<p>例如，想要安装<code>yiisoft/yii2-imagine</code>扩展，你需要先参照如下所示修改你的<code>composer.json</code>：</p>
-<div class="highlight"><pre><span></span>{
-    // ...
-    &quot;require&quot;: {
-        // ... 其他依赖
-        &quot;yiisoft/yii2-imagine&quot;: &quot;*&quot;
-    }
-}
-</pre></div>
-
-
-<p>安装完成后你应该可以在<code>BasePath/vendor</code>目录下看到<code>yiisoft/yii2-imagine</code>目录了，同时你也应该可以看到一个<code>imagine/imagine</code>目录，其中安装所依赖的软件包。</p>
-<blockquote>
-<p>补充： <code>yiisoft/yii2-imagine</code>是Yii开发团队开发和维护的一个核心扩展，所有核心扩展均由<a href="https://packagist.org/">Packagist</a>集中管理，命名为<code>yiisoft/yii2-xyz</code>，其中的<code>xyz</code>表示不同的扩展。</p>
-</blockquote>
-<p>现在你可以使用扩展了，它们就像是应用程序的一部分一样。下面的示例展示了如何使用<code>yiisoft/yii2-imagine</code>扩展提供的<code>yii\imagine\Image</code>类：</p>
-<div class="highlight"><pre><span></span><span class="x">use Yii;</span>
-<span class="x">use yii\imagine\Image;</span>
-
-<span class="x">// 生成一张缩略图</span>
-<span class="x">Image::thumbnail(&#39;@webroot/img/test-image.jpg&#39;, 120, 120)</span>
-<span class="x">    -&gt;save(Yii::getAlias(&#39;@runtime/thumb-test-image.jpg&#39;), [&#39;quality&#39; =&gt; 50]);</span>
-</pre></div>
-
-
-<blockquote>
-<p>补充： 扩展类由<a href="http://www.yiiframework.com/doc-2.0/guide-concept-autoloading.html">Yii class autoloader</a>自动加载。</p>
-</blockquote>
-<h5>手动安装扩展</h5>
-<p>在极少数情况下，你可能想要手动安装一些或者全部的扩展，而不是依赖Composer来安装。要做到这一点，你需要：</p>
-<ol>
-<li>下载扩展压缩包并且将其解压到<code>vendor</code>目录</li>
-<li>如果扩展提供了自动加载器类的话，安装它</li>
-<li>按照说明下载和安装所有的依赖扩展包</li>
-</ol>
-<p>如果扩展包中没有类的自动加载器但是该扩展包也遵循了<a href="http://www.php-fig.org/psr/psr-4/">PSR-4标准</a>的话，你可以使用Yii提供的类自动加载器来加载扩展类。你需要做的仅仅是为该扩展的根目录声明一个<a href="http://www.yiiframework.com/doc-2.0/guide-concept-aliases.html#defining-aliases">root alias</a>。例如，假设你已经在<code>vendor.mycompany/myext</code>目录下安装了一个扩展，并且扩展类在<code>myext</code>命名空间下，然后你就可以将如下的代码包含在你的应用程序配置文件中：</p>
-<div class="highlight"><pre><span></span><span class="x">[</span>
-<span class="x">    &#39;aliases&#39; =&gt; [</span>
-<span class="x">        &#39;@myext&#39; =&gt; &#39;@vendor/mycompany/myext&#39;,</span>
-<span class="x">    ],</span>
-<span class="x">]</span>
-</pre></div>
-
-
-<h4>创建扩展</h4>
-<p>当你想要把自己的代码分享给其他人使用的时候，你可能考虑创建扩展。扩展可以包含任何你想要的代码，比如一个帮助类、一个小部件、一个模块，等等。</p>
-<p>建议你按照<a href="https://getcomposer.org/">Composer</a>的条款创建一个扩展，以便更容易安装和方便他人使用，如上一章节的描述。</p>
-<p>以下是将扩展创建为一个Composer软件包的基本步骤：</p>
-<ol>
-<li>为你的扩展创建一个工程，并将它存放在版本控制库中，例如<a href="https://github.com/">github.com</a>，扩展的开发和维护工作都应该在这个工程中进行。</li>
-<li>在项目工程根目录下，创建Composer所需的composer.json文件，详情请参考后续的章节。</li>
-<li>在一个Composer仓库中注册你的扩展，比如<a href="https://packagist.org/">Packagist</a>，以便其他用户能够找到你的扩展并且使用Composer进行安装。</li>
-</ol>
-<h5><code>composer.json</code></h5>
-<p>每个Composer软件包根目录下都包含一个<code>composer.json</code>文件，该文件包含了软件包的元数据。你可以在<a href="https://getcomposer.org/doc/01-basic-usage.md#composer-json-project-setup">Composer手册</a>中找到该文件的完整说明。以下是<code>yiisoft/yii2-imagine</code>的<code>composer.json</code>内容：</p>
-<div class="highlight"><pre><span></span><span class="x">{</span>
-<span class="x">    // package name - 包名</span>
-<span class="x">    &quot;name&quot;: &quot;yiisoft/yii2-imagine&quot;,</span>
-
-<span class="x">    // package type - 包类型</span>
-<span class="x">    &quot;type&quot;: &quot;yii2-extension&quot;,</span>
-
-<span class="x">    &quot;description&quot;: &quot;The Image integration for Yii framework&quot;,</span>
-<span class="x">    &quot;keywords&quot;: [&quot;yii2&quot;, &quot;imagine&quot;, &quot;image&quot;, &quot;helper&quot;],</span>
-<span class="x">    &quot;license&quot;: &quot;BSD-D-Clause&quot;,</span>
-<span class="x">    &quot;support&quot;: {</span>
-<span class="x">        &quot;issues&quot;: &quot;https://github.com/yiisoft/yii2/issues?labels=ext%3Aimagine&quot;,</span>
-<span class="x">        &quot;forum&quot;: &quot;http://www.yiiframework.com/forum/&quot;,</span>
-<span class="x">        &quot;wiki&quot;: &quot;http://www.yiiframework.com/wiki/&quot;,</span>
-<span class="x">        &quot;irc&quot;: &quot;irc://irc.freenode.net/yii&quot;,</span>
-<span class="x">        &quot;source&quot;: &quot;https://github.com/yiisoft/yii2&quot;,</span>
-<span class="x">    },</span>
-<span class="x">    &quot;authors&quot;: [</span>
-<span class="x">        {</span>
-<span class="x">            &quot;name&quot;: &quot;Antonio Ramirez&quot;,</span>
-<span class="x">            &quot;email&quot;: &quot;amigo.cobos@gmail.com&quot;,</span>
-<span class="x">        }</span>
-<span class="x">    ],</span>
-<span class="x">    // package dependencies - 包依赖</span>
-<span class="x">    &quot;require&quot; : {</span>
-<span class="x">        &quot;yiisoft/yii2&quot;: &quot;*&quot;,</span>
-<span class="x">        &quot;imagine/imagine&quot;: &quot;v0.5.0&quot;,</span>
-<span class="x">    },</span>
-<span class="x">    // class autoloading specs - 类自动加载功能</span>
-<span class="x">    &quot;autoload&quot;: {</span>
-<span class="x">        &quot;psr-4&quot;: {</span>
-<span class="x">            &quot;yii\\imagine\\&quot;: &quot;&quot;</span>
-<span class="x">        }</span>
-<span class="x">    }</span>
-<span class="x">}</span>
-</pre></div>
-
-
-<h6>Package Name -  包名</h6>
-<p>每个Composer软件包都应当包含一个唯一的包名，用以跟其它的软件包区分。包名的格式是<code>vendorName/projectName</code>，例如包名<code>yiisoft/yii2-imagine</code>中，vendor名和project名分别是<code>yiisoft</code>和<code>yii2-imagine</code>。</p>
-<p>不要使用<code>yiisoft</code>作为你的vendor名，因为它被Yii的核心代码预留使用了。</p>
-<p>我们推荐使用<code>yii2-</code>作为你的包名的前缀，表示它是Yii2的扩展，例如<code>myname/yii2-mywidget</code>，以便用户辨别是否Yii2的扩展。</p>
-<h6>Package Type -  包类型</h6>
-<p>将你的扩展指明为<code>yii2-extension</code>类型很重要，便于在安装的时候能够被识别到是Yii扩展。</p>
-<p>当一个用户运行<code>composer install</code>命令来安装一个扩展的时候，<code>vendor/yiisoft/extension.php</code>文件会自动升级并包含新扩展的信息。从该文件中，Yii应用程序能够知道哪些扩展被安装了（可以通过<a href="http://www.yiiframework.com/doc-2.0/yii-base-application.html#$extensions-detail">yii\base\Application::extensions</a>访问）。</p>
-<h6>Dependencies -  依赖</h6>
-<p>你的扩展依赖于Yii（必须的），所以你应该将其（yiisoft/yii2）列在你的<code>composer.json</code>文件中的<code>require</code>部分。如果你的扩展还依赖其他的扩展或者第三方类库，你应该也把它们都列出来。确保你为每一个依赖包列出了适当的版本约束条件（比如<code>1.*</code>、<code>@stable</code>）等，当你发布一个稳定版本时，你所依赖的软件包也应当使用稳定版本。</p>
-<p>大多数的JS/CSS包是用<a href="http://bower.io/">Bower</a>来管理而非Composer，你可以使用<a href="https://github.com/francoispluchino/composer-asset-plugin">Composer asset插件</a>使其可以通过Composer来管理这类包。如果你的扩展依赖Bower软件包，你可以如下例所示那样儿简单的在<code>composer.json</code>中将其列出来：</p>
-<div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="err">//</span> <span class="err">package</span> <span class="err">dependencies</span> <span class="err">-</span> <span class="err">包依赖</span>
-    <span class="nt">&quot;require&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;bower-asset/jquery&quot;</span><span class="p">:</span> <span class="s2">&quot;&gt;=1.11.*&quot;</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-
-
-<p>上述代码表明该扩展依赖于<code>jquery</code> Bower包，一般来说，你可以在<code>composer.json</code>中通过<code>bower-asset/PackageName</code>指定Bower包，通过<code>npm-asset/PackageName</code>指定NPM包。当Composer安装Bower和NPM软件包时，会默认分别安装到<code>@vendor/bower/PackageName</code>和<code>@vendor/npm/Packages</code>这两个目录下，分别可以用<code>@bower/PackageName</code>和<code>@npm/PackageName</code>别名指向。</p>
-<p>更多关于资源管理的详情，请参考<a href="http://www.yiiframework.com/doc-2.0/guide-structure-assets.html#bower-npm-assets">Assets</a>章节。</p>
-<h6>Class Autoloading -  类自动加载</h6>
-<p>为了让你的类能够被Yii或者Composer类自动加载器自动加载，你应该在<code>composer.json</code>文件中指定<code>autoload</code>条目，如下所示：</p>
-<div class="highlight"><pre><span></span>{
-    // ....
-
-    &quot;autoload&quot;: {
-        &quot;psr-4&quot;: {
-            &quot;yii\\imagine\\&quot;: &quot;&quot;
-        }
-    }
-}
-</pre></div>
-
-
-<p>你可以列出一个或多个根命名空间以及他们相应的文件路径。</p>
-<p>当扩展安装到应用中后，Yii能够为每个所列出的根命名空间创建一个指向命名空间对应的目录的别名。例如，上述的<code>autoload</code>条目声明将对应别名<code>@yii/imagine</code>。</p>
-<h5>推荐的做法</h5>
-<p>由于扩展意味着会被其他人使用，所以你在开发过程中通常需要额外的付出，下面我们介绍一些通用的以及推荐的做法，以便帮助你创建高质量的扩展。</p>
-<h6>命名空间</h6>
-<p>为了避免命名冲突以及可以使你的扩展中的类能够被自动加载，你的泪应当使用命名空间，并且遵循<a href="http://www.php-fig.org/psr/psr-4/">PSR-4标准</a>和<a href="http://www.php-fig.org/psr/psr-0/">PSR-0标准</a>来命名你的扩展中的类。</p>
-<p>你的泪的命名空间应该以<code>vendorName\extensionName</code>，其中<code>extensionName</code>和项目名相同，除了它没有<code>yii2-</code>前缀。例如，对<code>yiisoft/yii2-imagine</code>扩展来说，我们用<code>yii\imagine</code>作为它的类的命名空间。</p>
-<p>不要使用<code>yii</code>、<code>yii2</code>或者<code>yiisoft</code>作为你的vendor名，这些名称已经被Yii核心代码预留使用了。</p>
-<h6>引导启动类</h6>
-<p>有时你可能想要你的扩展能够在应用程序的<a href="http://www.yiiframework.com/doc-2.0/guide-runtime-bootstrapping.html">引导启动过程</a>阶段执行一些代码。例如，你的扩展可能需要响应应用程序的<code>beginRequest</code>事件来做一些环境设置工作。除了可以明确地指导使用你的扩展的用户将你的事件处理代码附加到beginRequest事件上，一个更好的方式就是让该过程自动化处理。</p>
-<p>为了实现这个目标，你可以创建一个所谓的bootstrapping class（启动引导类）实现yii\base\BootstrapInterface接口。例如，</p>
-<div class="highlight"><pre><span></span><span class="x">namespace myname\mywidget;</span>
-
-<span class="x">use yii\base\BootstrapInterface;</span>
-<span class="x">use yii\base\Application;</span>
-
-<span class="x">class MyBootstrapClass implements BootstrapInterface</span>
-<span class="x">{</span>
-<span class="x">    public function bootstrap($app)</span>
-<span class="x">    {</span>
-<span class="x">        $app-&gt;on(Application::EVENT_BEFORE_REQUEST, function() {</span>
-<span class="x">            // 做点什么</span>
-<span class="x">        });</span>
-<span class="x">    }</span>
-<span class="x">}</span>
-</pre></div>
-
-
-<p>然后将这个类在<code>composer.json</code>文件中列出来，如下所示：</p>
-<div class="highlight"><pre><span></span>{
-    // ...
-
-    &quot;extra&quot;: {
-        &quot;bootstrap&quot;: &quot;myname\\mywidget\\MyBootstrapClass&quot;
-    }
-}
-</pre></div>
-
-
-<p>当这个扩展安装到应用后，Yii将在每一个请求的引导启动过程中自动实例化并调用其yii\base\BootstrapInterface::bootstrap()方法。</p>
-<h6>使用数据库</h6>
-<p>你的扩展可能需要使用数据库，不要认为使用你的扩展的应用程序总是会使用<code>Yii::$db</code>作为数据库连接。你应该在需要访问数据库的类中声明一个<code>db</code>属性，该属性允许使用你的扩展的用户可以自定义扩展所需要使用的数据库连接。例如，你可以参考<a href="http://www.yiiframework.com/doc-2.0/yii-caching-dbcache.html">yii\caching\DbCache</a>类看一下它是如何声明和使用<code>db</code>属性的。</p>
-<p>如果你的扩展需要创建特定的数据库表，或者修改数据库表结构，你应该：</p>
-<ul>
-<li>提供<a href="http://www.yiiframework.com/doc-2.0/guide-db-migrations.html">数据迁移</a>来操作数据库，而不是使用SQL文本文件</li>
-<li>尽量使迁移文件适用于不同的DBMS</li>
-<li>在迁移文件中避免使用<a href="http://www.yiiframework.com/doc-2.0/guide-db-active-record.html">Active Record</a></li>
-</ul>
-<h6>使用Assets</h6>
-<p>如果你的扩展是一个小部件或者一个模块，它可能需要使用一些<a href="http://www.yiiframework.com/doc-2.0/guide-structure-assets.html">Assets</a>。例如，一个模块可能会展示一些包含图片、JS和CSS的页面。由于扩展的文件都放在同一个目录下，安装后无法通过Web访问，你有两种方式可以使得这些asset文件目录通过Web被访问到：</p>
-<ul>
-<li>让扩展的使用者手动将这些资源文件拷贝到特定的可以通过Web访问的文件夹下</li>
-<li>声明一个<a href="http://www.yiiframework.com/doc-2.0/guide-structure-assets.html">资源包</a>并且依靠asset发布机制自动将这些文件（资源包中列出的文件）拷贝到可以通过Web访问的文件夹</li>
-</ul>
-<p>我们推荐你使用第二种方式以便你的扩展更加易用，更详细的关于如何处理assets的细节请参阅<a href="http://www.yiiframework.com/doc-2.0/guide-structure-assets.html">资源</a>一节。</p>
-<h6>国际化和本地化</h6>
-<p>你的扩展可能需要在支持不同语言的应用中使用，因此，如果你的扩展想要显示内容给终端用户，你应当尝试实现<a href="http://www.yiiframework.com/doc-2.0/guide-tutorial-i18n.html">国际化和本地化</a>，特别是：</p>
-<ul>
-<li>如果扩展显示面向最终用户的消息，这些消息应该被<code>Yii::t()</code>方法包裹起来以便他们可以被翻译。只给开发者参考的信息（如内部异常信息）等不需要做翻译。</li>
-<li>如果扩展显示数字、日期等，你应该用yii\i18n\Formatter中适当的格式化规则做格式化处理。</li>
-</ul>
-<p>更多详情请参考<a href="http://www.yiiframework.com/doc-2.0/guide-tutorial-i18n.html">国际化</a>一节。</p>
-<h6>测试</h6>
-<p>你肯定想让你的扩展可以顺畅无瑕疵的运行并且不会给使用者带来麻烦，想要实现这个目标，你需要在发布你的扩展之前进行测试。</p>
-<p>建议你创建各种测试用例来覆盖测试你的扩展代码，而非仅仅通过手工测试。每次你发布新版本的扩展之前都可以简单的运行一下这些测试用例确保一切正常。Yii提供了测试支持，可以让你更容易的编写单元测试、验收测试和功能测试。详情请参考<a href="http://www.yiiframework.com/doc-2.0/guide-test-overview.html">测试</a>一节。</p>
-<h6>版本控制</h6>
-<p>你应该为每一个扩展定一个版本号（如<code>1.0.1</code>），我们推荐版本号命名时参照<a href="http://semver.org/">semantic versioning</a>来决定用什么样儿的版本号。</p>
-<h6>发布</h6>
-<p>想让其他人知道你的扩展，你应该公开发布。</p>
-<p>如果你是第一次发布一个扩展，你应该在Composer仓库（例如<a href="https://packagist.org/">Packgist</a>）中将其进行注册。之后，你只需在版本管理库中创建一个标签（例如<code>v1.0.1</code>），然后通知Composer代码库，其他人就能够查找到这个新的发布版本了，并且可以通过Composer代码库安装和更新该扩展。</p>
-<p>在发布你的扩展的时候，除了代码文件，你还应该考虑包含如下内容，以帮助使用者更好地了解和使用你的扩展：</p>
-<ul>
-<li>根目录下的README文件：它用来描述你的扩展能做什么以及如何安装和使用。我们建议你采用<a href="http://daringfireball.net/projects/markdown/">Markdown</a>格式并且将其命名为<code>readme.md</code></li>
-<li>根目录下的修改日志文件：它列举每个版本的发布都做了哪些更改。该文件可以用Markdown格式编写并命名为<code>changelog.md</code></li>
-<li>根目录下的升级文件：它给出如何从旧版本升级该扩展的指导，该文件可以用Markdown格式编写并命名为<code>upgrade.md</code></li>
-<li>入门指南、演示代码、截图等：如果你的扩展提供了许多功能并且无法在readme文件中完整描述时，可以用这些文件</li>
-<li>API文档：你的代码应该文档齐全并且允许其他人更容易阅读和理解。你可以参考<a href="https://github.com/yiisoft/yii2/blob/master/framework/base/Object.php">Object class file</a>来学习如何为你的代码写文档</li>
-</ul>
-<blockquote>
-<p>补充：你的代码注释可以以Markdown格式编写。<code>yiisoft/yii2-apidoc</code>扩展提供了从你的代码注释生成漂亮的API文档的功能。</p>
-<p>补充：虽然不做具体要求，但我们还是建议你的扩展遵循某个编码规范，你可以参考<a href="https://github.com/yiisoft/yii2/wiki/Core-framework-code-style">核心框架代码规范</a>。</p>
-</blockquote>
-<h4>核心扩展</h4>
-<p>Yii提供了以下的核心扩展，由Yii开发团队开发和维护，这些扩展全都在<a href="https://packagist.org/">Packagist</a>中注册，并且像<a href="http://www.yiichina.com/doc/guide/2.0/structure-extensions#using-extensions">使用扩展</a>章节中描述的那样容易安装。</p>
-<ul>
-<li><a href="https://github.com/yiisoft/yii2-apidoc">yiisoft/yii2-apidoc</a>：提供了一个可扩展的并且高可用性的API文档生成器。核心框架的API文档也是用它生成的。</li>
-<li><a href="https://github.com/yiisoft/yii2-authclient">yiisoft/yii2-authclient</a>：提供一系列常用的认证客户端，例如Facebook OAuth2 客户端、Github OAuth2 客户端。</li>
-<li><a href="https://github.com/yiisoft/yii2-bootstrap">yiisoft/yii2-bootstrap</a>：提供了一系列的小部件，包括<a href="http://getbootstrap.com/">Bootstrap</a>组件和插件。</li>
-<li><a href="https://github.com/yiisoft/yii2-codeception">yiisoft/yii2-codeception</a>：提供了基于<a href="http://codeception.com/">Codeception</a>的测试支持。</li>
-<li><a href="https://github.com/yiisoft/yii2-debug">yiisoft/yii2-debug</a>：提供了对Yii应用的调试支持，当使用该扩展时，在每个页面底部将显示一个调试工具条，该扩展还提供了一个独立的页面用以显示更详细的调试信息。</li>
-<li><a href="https://github.com/yiisoft/yii2-elasticsearch">yiisoft/yii2-elasticsearch</a>：提供对<a href="https://www.elastic.co/">Elasticsearch</a>的支持，它包含基本的查询/搜索支持，并且实现了<a href="http://www.yiiframework.com/doc-2.0/guide-db-active-record.html">Active Record</a>模式并且允许你将活动记录保存在Elasticsearch中。</li>
-<li><a href="https://github.com/yiisoft/yii2-faker">yiisoft/yii2-faker</a>：提供了对使用<a href="https://github.com/fzaninotto/Faker">Faker</a>的支持并且能够为你生成测试数据。</li>
-<li><a href="https://github.com/yiisoft/yii2-gii">yiisoft/yii2-gii</a>：提供一个基于Web页面的代码生成器，具有高可扩展性，并且可以用来快速生成模型、表单、模板、CRUD等。</li>
-<li><a href="https://github.com/yiisoft/yii2-imagine">yiisoft/yii2-imagine</a>：提供了基于<a href="http://imagine.readthedocs.org/">Imagine</a>的常用的图像处理功能。</li>
-<li><a href="https://github.com/yiisoft/yii2-jui">yiisoft/yii2-jui</a>：提供了一套基于<a href="http://jqueryui.com/">JQuery UI</a>封装的组件。</li>
-<li><a href="https://github.com/yiisoft/yii2-mongodb">yiisoft/yii2-mongodb</a>：提供了对<a href="http://www.mongodb.org/">MongoDB</a>的使用支持，它包含基本的查询、活动记录、数据迁移、缓存、代码生成等特性。</li>
-<li><a href="https://github.com/yiisoft/yii2-redis">yiisoft/yii2-redis</a>：提供了对<a href="http://redis.io/">Redis</a>的使用支持，包含基本的查询、活动记录、缓存等特性。</li>
-<li><a href="https://github.com/yiisoft/yii2-smarty">yiisoft/yii2-smarty</a>：提供了基于<a href="http://www.smarty.net/">Smarty</a>的模板引擎。</li>
-<li><a href="https://github.com/yiisoft/yii2-sphinx">yiisoft/yii2-sphinx</a>：提供了对<a href="http://sphinxsearch.com/">Sphinx</a>的使用支持，包含基本的查询、活动记录、代码生成等特性。</li>
-<li><a href="https://github.com/yiisoft/yii2-swiftmailer">yiisoft/yii2-swiftmailer</a>：提供了基于<a href="http://swiftmailer.org/">swiftmailer</a>的邮件发送功能。</li>
-<li><a href="https://github.com/yiisoft/yii2-twig">yiisoft/yii2-twig</a>：提供了基于<a href="http://twig.sensiolabs.org/">Twig</a>的模板引擎。</li>
-</ul><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+<p>Composer安装的扩展保存在 ...</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
 
 </p>
 
 
 
-<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-18-application-structure-extensionsying-yong-jie-gou-zhi-kuo-zhan.html#disqus_thread">comments</a></p>            </article>
-
-
+<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-18-application-structure-extensionsying-yong-jie-gou-zhi-kuo-zhan.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-18-application-structure-extensionsying-yong-jie-gou-zhi-kuo-zhan.html">Read More</a>
                 <hr  class="gradient"/>
-
+            </article>
 
         
 
@@ -578,40 +405,6 @@
 
 
 <p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-10-application-structure-application-componentsying-yong-jie-gou-zhi-ying-yong-zu-jian.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-10-application-structure-application-componentsying-yong-jie-gou-zhi-ying-yong-zu-jian.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
-
-        
-
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-9-application-structure-applicationsying-yong-jie-gou-zhi-ying-yong.html"><h3 class="article-title">Yii2学习笔记系列9——Application Structure-Applications（应用结构之应用）</h3></a>
-<h6 class="subheader" title="2016-04-13T21:29:17+08:00">三 13 四月 2016
-</h6>
-
-
-<h3>Yii2学习笔记系列9——Application Structure-Applications（应用结构之应用）</h3>
-<h4>应用主体</h4>
-<p>应用主体是管理Yii应用系统整体结构和声明周期的对象，每个Yii应用系统只能包含一个应用主体，应用主体在入口脚本中创建，并且可以通过表达式<code>\Yii::$app</code>全局范围内访问。</p>
-<p>Yii有两种应用主体：<code>yii\web\Application</code>和<code>yii\console\Application</code>，分别用来处理网页请求和控制台请求。</p>
-<h5>应用主体配置</h5>
-<p>如下所示，当入口脚本创建了一个应用主体，它会加载一个配置文件并传给应用主体。</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-
-<span class="k">require</span><span class="p">(</span><span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/../vendor/autoload.php&#39;</span><span class="p">);</span>
-<span class="k">require</span><span class="p">(</span><span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/../vendor/yiisoft/yii2/Yii.php&#39;</span><span class="p">);</span>
-
-<span class="c1">// 加载应用主体配置</span>
-<span class="nv">$config</span> <span class="o">=</span> <span class="k">require</span><span class="p">(</span><span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/../config/web.php&#39;</span><span class="p">);</span>
-
-<span class="c1">// 实例化应用主体、配置应用主体</span>
-<span class="p">(</span><span class="k">new</span> <span class="nx">yii\web ...</span></pre></div><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-9-application-structure-applicationsying-yong-jie-gou-zhi-ying-yong.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-9-application-structure-applicationsying-yong-jie-gou-zhi-ying-yong.html">Read More</a>
                 <hr  class="gradient"/>
             </article>
 

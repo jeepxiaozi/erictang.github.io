@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8" />
+    <!-- Set the viewport width to device width for mobile -->
+    <meta name="viewport" content="width=device-width" />
+
+    <title>Yii2学习笔记系列19——Handling Requests-Overview（请求处理之概述）</title>
+
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/normalize.css" />
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/foundation.min.css" />
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/style.css" />
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/pygments.css" />
+    <script src="http://jeepxiaozi.github.io/theme/js/modernizr.js"></script>
+</head>
+
+<body>
+
+    <!-- Nav Bar -->
+    <nav>
+        <div class="top-bar">
+            <div class="row">
+                <div class="large-9 large-centered columns">
+                    <h1><a href="http://jeepxiaozi.github.io">一把汤勺</a></h1>
+                </div>
+            </div>
+        </div>
+
+        <!-- Show menu items and pages -->
+        <div class="row">
+            <div class="large-9 columns">
+                <ul class="button-group navigation">
+                      <li><a href="http://jeepxiaozi.github.io/pages/guan-yu-zuo-zhe.html" class="button secondary small">关于作者</a>
+                    </li>
+                 </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- End Nav -->
+
+
+    <!-- Main Page Content and Sidebar -->
+    <div class="row">
+
+        <!-- Main Blog Content -->
+        <div class="large-9 columns">
+<article>
+    <header>
+        <h3 class="article-title"><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-19-handling-requests-overviewqing-qiu-chu-li-zhi-gai-shu.html" rel="bookmark"
+        title="Permalink to Yii2学习笔记系列19——Handling Requests-Overview（请求处理之概述）">Yii2学习笔记系列19——Handling Requests-Overview（请求处理之概述）</a></h3>
+    </header>
+
+<h6 class="subheader" title="2016-05-26T14:26:22+08:00">四 26 五月 2016
+</h6>
+
+
+    <h3>概述</h3>
+<p>每次Yii应用程序处理一个请求的时候，它都会经历一个相同的流程：</p>
+<ol>
+<li>
+<p>用户提交指向<a href="http://www.yiiframework.com/doc-2.0/guide-structure-entry-scripts.html">入口脚本</a><code>web/index.php</code>的请求。</p>
+</li>
+<li>
+<p>入口脚本加载应用程序<a href="http://www.yiiframework.com/doc-2.0/guide-concept-configurations.html">配置</a>并且创建一个<a href="http://www.yiiframework.com/doc-2.0/guide-structure-applications.html">应用程序</a>的实例来处理请求。</p>
+</li>
+<li>
+<p>应用程序通过<a href="http://www.yiiframework.com/doc-2.0/guide-runtime-requests.html">request（请求）</a>应用组件来解析被请求的路由。</p>
+</li>
+<li>
+<p>应用程序创建一个<a href="http://www.yiiframework.com/doc-2.0/guide-structure-controllers.html">控制器</a>实例来处理请求。</p>
+</li>
+<li>
+<p>控制器创建一个<a href="http://www.yiiframework.com/doc-2.0/guide-structure-controllers.html">动作</a>实例并且为其执行访问过滤。</p>
+</li>
+<li>
+<p>如果任何一个<a href="http://www.yiiframework.com/doc-2.0/guide-structure-filters.html">过滤器</a>失败，动作取消。</p>
+</li>
+<li>
+<p>如果所有的过滤器通过，动作继续执行。</p>
+</li>
+<li>
+<p>action加载一个数据<a href="http://www.yiiframework.com/doc-2.0/guide-structure-models.html">模型</a>，一般从数据库中取得。</p>
+</li>
+<li>
+<p>action渲染一个<a href="http://www.yiiframework.com/doc-2.0/guide-structure-views.html">视图</a>，同时会加载数据模型。</p>
+</li>
+<li>
+<p>渲染后的结果返回给应用程序的<a href="http://www.yiiframework.com/doc-2.0/guide-runtime-responses.html">response（响应）</a>组件。</p>
+</li>
+<li>
+<p>响应组件将渲染后的结果返回到用户的浏览器。</p>
+</li>
+</ol>
+<p>以下示意图展示了一个应用程序如何处理一个请求：</p>
+<p><img alt="img" src="http://7vzo2i.com1.z0.glb.clouddn.com/request-lifecycle.png-img.normal" /></p>
+<p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+
+</p>
+
+
+
+
+	<h4>Comments</h4>
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        var disqus_shortname = 'erictang'
+        var disqus_identifier = "yii2xue-xi-bi-ji-xi-lie-19-handling-requests-overviewqing-qiu-chu-li-zhi-gai-shu.html";
+        var disqus_url = "http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-19-handling-requests-overviewqing-qiu-chu-li-zhi-gai-shu.html";
+
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</article>
+        </div>
+        <!-- End Main Content -->
+
+        <!-- Sidebar -->
+        <aside class="large-3 columns">
+            <h5 class="sidebar-title">Site</h5>
+            <ul class="side-nav">
+                <li><a href="http://jeepxiaozi.github.io/archives.html">Archives</a>
+                    <li><a href="http://jeepxiaozi.github.io/tags.html">Tags</a>              </ul>
+
+            <h5 class="sidebar-title">Categories</h5>
+            <ul class="side-nav">
+                <li><a href="http://jeepxiaozi.github.io/category/android-develop.html">Android Develop</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/git.html">Git</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/ios-develop.html">iOS Develop</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo.html">技术生活</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/markdownxie-zuo.html">Markdown写作</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/multicopter.html">MultiCopter</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/pages.html">Pages</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/server-develop.html">Server Develop</a>
+                </li>
+            </ul>
+             <h5 class="sidebar-title">Links</h5>
+            <ul class="side-nav">
+                <li><a href="http://www.linuxzen.com">cold's world</a>
+                </li>
+                <li><a href="http://www.icnws.com/">城南往事小站</a>
+                </li>
+                <li><a href="http://wellmakers.com">电子匠人</a>
+                </li>
+                <li><a href="http://androidcat.com/">AndroidCat</a>
+                </li>
+            </ul>
+             <h5 class="sidebar-title">Social</h5>
+            <ul class="side-nav social">
+                <li><a href="https://twitter.com/jeepxiaoxiaozi">twitter</a>
+                </li>
+                <li><a href="https://github.com/jeepxiaozi">GitHub</a>
+                </li>
+                <li><a href="http://weibo.com/u/1375170263/">Weibo</a>
+                </li>
+            </ul>
+
+        </aside>
+        <!-- End Sidebar -->
+
+    </div>
+    <!-- End Main Content and Sidebar -->
+
+
+    <!-- Footer -->
+    <footer class="row">
+        <div class="large-12 columns">
+            <hr />
+            <div class="row">
+                <div class="large-6 columns">
+                    <p><a href="http://jeepxiaozi.github.io">一把汤勺</a> &copy; EricTang 2016 
+ 
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1254253569'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s95.cnzz.com/z_stat.php%3Fid%3D1254253569%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));</script>
+                 </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

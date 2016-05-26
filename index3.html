@@ -49,6 +49,42 @@
 
 
             <article>
+                <a href="http://jeepxiaozi.github.io/centosxia-shi-yong-gitlabda-jian-git-server.html"><h3 class="article-title">CentOS下使用GitLab搭建Git Server</h3></a>
+<h6 class="subheader" title="2015-09-23T10:10:33+08:00">三 23 九月 2015
+</h6>
+
+
+<p>记录下在CentOS下使用GitLab搭建Git Server的流程</p>
+<p>按照官方的文档<a href="https://about.gitlab.com/downloads/#centos6">CentOS6安装GitLab</a></p>
+<p>然后参考<a href="http://my.oschina.net/VincentJiang/blog/224993">CentOS6.5配置yum安装Nginx</a>完成了Nginx的安装</p>
+<p>然后参考<a href="https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/doc/settings/nginx.md#using-a-non-bundled-web-server">使用已有的Nginx配置</a>进行配置</p>
+<p>简单的翻译记录一下所需要的配置部分</p>
+<p>默认的，omnibus-gitlab会在安装GitLab的时候默认内置了一个Nginx Server，Omnibus-gitlab允许webserver通过gitlab-www分组下的gitlab-www同名用户来访问。要想添加额外的webserver权限到GitLab的话，需要将额外的webserver用户添加到gitlab-www分组里</p>
+<p>想要使用其他的web server例如Apache或者已有的Nginx，你需要做以下的操作步骤：
+- 通过在<em>/etc/gitlab/gitlab.rb</em>文件中指定来禁用内置的Nginx：</p>
+<div class="highlight"><pre><span></span><span class="n">nginx</span><span class="o">[</span><span class="s1">&#39;enable&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="kp">false</span>
+
+<span class="c1">#对于GitLab CI，使用如下的：</span>
+<span class="n">ci_nginx</span><span class="o">[</span><span class="s1">&#39;enable&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="kp">false</span>
+</pre></div>
+
+
+<p>之后一定要记得执行<em>sudo gitlab-ctl reconfigure</em>进行重新配置</p>
+<ul>
+<li>检查非内置的web server的用户名，默认情况下，omnibus-gitlab没有为额外的webserver用户添加默认设置，你必须手动在配置文件中将额外的webserver用户名添加进来，我们假设你的webserver的用户名是nginx，那么，在<em>/etc ...</em></li></ul><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/git.html">Git</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/centosxia-shi-yong-gitlabda-jian-git-server.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/centosxia-shi-yong-gitlabda-jian-git-server.html">Read More</a>
+                <hr  class="gradient"/>
+            </article>
+
+        
+
+
+            <article>
                 <a href="http://jeepxiaozi.github.io/css3zhong-de-transform.html"><h3 class="article-title">CSS3中的Transform</h3></a>
 <h6 class="subheader" title="2015-07-28T16:00:19+08:00">二 28 七月 2015
 </h6>
@@ -311,27 +347,6 @@ android {
 
 
 <p><a href="http://jeepxiaozi.github.io/wei-zi-ji-de-github-pagestian-jia-yi-ge-tu-chuang.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/wei-zi-ji-de-github-pagestian-jia-yi-ge-tu-chuang.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
-
-        
-
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/zhuan-zai-kai-pian-cong-ling-zuo-si-zhou-fei-xing-qi-1.html"><h3 class="article-title">[转载]开篇 从零做四轴飞行器(1)</h3></a>
-<h6 class="subheader" title="2015-02-09T23:06:51+08:00">一 09 二月 2015
-</h6>
-
-
-<p>我个人对于四轴飞行器（或者说专业一点儿讲，多旋翼飞行器）的爱好，具体也不记得是从哪天起来的了，但是无疑Ted上的那个四轴的视频给我很大的触动，然后机缘巧合，认识了这篇文章的作者：洋仔，具体的机缘巧合地点在此：<a href="http://www.zhihu.com/question/21775696">如何学习自制四轴飞行器</a>，啊，各位看官如果对我们的基情，啊不是，是纯洁的友情，要进行点上1024个赞的话，欢迎前去围观。</p>
-<p>扯完闲篇儿，聊点儿正经的爱好，四轴飞行器，当然啦，这个目前是很火爆的，国内国外的都有，自不必说，可问题是，咱们是攻城狮诶！高（不）端（折）大（滕）气（不）上（不）档（成）次（活）的攻城狮诶！所以嘞，在四轴飞行器方面我还是个菜鸟菜鸟菜菜鸟，但是洋仔同学已经有较为丰富的折腾经验，并且也是专业算是对口啊，所以他整理了不少博客，详情请戳<a href="http://wellmakers.com/?cat=13">四轴飞行器</a>。</p>
-<p>那么OK，我们顺着洋仔同学的折腾轨迹 ...</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/multicopter.html">MultiCopter</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/zhuan-zai-kai-pian-cong-ling-zuo-si-zhou-fei-xing-qi-1.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/zhuan-zai-kai-pian-cong-ling-zuo-si-zhou-fei-xing-qi-1.html">Read More</a>
                 <hr  class="gradient"/>
             </article>
 
