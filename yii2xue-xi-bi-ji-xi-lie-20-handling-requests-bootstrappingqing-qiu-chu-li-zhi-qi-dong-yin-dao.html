@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8" />
+    <!-- Set the viewport width to device width for mobile -->
+    <meta name="viewport" content="width=device-width" />
+
+    <title>Yii2学习笔记系列20——Handling Requests-Bootstrapping（请求处理之启动引导）</title>
+
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/normalize.css" />
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/foundation.min.css" />
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/style.css" />
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/pygments.css" />
+    <script src="http://jeepxiaozi.github.io/theme/js/modernizr.js"></script>
+</head>
+
+<body>
+
+    <!-- Nav Bar -->
+    <nav>
+        <div class="top-bar">
+            <div class="row">
+                <div class="large-9 large-centered columns">
+                    <h1><a href="http://jeepxiaozi.github.io">一把汤勺</a></h1>
+                </div>
+            </div>
+        </div>
+
+        <!-- Show menu items and pages -->
+        <div class="row">
+            <div class="large-9 columns">
+                <ul class="button-group navigation">
+                      <li><a href="http://jeepxiaozi.github.io/pages/guan-yu-zuo-zhe.html" class="button secondary small">关于作者</a>
+                    </li>
+                 </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- End Nav -->
+
+
+    <!-- Main Page Content and Sidebar -->
+    <div class="row">
+
+        <!-- Main Blog Content -->
+        <div class="large-9 columns">
+<article>
+    <header>
+        <h3 class="article-title"><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-20-handling-requests-bootstrappingqing-qiu-chu-li-zhi-qi-dong-yin-dao.html" rel="bookmark"
+        title="Permalink to Yii2学习笔记系列20——Handling Requests-Bootstrapping（请求处理之启动引导）">Yii2学习笔记系列20——Handling Requests-Bootstrapping（请求处理之启动引导）</a></h3>
+    </header>
+
+<h6 class="subheader" title="2016-05-27T11:34:26+08:00">五 27 五月 2016
+</h6>
+
+
+    <h3>启动引导</h3>
+<p>启动引导指的是在应用开始解析和处理请求之前，一个预先准备环境的过程。启动引导会在两个地方进行：<a href="http://www.yiiframework.com/doc-2.0/guide-concept-configurations.html">入口脚本</a>处和<a href="http://www.yiiframework.com/doc-2.0/guide-structure-applications.html">应用主体</a>处。</p>
+<p>在<a href="http://www.yiiframework.com/doc-2.0/guide-concept-configurations.html">入口脚本</a>中，不同的类库的自动类加载器会被注册进来（Class Autoloader，简称自动加载器），其中包括通过<code>autoload.php</code>文件注册的Composer自动加载器和通过<code>Yii</code>类文件注册的Yii自动加载器。之后，入口脚本会加载应用程序的<a href="http://www.yiiframework.com/doc-2.0/guide-concept-configurations.html">配置</a>并且创建<a href="http://www.yiiframework.com/doc-2.0/guide-structure-applications.html">应用主体</a>的实例。</p>
+<p>在应用主体的构造函数中会做以下的工作：</p>
+<ol>
+<li>
+<p>调用<a href="http://www.yiiframework.com/doc-2.0/yii-base-application.html#preInit()-detail">preInit() - 预初始化</a>方法，从而配置一些优先级比较高的属性，例如<a href="http://www.yiiframework.com/doc-2.0/yii-base-module.html#$basePath-detail">basePath</a>。</p>
+</li>
+<li>
+<p>注册<a href="http://www.yiiframework.com/doc-2.0/yii-base-application.html#$errorHandler-detail">异常处理器</a>。</p>
+</li>
+<li>
+<p>通过给定的应用程序配置初始化应用程序属性。</p>
+</li>
+<li>
+<p>调用<a href="http://www.yiiframework.com/doc-2.0/yii-base-application.html#init()-detail">init() - 初始化</a>方法，它会进而顺序调用<a href="http://www.yiiframework.com/doc-2.0/yii-base-application.html#bootstrap()-detail">bootstrap() - 启动引导</a>方法来引导组件。</p>
+<ul>
+<li>
+<p>加载扩展清单文件<code>vendor/yiisoft/extensions.php</code>。</p>
+</li>
+<li>
+<p>创建并运行各个扩展创建的<a href="http://www.yiiframework.com/doc-2.0/guide-structure-extensions.html#bootstrapping-classes">引导组件</a>。</p>
+</li>
+<li>
+<p>创建并运行在应用程序的<a href="http://www.yiiframework.com/doc-2.0/guide-structure-applications.html#bootstrap">启动引导属性</a>中声明的<a href="http://www.yiiframework.com/doc-2.0/guide-structure-application-components.html">应用程序组件</a> 和/或 <a href="http://www.yiiframework.com/doc-2.0/guide-structure-modules.html">模块</a> 。</p>
+</li>
+</ul>
+</li>
+</ol>
+<p>因为引导工作必须在处理<strong>每一次</strong>请求之前完成，所以请尽量轻量化该过程，并且尽可能的优化。</p>
+<p>尽量不要注册过多的引导组件，只有当一个组件需要在HTTP请求的完整生命周期内都作用时才需要将其注册为引导组件。例如，如果一个模块需要注册其他的URL解析规则，就应该在<a href="http://www.yiiframework.com/doc-2.0/guide-structure-applications.html#bootstrap">bootstrap 属性</a>中将其列出，这样儿它才会在解析URL请求之前生效。（译注：换言之，为了性能需要，除了 URL 
+解析等少量操作之外，绝大多数组件都应该按需加载，而不是都放在引导过程中。）</p>
+<p>在生产环境下，可以开启字节码缓存，比如<a href="http://php.net/manual/en/intro.opcache.php">PHP OPcache</a>或者<a href="http://php.net/manual/en/book.apc.php">APC</a>，来减少加载和解析PHP文件的耗费时间。</p>
+<p>一些大型的应用有着非常复杂的应用程序<a href="http://www.yiiframework.com/doc-2.0/guide-concept-configurations.html">配置</a>，该配置会被分割成许多小的配置文件，在这种情况下，可以考虑缓存整个配置数组，并在入口脚本创建应用实例之前直接从缓存中加载。</p>
+<p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+
+</p>
+
+
+
+
+	<h4>Comments</h4>
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        var disqus_shortname = 'erictang'
+        var disqus_identifier = "yii2xue-xi-bi-ji-xi-lie-20-handling-requests-bootstrappingqing-qiu-chu-li-zhi-qi-dong-yin-dao.html";
+        var disqus_url = "http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-20-handling-requests-bootstrappingqing-qiu-chu-li-zhi-qi-dong-yin-dao.html";
+
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</article>
+        </div>
+        <!-- End Main Content -->
+
+        <!-- Sidebar -->
+        <aside class="large-3 columns">
+            <h5 class="sidebar-title">Site</h5>
+            <ul class="side-nav">
+                <li><a href="http://jeepxiaozi.github.io/archives.html">Archives</a>
+                    <li><a href="http://jeepxiaozi.github.io/tags.html">Tags</a>              </ul>
+
+            <h5 class="sidebar-title">Categories</h5>
+            <ul class="side-nav">
+                <li><a href="http://jeepxiaozi.github.io/category/android-develop.html">Android Develop</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/git.html">Git</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/ios-develop.html">iOS Develop</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo.html">技术生活</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/markdownxie-zuo.html">Markdown写作</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/multicopter.html">MultiCopter</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/pages.html">Pages</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/server-develop.html">Server Develop</a>
+                </li>
+            </ul>
+             <h5 class="sidebar-title">Links</h5>
+            <ul class="side-nav">
+                <li><a href="http://www.linuxzen.com">cold's world</a>
+                </li>
+                <li><a href="http://www.icnws.com/">城南往事小站</a>
+                </li>
+                <li><a href="http://wellmakers.com">电子匠人</a>
+                </li>
+                <li><a href="http://androidcat.com/">AndroidCat</a>
+                </li>
+            </ul>
+             <h5 class="sidebar-title">Social</h5>
+            <ul class="side-nav social">
+                <li><a href="https://twitter.com/jeepxiaoxiaozi">twitter</a>
+                </li>
+                <li><a href="https://github.com/jeepxiaozi">GitHub</a>
+                </li>
+                <li><a href="http://weibo.com/u/1375170263/">Weibo</a>
+                </li>
+            </ul>
+
+        </aside>
+        <!-- End Sidebar -->
+
+    </div>
+    <!-- End Main Content and Sidebar -->
+
+
+    <!-- Footer -->
+    <footer class="row">
+        <div class="large-12 columns">
+            <hr />
+            <div class="row">
+                <div class="large-6 columns">
+                    <p><a href="http://jeepxiaozi.github.io">一把汤勺</a> &copy; EricTang 2016 
+ 
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1254253569'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s95.cnzz.com/z_stat.php%3Fid%3D1254253569%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));</script>
+                 </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

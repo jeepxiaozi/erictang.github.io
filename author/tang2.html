@@ -49,6 +49,43 @@
 
 
             <article>
+                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-10-application-structure-application-componentsying-yong-jie-gou-zhi-ying-yong-zu-jian.html"><h3 class="article-title">Yii2学习笔记系列10——Application Structure-Application Components（应用结构之应用组件）</h3></a>
+<h6 class="subheader" title="2016-04-14T13:35:13+08:00">四 14 四月 2016
+</h6>
+
+
+<h4>应用组件</h4>
+<p>应用主体都是<a href="http://www.yiiframework.com/doc-2.0/guide-concept-service-locator.html">服务定位器</a>，他们部署一系列的应用组件，用来提供可以处理请求的多个服务，例如，<code>urlManager</code>组件负责处理网页请求路由到对应的控制器，<code>db</code>组件提供数据库相关服务等。</p>
+<p>在一个应用主体中，每个应用组件都包含一个唯一的ID用以区分其他的应用组件。你可以通过如下表达式访问应用组件：</p>
+<div class="highlight"><pre><span></span><span class="x">\Yii::$app-&gt;componentID</span>
+</pre></div>
+
+
+<p>例如你可以通过<code>\Yii::$app-&gt;db</code>获取数据库连接，通过<code>\Yii::$app-&gt;cache</code>获取已经注册到应用的yii\caching\Cache。</p>
+<p>一个应用组件实例会在通过上述表达式第一次访问的时候创建，后续访问的时候将会返回同一个组件实例。</p>
+<p>应用组件可以是任意对象，你可以通过配置应用配置文件中的<code>yii\base\Application::$components</code>属性来注册组件，例如：</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="p">[</span>
+    <span class="s1">&#39;components&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="c1">// 通过类名注册cache组件</span>
+        <span class="s1">&#39;cache&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;yii\caching\ApcCache&#39;</span><span class="p">,</span>
+
+        <span class="c1">//通过配置数组注册db组件</span>
+        <span class="s1">&#39;db&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+            <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;yii\db ...</span></pre></div><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-10-application-structure-application-componentsying-yong-jie-gou-zhi-ying-yong-zu-jian.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-10-application-structure-application-componentsying-yong-jie-gou-zhi-ying-yong-zu-jian.html">Read More</a>
+                <hr  class="gradient"/>
+            </article>
+
+        
+
+
+            <article>
                 <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-9-application-structure-applicationsying-yong-jie-gou-zhi-ying-yong.html"><h3 class="article-title">Yii2学习笔记系列9——Application Structure-Applications（应用结构之应用）</h3></a>
 <h6 class="subheader" title="2016-04-13T21:29:17+08:00">三 13 四月 2016
 </h6>
