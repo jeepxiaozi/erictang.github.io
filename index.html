@@ -48,6 +48,446 @@
         
 
             <article>
+                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-21-routing-and-url-creationqing-qiu-chu-li-zhi-yin-dao-lu-you-yu-urlchuang-jian.html"><h3 class="article-title">Yii2学习笔记系列21——Routing and URL Creation（请求处理之引导路由与URL创建）</h3></a>
+<h6 class="subheader" title="2016-05-30T11:00:59+08:00">一 30 五月 2016
+</h6>
+
+
+<p>当一个Yii应用程序开始处理一个请求的URL时，它所做的第一步是将该URL转换成<a href="http://www.yiiframework.com/doc-2.0/guide-structure-controllers.html#routes">路由</a>，然后这个路由被用来实例化相应的<a href="http://www.yiiframework.com/doc-2.0/guide-structure-controllers.html">控制器动作</a>来处理该请求，这整个的过程被称为引导路由。</p>
+<p>引导路由的逆过程被称为URL创建，该过程会根据给定的路由和相关的查询参数创建一个URL，当后面该URL被请求时，引导路由可以将其处理为原始的路由以及查询参数。</p>
+<p>负责处理引导路由和URL创建的是Yii应用中的<code>urlManager</code>组件，即<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlmanager.html">URL manager</a>。<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlmanager.html">URL manager</a>提供了<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlmanager.html#parseRequest()-detail">parseRequest()</a>方法用于解析收到的请求，提供<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlmanager.html#createUrl()-detail">createUrl()</a>方法从给定的路由及相应的查询参数创建一个路由。</p>
+<p>通过在应用程序中配置<code>urlManager</code>组件，你可以无需修改任何已有的程序代码就能够让你的应用识别任意的URL格式。例如，你通过使用如下的代码来为<code>post/view</code>动作创建一个URL：</p>
+<div class="highlight"><pre><span></span><span class="x">use yii\helpers\Url;</span>
+
+<span class="x">// Url::to() 调用UrlManager::createUrl()来创建一个URL</span>
+<span class="x">$url = Url::to([&#39;post/view&#39;, &#39;id&#39; =&gt; 100]);</span>
+</pre></div>
+
+
+<p>根据<code>urlManager</code>配置，创建好的URL可能会看起来像如下的一种（或集中）格式，并且如果创建好的URL在后面被请求时，它仍然会被解析为原始的引导路由以及相应的查询参数值。</p>
+<div class="highlight"><pre><span></span>/index.php?r=post%2Fview&amp;id=100
+/index.php/post/100
+/posts/100
+</pre></div>
+
+
+<h4>URL格式</h4>
+<p><a href="http://www.yiiframework.com/doc-2.0/yii-web-urlmanager.html">URL Manager - URL管理器</a>支持两种URL格式：缺省URL格式和美观URL格式。</p>
+<p>缺省URL格式使用了一个名为<code>r</code>的查询参数来表示路由，使用常用的查询参数来代表路由的相关查询参数。例如，URL <code>/index.php?r=post/view&amp;id=100</code>表示路由是<code>post/view</code>，查询参数<code>id</code>是100。缺省的URL格式不需要在<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlmanager.html">URL Manager - URL管理器</a>中做任何设置和工作。</p>
+<p>你可以通过设置<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlmanager.html">URL Manager - URL管理器</a>中的<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlmanager.html#$enablePrettyUrl-detail">enablePrettyUrl</a>属性在两种URL格式之间任意切换，无需修改任何其他的程序代码。</p>
+<h4>引导路由</h4>
+<p>引导路由包括两个步骤，第一步，将收到的请求解析成一个路由和相应的查询参数；第二步，创建一个对应到解析后的路由的<a href="http://www.yiiframework.com/doc-2.0/guide-structure-controllers.html#actions">控制器操作</a>来处理该请求。</p>
+<p>当使用缺省的URL格式时，将请求解析为路由只需要简单的获取一下GET的查询参数r即可。</p>
+<p>当使用美观URL格式时，<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlmanager.html">URL Manager -  URL管理器</a>会检查已注册的<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlmanager.html#$rules-detail">URL rules - URL规则</a>，找出其中可以将请求转换为路由的匹配项。如果找不到会返回<a href="http://www.yiiframework.com/doc-2.0/yii-web-notfoundhttpexception.html">yii\web\NotFoundHttpException</a>异常。</p>
+<p>一旦请求被转换为了一个路由，就该创建由该路由标识的控制器操作了。路由会被根据斜线分割成不同的部分。例如，<code>site/index</code>会被分割成<code>site</code>和<code>index</code>，每一部分可能是代表模块、控制器或者操作的ID。从路由的第一部分开始，应用会采取如下的步骤来创建模块（如果有的话）、控制器和操作：</p>
+<ol>
+<li>设置应用程序作为当前的模块</li>
+<li>检查当前模块的<a href="http://www.yiiframework.com/doc-2.0/yii-base-module.html#$controllerMap-detail">controller map - 控制器集合</a>是否包含当前ID。如果是的话，会根据在控制器集合中找到的控制器配置创建一个控制器对象，并且会直接跳到第5步去执行路由的其余部分</li>
+<li>检查当前模块的<a href="http://www.yiiframework.com/doc-2.0/yii-base-module.html#$modules-detail">modules</a>属性中列出的是否包含当前ID，如果是的话，跳到第2步中在新创建的模块上下文环境下处理路由的下一部分</li>
+<li>将当前ID当作<a href="http://www.yiiframework.com/doc-2.0/guide-structure-controllers.html#controller-ids">控制器ID</a>来对待，并且创建一个控制器对象。继续下一步来处理路由的剩余部分</li>
+<li>控制器会在<a href="http://www.yiiframework.com/doc-2.0/yii-base-controller.html#actions()-detail">action map - 操作集合</a>中当前ID。如果找到，它会根据在操作集合中找到的配置创建一个操作。否则，控制器会尝试创建一个与该ID对相对应，由某个aciotn方法所定义的行内操作（inline action）</li>
+</ol>
+<p>在以上步骤中，如果发生了任何的错误，会抛出一个<a href="http://www.yiiframework.com/doc-2.0/yii-web-notfoundhttpexception.html">yii\web\NotFoundHttpException</a>异常，用来指示路由处理过程中的失败项。</p>
+<h5>缺省路由</h5>
+<p>如果一个请求最后被转换成了一个空路由，这时候就会采用所谓的缺省路由取而代之。默认情况下，缺省路由是<code>site/index</code>，指代的是<code>site</code>控制器下的<code>index</code>操作。你可以通过类似如下代码配置应用的<a href="http://www.yiiframework.com/doc-2.0/yii-web-application.html#$defaultRoute-detail">defaultRoute</a>属性来自定义配置：</p>
+<div class="highlight"><pre><span></span><span class="x">[</span>
+<span class="x">    // ...</span>
+<span class="x">    &#39;defaultRout&#39; =&gt; &#39;main/index&#39;,</span>
+<span class="x">];</span>
+</pre></div>
+
+
+<h5><code>catchAll</code>路由</h5>
+<p>有时候你可能想要将你的Web应用临时设置为维护模式并且对所有的请求都返回相同的提示信息，有很多种方式可一实现这个目标，但其中最简单的方式是类似如下的配置<a href="http://www.yiiframework.com/doc-2.0/yii-web-application.html#$catchAll-detail">yii\web\Application::catchAll</a>属性：</p>
+<div class="highlight"><pre><span></span><span class="x">[</span>
+<span class="x">    // ...</span>
+<span class="x">    &#39;catchAll&#39; =&gt; [&#39;site&#39;/offline&#39;],</span>
+<span class="x">]</span>
+</pre></div>
+
+
+<p>有了如上的配置之后，<code>site/offline</code>操作会应用到所有进来的请求上。</p>
+<p><code>catchAll</code>属性接收一个数组，数组的第一个元素指定一个路由，其余的元素（键值对）指定<a href="http://www.yiiframework.com/doc-2.0/guide-structure-controllers.html#action-parameters">绑定到操作上</a>的参数。</p>
+<blockquote>
+<p>注意：开发环境下启用了该属性的话Debug面板就不可用了。</p>
+</blockquote>
+<h5>创建URL</h5>
+<p>Yii提供了<a href="http://www.yiiframework.com/doc-2.0/yii-helpers-baseurl.html#to()-detail">yii\helpers\Url::to()</a>方法来通过给定的路由和他们的相关查询参数来创建各种URL。例如：</p>
+<div class="highlight"><pre><span></span><span class="x">use yii\helpers\Url;</span>
+
+<span class="x">// 为路由创建一个URL，路由是/index.php?r=post%2Findex</span>
+<span class="x">echo Url::to([&#39;post/index&#39;]);</span>
+
+<span class="x">// 为带参数的路由创建一个URL，路由是/index.php?r=post%2Fview&amp;id=100</span>
+<span class="x">echo Url::to([&#39;post/view&#39;, &#39;id&#39; =&gt; 100]);</span>
+
+<span class="x">// 创建一个带锚点的URL，路由是/index.php?r=post%2Fview&amp;id=100#content</span>
+<span class="x">echo Url::to([&#39;post/view&#39;, &#39;id&#39; =&gt; 100, &#39;#&#39; =&gt; &#39;content&#39;]);</span>
+
+<span class="x">// 创建一个绝对路径URL：http://www.example.com/index.php?r=post%2Findex</span>
+<span class="x">echo Url::to([&#39;post/index&#39;], true);</span>
+
+<span class="x">// 创建一个带https的绝对URL：https://www.example.com/index.php?r=post%2Findex</span>
+<span class="x">echo Url::to([&#39;post/index&#39;], &#39;https&#39;);</span>
+</pre></div>
+
+
+<p>需要注意的是在上述示例中，我们假设使用缺省URL。如果启用了美观URL格式，创建出来的URL是不同的，需要根据使用的<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlmanager.html#$rules-detail">Url规则</a>来确定。</p>
+<p>传递到<a href="http://www.yiiframework.com/doc-2.0/yii-helpers-baseurl.html#to()-detail">yii\helpers\Url::to()</a>方法中的路由是上下文相关的，它既可以是一个相对路由也可以是一个绝对路由，路由要根据如下的规则来规范化：</p>
+<ul>
+<li>如果路由是一个空字符串，则使用当前请求的路由</li>
+<li>如果路由不包含任何斜线，它会被当做当前控制器的操作ID，并且会在它前面追加当前控制器的<a href="http://www.yiiframework.com/doc-2.0/yii-base-controller.html#$uniqueId-detail">唯一ID</a></li>
+<li>如果不是以斜线开头的，它会被当做是当前模块的一个相对路由，并且会在它前面追加当前模块的<a href="http://www.yiiframework.com/doc-2.0/yii-base-module.html#$uniqueId-detail">唯一ID</a></li>
+</ul>
+<p>从2.0.2版本开始，你可以通过一个<a href="http://www.yiiframework.com/doc-2.0/guide-concept-aliases.html">别名</a>来指定路由。如果是这种情况，别名会先转换为实际的路由，然后根据上述规则转换成绝对路由。</p>
+<p>例如，假设当前的模块是<code>admin</code>，当前控制器是<code>post</code>：</p>
+<div class="highlight"><pre><span></span><span class="x">use yii\helpers\Url;</span>
+
+<span class="x">// 当前请求的路由：/index.php?r=admin%2Fpost%2Findex</span>
+<span class="x">echo Url::to([&#39;&#39;]);</span>
+
+<span class="x">// 一个只包含当前操作ID的路由：/index.php?r=admin%2Fpost%2Findex</span>
+<span class="x">echo Url::to([&#39;index&#39;]);</span>
+
+<span class="x">// 一个相对路由：/index.php?r=admin%2Fpost%2Findex</span>
+<span class="x">echo Url::to([&#39;post/index&#39;]);</span>
+
+<span class="x">// 一个绝对路由：/index.php?r=post%2Findex</span>
+<span class="x">echo Url::to([&#39;/post/index&#39;]);</span>
+
+<span class="x">// /index.php?r=post%2Findex 假设别名是&quot;@posts&quot;，代指的是&quot;/post/index&quot;</span>
+<span class="x">echo Url::to([&#39;@posts&#39;]);</span>
+</pre></div>
+
+
+<p><a href="http://www.yiiframework.com/doc-2.0/yii-helpers-baseurl.html#to()-detail">yii\helpers\Url::to()</a>方法是通过调用<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlmanager.html">URL manager - URL管理器</a>的<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlmanager.html#createUrl()-detail">createUrl()</a>方法和<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlmanager.html#createAbsoluteUrl()-detail">createAbsoluteUrl()</a>方法来实现的。在接下来的几个章节里，我们会讲解如何配置<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlmanager.html">URL manager - URL管理器</a>来实现自定义创建URL的格式。</p>
+<p><a href="http://www.yiiframework.com/doc-2.0/yii-helpers-baseurl.html#to()-detail">yii\helpers\Url::to()</a>方法也支持创建不与特定路由相关的URL，这种情况下，第一个参数不能传数组，而是要传一个字符串。例如：</p>
+<div class="highlight"><pre><span></span><span class="x">use yii\helpers\Url;</span>
+
+<span class="x">// 当前的请求URL：/index.php?r=admin%2Fpost%2Findex</span>
+<span class="x">echo Url::to();</span>
+
+<span class="x">// 一个别名URL：http://example.com</span>
+<span class="x">Yii::setAlias(&#39;@example&#39;, &#39;http://example.com/&#39;);</span>
+<span class="x">echo Url::to(&#39;@example&#39;);</span>
+
+<span class="x">// 一个绝对URL：http://example.com/images/logo.gif</span>
+<span class="x">echo Url::to(&#39;/images/logo.gif&#39;, true);</span>
+</pre></div>
+
+
+<p>除了<code>to()</code>方法，<a href="http://www.yiiframework.com/doc-2.0/yii-helpers-url.html">yii\helpers\Url</a>帮助类也提供了几个方便的创建URL的方法，例如：</p>
+<div class="highlight"><pre><span></span><span class="x">use yii\helpers\Url;</span>
+
+<span class="x">// 主页URL：/index.php?r=site%2Findex</span>
+<span class="x">echo Url::home();</span>
+
+<span class="x">// 基础URL，当应用部署在Web root的子目录下的时候非常有用</span>
+<span class="x">echo Url::base();</span>
+
+<span class="x">// 当前请求的URL的规范网址，详情请查看https://en.wikipedia.org/wiki/Canonical_link_element</span>
+<span class="x">echo Url::canonical();</span>
+
+<span class="x">// 记住当前请求的URL，稍后将它恢复出来</span>
+<span class="x">Url::remember();</span>
+<span class="x">echo Url::previous();</span>
+</pre></div>
+
+
+<h5>使用美观URL</h5>
+<p>为了使用美观URL，需要像如下的方式在应用的配置文件中配置<code>urlManager</code>组件：</p>
+<div class="highlight"><pre><span></span><span class="x">[</span>
+<span class="x">    &#39;components&#39; =&gt; [</span>
+<span class="x">        &#39;urlManager&#39; =&gt; [</span>
+<span class="x">            &#39;enablePrettyUrl&#39; =&gt; true,</span>
+<span class="x">            &#39;showScriptName&#39; =&gt; false,</span>
+<span class="x">            &#39;enableStrictParsing&#39; =&gt; false,</span>
+<span class="x">            &#39;rules&#39; =&gt; [</span>
+<span class="x">                // ...</span>
+<span class="x">            ],</span>
+<span class="x">        ],</span>
+<span class="x">    ],</span>
+<span class="x">]</span>
+</pre></div>
+
+
+<p>在开关美观URL格式时，<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlmanager.html#$enablePrettyUrl-detail">enablePrettyUrl</a>属性是必须的，其它的属性是可选的。然而，上述展示的配置是最常使用的。</p>
+<ul>
+<li><a href="http://www.yiiframework.com/doc-2.0/yii-web-urlmanager.html#$showScriptName-detail">showScriptName</a>：该属性决定入口脚本是否会被包含在创建的URL中。例如，创建URL <code>/index.php/post/100</code>，将该属性设置为false之后，则会创建<code>/post/100</code></li>
+<li><a href="http://www.yiiframework.com/doc-2.0/yii-web-urlmanager.html#$enableStrictParsing-detail">enableStrictParsing</a>：该属性决定是否要启用严格的请求解析。如果启用了严格解析，相应的请求必须要至少能够匹配一个<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlmanager.html#$rules-detail">规则</a>才能被视为有效请求，否则会抛出<a href="http://www.yiiframework.com/doc-2.0/yii-web-notfoundhttpexception.html">yii\web\NotFoundHttpException</a>异常。如果严格解析被禁用了，当请求的URL没有规则可以匹配到的时候，URL的路径部分会被当成请求的路由</li>
+<li><a href="http://www.yiiframework.com/doc-2.0/yii-web-urlmanager.html#$rules-detail">rules</a>：该属性包含一个数组，数组中指定了用于解析、创建URL的规则。如果想满足你特殊的应用需求，该属性是你最需要掌握的。</li>
+</ul>
+<blockquote>
+<p>注意：为了在创建的URL中隐藏入口脚本，除了设置<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlmanager.html#$showScriptName-detail">showScriptName</a>属性为false之外，你可能还需要配置你的Web服务器，这样儿当请求的URL没有明确指示的时候它可以判断哪个PHP文件应该执行。如果你使用的是Apache服务器，可以参考<a href="http://www.yiiframework.com/doc-2.0/guide-start-installation.html#recommended-apache-configuration">安装</a>部分的配置。</p>
+</blockquote>
+<h6>URL规则</h6>
+<p>一个URL规则就是一个<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlrule.html">yii\web\UrlRule</a>的实例或者它的子类。每个URL由一个用来匹配URL路径信息部分的表达式、一个路由和几个查询参数组成。当URL规则的表达式可以匹配到请求的URL时，该URL规则会被用来解析这个请求。当URL的路由和查询参数名与给定的相匹配时，该URL规则会被用来创建URL。</p>
+<p>当启用了美观URL格式时，<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlmanager.html">URL manager - URL管理器</a>使用在它的<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlmanager.html#$rules-detail">rules</a>属性中声明的URL规则来解析相应的请求和创建URL。其中，为了解析相应的请求，<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlmanager.html">URL manager - URL管理器</a>按照URL rules的声明顺序来逐一进行匹配，并且在其中寻找第一个可以匹配请求的URL的规则。匹配的规则接下来被用来将URL解析成一个路由及其对应的参数。同样的，为了创建一个URL，<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlmanager.html">URL manager - URL管理器</a>也会根据给定的路由和参数寻找第一个匹配的URL规则来创建URL。</p>
+<p>你可以将<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlmanager.html#$rules-detail">yii\web\UrlManager::rules</a>配置为一个数组，其键是相应的表达式，对应的值是相应的路由。每个“表达式-路由”键值对构成了一条URL规则。例如，如下的规则配置中声明了两条URL规则，第一条规则匹配URL <code>posts</code>并且将其映射到路由<code>post/index</code>上，第二条规则匹配符合正则表达式<code>post/(\d+)</code>的URL并且将其映射带参数名为<code>id</code>的<code>post/view</code>路由上。</p>
+<div class="highlight"><pre><span></span><span class="x">[</span>
+<span class="x">    &#39;posts&#39; =&gt; &#39;post/index&#39;,</span>
+<span class="x">    &#39;post/&lt;id:\d+&gt;&#39; =&gt; &#39;post/view&#39;,</span>
+<span class="x">]</span>
+</pre></div>
+
+
+<blockquote>
+<p>注意：URL规则中的表达式是用来匹配URL的路径信息部分的。例如，<code>/index.php/post/100?source=ad</code>的路径信息部分是<code>post/100</code>（开头和结尾的斜线是忽略掉的），它能够匹配<code>post/(\d+)</code>表达式。</p>
+</blockquote>
+<p>除了声明“表达式-路由”这种键值对的URL规则外，你也可以以配置数组的方式声明URL规则。每个配置数组用来配置单独的一个URL规则对象，一般在你想要配置URL规则的其它属性时使用。例如：</p>
+<div class="highlight"><pre><span></span><span class="x">[</span>
+<span class="x">    // ...其它URL规则...</span>
+<span class="x">    [</span>
+<span class="x">        &#39;pattern&#39; =&gt; &#39;posts&#39;,</span>
+<span class="x">        &#39;route&#39; =&gt; &#39;post/index&#39;,</span>
+<span class="x">        &#39;suffix&#39; =&gt; &#39;.json&#39;,</span>
+<span class="x">    ],</span>
+<span class="x">]</span>
+</pre></div>
+
+
+<p>默认情况下你不需要指定规则配置的<code>class</code>属性，它会默认使用<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlrule.html">yii\web\UrlRule</a>类。</p>
+<h6>命名参数</h6>
+<p>一条URL规则可以被关联到几个命名好的查询参数上，这些参数用类似<code>&lt;ParamName:RegExp&gt;</code>的格式来指定，其中，<code>ParamName</code>是参数名，<code>RegExp</code>是可选的用来匹配参数值的正则表达式。如果没有指定<code>RegExp</code>，则表示该参数的值应该是不带任何斜线的字符串。</p>
+<blockquote>
+<p>注意：你只能指定参数的正则表达式，表达式的其它部分是纯文本形式。</p>
+</blockquote>
+<p>当一条规则被用来解析一个URL网址时，它会将匹配相应部分的URL的值作为相关参数的值进行填充，这些参数可以被应用的request组件变成可以通过变量<code>$_GET</code>访问的参数。当一条规则被用来创建URL时，它会提取提供的参数的值并且将其插入到参数声明的地方。</p>
+<p>让我们用一些实际的例子来说明命名参数是如何工作的，假设我们已经声明了如下的URL规则：</p>
+<div class="highlight"><pre><span></span><span class="x">[</span>
+<span class="x">    &#39;posts/&lt;year:\d{4}&gt;/&lt;category&gt;&#39; =&gt; &#39;post/index&#39;,</span>
+<span class="x">    &#39;posts&#39; =&gt; &#39;post/index&#39;,</span>
+<span class="x">    &#39;post/&lt;id:\d+&gt;&#39; =&gt; &#39;post/view&#39;,</span>
+<span class="x">]</span>
+</pre></div>
+
+
+<p>当上述规则用来解析URL时：</p>
+<ul>
+<li><code>/index.php/posts</code>根据第二条规则被解析成路由<code>post/index</code></li>
+<li><code>/index.php/posts/2014/php</code>根据第一条规则被解析成路由<code>post/index</code>，其中<code>year</code>参数的值是2014，<code>category</code>参数的值是<code>php</code></li>
+<li><code>/index.php/post/100</code>根据第三条规则被解析成路由<code>post/view</code>，其中<code>id</code>参数的值是100</li>
+<li><code>/index.php/posts/php</code>会在<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlmanager.html#$enableStrictParsing-detail">yii\web\UrlManager::enableStrictParsing</a>属性设置为true的时候引发<a href="http://www.yiiframework.com/doc-2.0/yii-web-notfoundhttpexception.html">yii\web\NotFoundException</a>异常。如果<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlmanager.html#$enableStrictParsing-detail">yii\web\UrlManager::enableStrictParsing</a>属性设置为<code>false</code>（默认值），<code>posts/php</code>这个路径部分会被作为路由返回</li>
+</ul>
+<p>当上述规则用来创建URL时：</p>
+<ul>
+<li><code>Url::to(['post/index'])</code>根据第二条规则会被创建为<code>/index.php/posts</code></li>
+<li><code>Url::to(['post/index', 'year' =&gt; 2014, 'category' =&gt; 'php'])</code>根据第一条规则会被创建为<code>/index.php/posts/2014/php</code></li>
+<li><code>Url::to(['post/view', 'id' =&gt; 100])</code>根据第三条规则会被创建为<code>/index.php/post/100</code></li>
+<li><code>Url::to(['post/view', 'id' =&gt; 100, 'source' =&gt; 'ad'])</code>根据第三条规则会被创建为<code>/index.php/post/100?source=ad</code>，因为<code>source</code>参数并没有在规则中指定，所以它会被当成一个查询参数追加到创建的URL中</li>
+<li><code>Url::to(['post/index', 'category' =&gt; 'php'])</code>由于没有规则可以匹配所以会被创建为<code>/index.php/post/index?category=php</code>。需要注意的是，由于没有规则可以匹配，所以URL的创建也仅仅是将路径部分作为路由并且将所有的参数作为查询字符串追加。</li>
+</ul>
+<h6>参数化路由</h6>
+<p>你可以在URL规则中的路由部分嵌入参数名，这表示允许一条URL规则用来匹配多种路由。例如，以下规则在路由中嵌入了<code>controller</code>和<code>action</code>参数：</p>
+<div class="highlight"><pre><span></span><span class="x">[</span>
+<span class="x">    &#39;&lt;controller:(post|comment)&gt;/&lt;id:d+&gt;/&lt;action:(create|update|delete)&gt;&#39; =&gt; &#39;&lt;controller&gt;/&lt;action&gt;&#39;,</span>
+<span class="x">    &#39;&lt;controller:(post|comment)&gt;/&lt;id:d+&gt;&#39; =&gt; &#39;&lt;controller&gt;/view&#39;,</span>
+<span class="x">    &#39;&lt;controller:(post|comment)&gt;s&#39; =&gt; &#39;&lt;controller&gt;/index&#39;,</span>
+<span class="x">]</span>
+</pre></div>
+
+
+<p>为了解析<code>/index.php/comment/100/create</code>这样儿的一条URL，第一条规则会被应用，它会将控制器的参数设置为<code>comment</code>，将操作的参数设置为<code>create</code>，路由<code>&lt;controller&gt;/&lt;action&gt;</code>因此会被解析为<code>comment/create</code>。</p>
+<p>同样的，为了根据路由<code>comment/index</code>创建一个URL，则会应用第三条规则，创建<code>/index.php/comments</code>这样的一个URL。</p>
+<blockquote>
+<p>注意：通过参数化路由，使得大大减少URL规则的条数成为可能，同时也可以显著提高URL管理器的性能表现。</p>
+</blockquote>
+<p>默认情况下，所有在规则中声明的参数都是必需的。如果请求的URL不包含某个特定的参数，或者一个在创建的时候就没有赋予参数，该规则就不会被应用。为了让一些参数变成可选的，你可以通过配置一条规则的<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlrule.html#$defaults-detail">defaults</a>属性，在这个属性中列出的参数是可选的，并且如果没有提供这些参数的值的话，它们会采用默认值。</p>
+<p>在下面的规则声明中，<code>page</code>和<code>tag</code>参数都是可选的，并且如果当这两个参数没有被提供时，他们的默认值分别是数字1和一个空字符串。</p>
+<div class="highlight"><pre><span></span><span class="x">[</span>
+<span class="x">    // ...其它规则...</span>
+<span class="x">    [</span>
+<span class="x">        &#39;pattern&#39; =&gt; &#39;posts/&lt;page:\d+&gt;/&lt;tag&gt;&#39;,</span>
+<span class="x">        &#39;route&#39; =&gt; &#39;post/index&#39;,</span>
+<span class="x">        &#39;defaults&#39; =&gt; [&#39;page&#39; =&gt; 1, &#39;tag&#39; =&gt; &#39;&#39;],</span>
+<span class="x">    ],</span>
+<span class="x">]</span>
+</pre></div>
+
+
+<p>上述的规则可以被用来解析或者创建以下任何的URL：</p>
+<ul>
+<li><code>/index.php/posts</code>：<code>page</code>参数是1，<code>tag</code>参数是''</li>
+<li><code>/index.php/posts/2</code>：<code>page</code>参数是2，<code>tag</code>参数是''</li>
+<li><code>/index.php/posts/2/news</code>：<code>page</code>参数是2，<code>tag</code>参数是<code>'news'</code></li>
+<li><code>/index.php/posts/news</code>：<code>page</code>参数是1，<code>tag</code>参数是<code>'news'</code></li>
+</ul>
+<p>如果不使用可选参数的话，你就必须要创建四条规则才能实现同样的效果。</p>
+<h6>带Server Name的规则</h6>
+<p>在URL规则的表达式中可以加入Web Server Name，这在你的应用程序会根据不同的Web Server Name有不同的行为时尤其有用。例如，下面的规则用来将<code>http://admin.example.com/login</code>解析成路由<code>admin/user/login</code>，将<code>http://www.example.com/login</code>解析成路由<code>site/login</code>。</p>
+<div class="highlight"><pre><span></span><span class="x">[</span>
+<span class="x">    &#39;http://admin.example.com/login&#39; =&gt; &#39;admin/user/login&#39;,</span>
+<span class="x">    &#39;http://www.example.com/login&#39; =&gt; &#39;site/login&#39;,</span>
+<span class="x">]</span>
+</pre></div>
+
+
+<p>你也可以在Server Name中嵌入参数用来提取动态信息。例如，以下的规则将会把URL <code>http://en.example.com/posts</code>解析成路由<code>post/index</code>并且其参数是<code>language=en</code>。</p>
+<div class="highlight"><pre><span></span><span class="x">[</span>
+<span class="x">    &#39;http://&lt;language:\w+&gt;.example.com/posts&#39; =&gt; &#39;post/index&#39;,</span>
+<span class="x">]</span>
+</pre></div>
+
+
+<blockquote>
+<p>注意：带有Server Name的规则不应该将入口脚本的子目录也包含在表达式中，例如，如果应用程序在<code>http://www.example.com/sandbox/blog</code>下，那么你应该使用表达式<code>http://www.example.com/posts</code>，而不是<code>http://www.example.com/sandbox/blog/posts</code>，它可以允许你讲应用程序部署在任何目录下而无需修改程序代码。</p>
+</blockquote>
+<h6>URL后缀</h6>
+<p>你可能因为不同的目的想要给URL加上后缀。例如，你可能想添加<code>.html</code>后缀，这样儿URL看起来就像是静态的HTML页面了；你也可能想要添加<code>.json</code>后缀，用来指示响应的内容的格式。你可以类似如下的代码来配置应用程序配置中的<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlmanager.html#$suffix-detail">yii\web\UrlManager::suffix</a>属性来实现这样儿的目标：</p>
+<div class="highlight"><pre><span></span><span class="x">[</span>
+<span class="x">    &#39;components&#39; =&gt; [</span>
+<span class="x">        &#39;urlManager&#39; =&gt; [</span>
+<span class="x">            &#39;enablePrettyUrl&#39; =&gt; true,</span>
+<span class="x">            &#39;showScriptName&#39; =&gt; false,</span>
+<span class="x">            &#39;enableStrictParsing&#39; =&gt; true,</span>
+<span class="x">            &#39;suffix&#39; =&gt; &#39;.html&#39;,</span>
+<span class="x">            &#39;rules&#39; =&gt; [</span>
+<span class="x">                // ...</span>
+<span class="x">            ],</span>
+<span class="x">        ],</span>
+<span class="x">    ],</span>
+<span class="x">]</span>
+</pre></div>
+
+
+<p>上述配置允许<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlmanager.html">URL manager - URL管理器</a>识别请求的URL以及创建带<code>.html</code>后缀的URL。</p>
+<blockquote>
+<p>提示：你可以设置<code>/</code>作为URL的后缀，这样URL就会以斜线结尾。</p>
+<p>注意：当你配置了一个URL后缀时，如果请求的URL不包含这个后缀，会被当成未识别的URL。这在做SEO的时候是一个推荐手段（针对搜索引擎）。</p>
+</blockquote>
+<p>有时你可能想要针对不同的URL使用不同的后缀，这种需求可以通过配置单独的URL规则的<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlrule.html#$suffix-detail">suffix</a>属性来实现。当一条URL规则设置了该属性的时候，它会在<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlmanager.html">URL manager - URL管理器</a>级别重写后缀设置。例如，如下的配置中包含了一条自定义URL规则，它使用了<code>.json</code>作为后缀，而不是全局的<code>.html</code>作为后缀。</p>
+<div class="highlight"><pre><span></span><span class="x">[</span>
+<span class="x">    &#39;components&#39; =&gt; [</span>
+<span class="x">        &#39;urlManager&#39; =&gt; [</span>
+<span class="x">            &#39;enablePrettyUrl&#39; =&gt; true,</span>
+<span class="x">            &#39;showScriptName&#39; =&gt; false,</span>
+<span class="x">            &#39;enableStrictParsing&#39; =&gt; true,</span>
+<span class="x">            &#39;suffix&#39; =&gt; &#39;.html&#39;,</span>
+<span class="x">            &#39;rules&#39; =&gt; [</span>
+<span class="x">                // ...</span>
+<span class="x">                [</span>
+<span class="x">                    &#39;pattern&#39; =&gt; &#39;posts&#39;,</span>
+<span class="x">                    &#39;route&#39; =&gt; &#39;post/index&#39;,</span>
+<span class="x">                    &#39;suffix&#39; =&gt; &#39;.json&#39;,</span>
+<span class="x">                ],</span>
+<span class="x">            ],</span>
+<span class="x">        ],</span>
+<span class="x">    ],</span>
+<span class="x">]</span>
+</pre></div>
+
+
+<h6>HTTP方法</h6>
+<p>当实现RESTful API时，通常需要根据用到的HTTP方法将相同的URL解析成不同的路由。这个可以很容易的通过在规则的表达式中将支持的HTTP方法作为前缀来实现。如果一条规则支持多个HTTP方法，将方法名用逗号分隔开。例如，以下规则有着相同的表达式<code>post/&lt;id:\d+&gt;</code>，但是却支持不同的HTTP方法。一个对<code>post/100</code>的<code>PUT</code>请求会被解析成<code>post/create</code>，一个对<code>post/100</code>的<code>GET</code>请求会被解析成<code>post/view</code>。</p>
+<div class="highlight"><pre><span></span><span class="x">[</span>
+<span class="x">    &#39;PUT,POST post/&lt;id:\d+&gt;&#39; =&gt; &#39;post/create&#39;,</span>
+<span class="x">    &#39;DELETE post/&lt;id:\d+&gt;&#39; =&gt; &#39;post/delete&#39;,</span>
+<span class="x">    &#39;post/&lt;id:\d+&gt;&#39; =&gt; &#39;post/view&#39;,</span>
+<span class="x">]</span>
+</pre></div>
+
+
+<blockquote>
+<p>注意：如果一条URL规则的表达式中包含HTTP方法，那么这条规则只能被用作解析目的，当调用<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlmanager.html">URL manager - URL管理器</a>来创建URL的时候会跳过。</p>
+<p>提示：为了简化RESTful API的引导路由，Yii提供了一个专门的URL规则类<a href="http://www.yiiframework.com/doc-2.0/yii-rest-urlrule.html">yii\rest\UrlRule</a>，它非常高效，并且可以支持许多花哨的功能比如控制器ID的自动多元化。更多详情请参考RESTful API开发的<a href="http://www.yiiframework.com/doc-2.0/guide-rest-routing.html">Routing</a>章节。</p>
+</blockquote>
+<h6>自定义规则</h6>
+<p>在之前的例子中，URL规则主要是以“表达式-路由“这样儿的键值对的形式来声明的，这是一种常用的快捷方式。在某些场景下，你可能想要通过配置一些其他属性来自定义一条URL规则，例如<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlrule.html#$suffix-detail">yii\web\UrlRule::suffix</a>属性，这时候我们就可以通过使用一个配置数组来指定一条规则。以下的例子是从<a href="http://www.yiiframework.com/doc-2.0/guide-runtime-routing.html#url-suffixes">URL Suffix - URL后缀</a>部分提取出来的：</p>
+<div class="highlight"><pre><span></span><span class="x">[</span>
+<span class="x">    // ...其他URL规则...</span>
+<span class="x">    [</span>
+<span class="x">        &#39;pattern&#39; =&gt; &#39;posts&#39;,</span>
+<span class="x">        &#39;route&#39; =&gt; &#39;post/index&#39;,</span>
+<span class="x">        &#39;suffix&#39; =&gt; &#39;.json&#39;,</span>
+<span class="x">    ],</span>
+<span class="x">]</span>
+</pre></div>
+
+
+<blockquote>
+<p>信息： 默认情况下你不需要指定一条规则配置的<code>class</code>选项，它会采用默认的<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlrule.html">yii\web\UrlRule</a></p>
+</blockquote>
+<h6>动态添加规则</h6>
+<p>URL规则可以被动态地添加到<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlmanager.html">URL manager - URL管理器</a>中，通常这种情况出现在一个可以被再次发行的<a href="http://www.yiiframework.com/doc-2.0/guide-structure-modules.html">模块</a>，并且想要自行管理URL规则时。为了使得动态添加的URL可以在路由处理过程中生效，你应该在<a href="http://www.yiiframework.com/doc-2.0/guide-runtime-bootstrapping.html">启动引导</a>的过程中将其添加进来。对于模块来说，这意味着他们应该实现<a href="http://www.yiiframework.com/doc-2.0/yii-base-bootstrapinterface.html">yii\base\BootstrapInterface</a>接口并且在<a href="http://www.yiiframework.com/doc-2.0/yii-base-bootstrapinterface.html#bootstrap()-detail">bootstrap()</a>方法中添加类似如下的代码：</p>
+<div class="highlight"><pre><span></span><span class="x">public function bootstrap($app)</span>
+<span class="x">{</span>
+<span class="x">    $app-&gt;getUrlManager()-&gt;addRules([</span>
+<span class="x">        // 规则声明在这里</span>
+<span class="x">    ], false);</span>
+<span class="x">}</span>
+</pre></div>
+
+
+<p>注意，你应该还要将这些模块列在<a href="http://www.yiiframework.com/doc-2.0/yii-web-application.html#bootstrap()-detail">yii\web\Application::bootstrap()</a>中，这样他们就可以参与<a href="http://www.yiiframework.com/doc-2.0/guide-runtime-bootstrapping.html">启动引导</a>过程了。</p>
+<h6>创建规则类</h6>
+<p>尽管默认的<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlrule.html">yii\web\UrlRule</a>对大多数的项目来说已经足够灵活了，但有些情况下你可能依然不得不自己创建一个规则类。例如，在一个汽车经销商网站里，你可能想要支持类似<code>/Manufacturer/Model</code>这样的URL格式，其中，<code>Manufacturer</code>和<code>Model</code>都必须能够匹配数据库表中存储的某些数据，这时默认的规则类就无法工作了，因为默认规则类是依赖静态声明的表达式的。</p>
+<p>我们可以通过创建如下的URL规则类来解决这个问题。</p>
+<div class="highlight"><pre><span></span><span class="x">namespace app\components;</span>
+
+<span class="x">use yii\web\UrlRuleInterface;</span>
+<span class="x">use yii\base\Object;</span>
+
+<span class="x">class CarUrlRule extends Object implements UrlRuleInterface</span>
+<span class="x">{</span>
+
+<span class="x">    public function createUrl($manager, $route, $params)</span>
+<span class="x">    {</span>
+<span class="x">        if ($route === &#39;car/index&#39;) {</span>
+<span class="x">            if (isset($params[&#39;manufacturer&#39;], $params[&#39;model&#39;])) {</span>
+<span class="x">                return $params[&#39;manufacturer&#39;] . &#39;/&#39; . $params[&#39;model&#39;];</span>
+<span class="x">            } elseif (isset($params[&#39;manufacturer&#39;])) {</span>
+<span class="x">                return $params[&#39;manufacturer&#39;];</span>
+<span class="x">            }</span>
+<span class="x">        }</span>
+<span class="x">        return false;  // 不满足该规则</span>
+<span class="x">    }</span>
+
+<span class="x">    public function parseRequest($manager, $request)</span>
+<span class="x">    {</span>
+<span class="x">        $pathInfo = $request-&gt;getPathInfo();</span>
+<span class="x">        if (preg_match(&#39;%^(\w+)(/(\w+))?$%&#39;, $pathInfo, $matches)) {</span>
+<span class="x">            // 检查 $matches[1] 和 $matches[3] 看他们是否能够匹配数据库中的</span>
+<span class="x">            // 一条manufacturer和一条model记录</span>
+<span class="x">            // 如果满足， 设置 $params[&#39;manufacturer&#39;] 和/或 $params[&#39;model&#39;]</span>
+<span class="x">            // 并且返回 [&#39;car/index&#39;, $params]</span>
+<span class="x">        }</span>
+<span class="x">        return false;  // 不满足该规则</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</pre></div>
+
+
+<p>并且在<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlmanager.html#$rules-detail">yii\web\UrlManager::rules</a>配置中使用新建的规则类：</p>
+<div class="highlight"><pre><span></span><span class="x">[</span>
+<span class="x">    // ...其他规则...</span>
+<span class="x">    [</span>
+<span class="x">        &#39;class&#39; =&gt; &#39;app\components\CarUrlRule&#39;,</span>
+<span class="x">        // ...配置其他的属性...</span>
+<span class="x">    ],</span>
+<span class="x">]</span>
+</pre></div>
+
+
+<h6>性能考虑</h6>
+<p>在开发一个复杂的Web应用的时候，组织URL规则是很重要的一项工作，因为这样做可以减少解析请求、创建URL的所需时间。</p>
+<p>通过使用参数化的路由，你可以减少URL规则的条数，从而显著提升性能表现。</p>
+<p>当解析或创建URL时，<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlmanager.html">URL manager - URL管理器</a>根据URL规则声明的顺序来逐一检查。因此，你可以考虑调整URL规则的顺序，将某些指定的和/或某些更常用的URL规则放在那些很少使用的规则之前。</p>
+<p>如果某些URL规则在他们的表达式或者路由中有着相同的前缀，你可以考虑使用<a href="http://www.yiiframework.com/doc-2.0/yii-web-groupurlrule.html">yii\web\GroupUrlRule</a>，这样儿他们可以更有效的被<a href="http://www.yiiframework.com/doc-2.0/yii-web-urlmanager.html">URL manager - URL管理器</a>当做一个组来检查。当你的应用程序由多个模块组成，而每个模块又有以它自己的模块ID作为前缀的URL规则集合时，这时候就可以使用<a href="http://www.yiiframework.com/doc-2.0/yii-web-groupurlrule.html">yii\web\GroupUrlRule</a>了。</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-21-routing-and-url-creationqing-qiu-chu-li-zhi-yin-dao-lu-you-yu-urlchuang-jian.html#disqus_thread">comments</a></p>            </article>
+
+
+                <hr  class="gradient"/>
+
+
+        
+
+
+            <article>
                 <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-20-handling-requests-bootstrappingqing-qiu-chu-li-zhi-qi-dong-yin-dao.html"><h3 class="article-title">Yii2学习笔记系列20——Handling Requests-Bootstrapping（请求处理之启动引导）</h3></a>
 <h6 class="subheader" title="2016-05-27T11:34:26+08:00">五 27 五月 2016
 </h6>
@@ -71,32 +511,15 @@
 <p>调用<a href="http://www.yiiframework.com/doc-2.0/yii-base-application.html#init()-detail">init() - 初始化</a>方法，它会进而顺序调用<a href="http://www.yiiframework.com/doc-2.0/yii-base-application.html#bootstrap()-detail">bootstrap() - 启动引导</a>方法来引导组件。</p>
 <ul>
 <li>
-<p>加载扩展清单文件<code>vendor/yiisoft/extensions.php</code>。</p>
-</li>
-<li>
-<p>创建并运行各个扩展创建的<a href="http://www.yiiframework.com/doc-2.0/guide-structure-extensions.html#bootstrapping-classes">引导组件</a>。</p>
-</li>
-<li>
-<p>创建并运行在应用程序的<a href="http://www.yiiframework.com/doc-2.0/guide-structure-applications.html#bootstrap">启动引导属性</a>中声明的<a href="http://www.yiiframework.com/doc-2.0/guide-structure-application-components.html">应用程序组件</a> 和/或 <a href="http://www.yiiframework.com/doc-2.0/guide-structure-modules.html">模块</a> 。</p>
-</li>
-</ul>
-</li>
-</ol>
-<p>因为引导工作必须在处理<strong>每一次</strong>请求之前完成，所以请尽量轻量化该过程，并且尽可能的优化。</p>
-<p>尽量不要注册过多的引导组件，只有当一个组件需要在HTTP请求的完整生命周期内都作用时才需要将其注册为引导组件。例如，如果一个模块需要注册其他的URL解析规则，就应该在<a href="http://www.yiiframework.com/doc-2.0/guide-structure-applications.html#bootstrap">bootstrap 属性</a>中将其列出，这样儿它才会在解析URL请求之前生效。（译注：换言之，为了性能需要，除了 URL 
-解析等少量操作之外，绝大多数组件都应该按需加载，而不是都放在引导过程中。）</p>
-<p>在生产环境下，可以开启字节码缓存，比如<a href="http://php.net/manual/en/intro.opcache.php">PHP OPcache</a>或者<a href="http://php.net/manual/en/book.apc.php">APC</a>，来减少加载和解析PHP文件的耗费时间。</p>
-<p>一些大型的应用有着非常复杂的应用程序<a href="http://www.yiiframework.com/doc-2.0/guide-concept-configurations.html">配置</a>，该配置会被分割成许多小的配置文件，在这种情况下，可以考虑缓存整个配置数组，并在入口脚本创建应用实例之前直接从缓存中加载。</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+<p>加载扩展清单文件<code>vendor/yiisoft/extensions ...</code></p></li></ul></li></ol><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
 
 </p>
 
 
 
-<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-20-handling-requests-bootstrappingqing-qiu-chu-li-zhi-qi-dong-yin-dao.html#disqus_thread">comments</a></p>            </article>
-
-
+<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-20-handling-requests-bootstrappingqing-qiu-chu-li-zhi-qi-dong-yin-dao.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-20-handling-requests-bootstrappingqing-qiu-chu-li-zhi-qi-dong-yin-dao.html">Read More</a>
                 <hr  class="gradient"/>
-
+            </article>
 
         
 
@@ -384,42 +807,6 @@
 
 
 <p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-12-application-structure-modelsying-yong-jie-gou-zhi-mo-xing.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-12-application-structure-modelsying-yong-jie-gou-zhi-mo-xing.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
-
-        
-
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-11-application-structure-controllersying-yong-jie-gou-zhi-kong-zhi-qi.html"><h3 class="article-title">Yii2学习笔记系列11——Application Structure-Controllers（应用结构之控制器）</h3></a>
-<h6 class="subheader" title="2016-04-15T14:37:52+08:00">五 15 四月 2016
-</h6>
-
-
-<h3>控制器</h3>
-<p>控制器是MVC设计模式的一部分，继承自yii\base\Controller并且负责处理请求生成响应。具体的来说，当控制器从应用主体接管控制后会分析请求数据并传送到模型，将模型结果注入到视图中，并且最终生成输出的响应信息。</p>
-<h4>操作</h4>
-<p>“操作”是执行终端用户请求的最基础的单元，一个控制器中可以包含一个或多个操作。</p>
-<p>如下示例展示了一个名为<code>post</code>的控制器，其中包含两个操作：<code>view</code>和<code>create</code>。</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
-<span class="k">namespace</span> <span class="nx">app\controllers</span><span class="p">;</span>
-
-<span class="k">use</span> <span class="nx">Yii</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">app\models\Post</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">yii\web\Controller</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">yii\web\NotFoundHttpException</span><span class="p">;</span>
-
-<span class="k">class</span> <span class="nc">PostController</span> <span class="k">extends</span> <span class="nx">Controller</span>
-<span class="p">{</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">actionView</span><span class="p">(</span><span class="nv">$id</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="nv">$model</span> <span class="o">=</span> <span class="nx">Post</span><span class="o">::</span><span class="na">findOne</span><span class="p">(</span><span class="nv">$id ...</span></pre></div><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-11-application-structure-controllersying-yong-jie-gou-zhi-kong-zhi-qi.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-11-application-structure-controllersying-yong-jie-gou-zhi-kong-zhi-qi.html">Read More</a>
                 <hr  class="gradient"/>
             </article>
 
