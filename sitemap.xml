@@ -5,28 +5,28 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://jeepxiaozi.github.io/</loc>
-<lastmod>2016-06-07T00:44:34-00:00</lastmod>
+<lastmod>2016-06-07T20:21:47-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://jeepxiaozi.github.io/archives.html</loc>
-<lastmod>2016-06-07T00:44:34-00:00</lastmod>
+<lastmod>2016-06-07T20:21:47-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://jeepxiaozi.github.io/tags.html</loc>
-<lastmod>2016-06-07T00:44:34-00:00</lastmod>
+<lastmod>2016-06-07T20:21:47-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://jeepxiaozi.github.io/categories.html</loc>
-<lastmod>2016-06-07T00:44:34-00:00</lastmod>
+<lastmod>2016-06-07T20:21:47-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -36,6 +36,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <lastmod>2015-02-05T00:00:00+08:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.3</priority>
+</url>
+
+<url>
+<loc>http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-22-requestsqing-qiu-chu-li-zhi-qing-qiu.html</loc>
+<lastmod>2016-06-07T13:54:23+08:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.7</priority>
 </url>
 
 <url>
@@ -341,7 +348,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://jeepxiaozi.github.io/category/php-develop.html</loc>
-<lastmod>2016-05-30T11:00:59+08:06</lastmod>
+<lastmod>2016-06-07T13:54:23+08:06</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -362,7 +369,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://jeepxiaozi.github.io/author/tang.html</loc>
-<lastmod>2016-05-30T11:00:59+08:06</lastmod>
+<lastmod>2016-06-07T13:54:23+08:06</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>

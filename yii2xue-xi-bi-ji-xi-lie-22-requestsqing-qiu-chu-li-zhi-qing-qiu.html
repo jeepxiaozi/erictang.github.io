@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8" />
+    <!-- Set the viewport width to device width for mobile -->
+    <meta name="viewport" content="width=device-width" />
+
+    <title>Yii2学习笔记系列22——Requests（请求处理之请求）</title>
+
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/normalize.css" />
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/foundation.min.css" />
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/style.css" />
+    <link rel="stylesheet" href="http://jeepxiaozi.github.io/theme/css/pygments.css" />
+    <script src="http://jeepxiaozi.github.io/theme/js/modernizr.js"></script>
+</head>
+
+<body>
+
+    <!-- Nav Bar -->
+    <nav>
+        <div class="top-bar">
+            <div class="row">
+                <div class="large-9 large-centered columns">
+                    <h1><a href="http://jeepxiaozi.github.io">一把汤勺</a></h1>
+                </div>
+            </div>
+        </div>
+
+        <!-- Show menu items and pages -->
+        <div class="row">
+            <div class="large-9 columns">
+                <ul class="button-group navigation">
+                      <li><a href="http://jeepxiaozi.github.io/pages/guan-yu-zuo-zhe.html" class="button secondary small">关于作者</a>
+                    </li>
+                 </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- End Nav -->
+
+
+    <!-- Main Page Content and Sidebar -->
+    <div class="row">
+
+        <!-- Main Blog Content -->
+        <div class="large-9 columns">
+<article>
+    <header>
+        <h3 class="article-title"><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-22-requestsqing-qiu-chu-li-zhi-qing-qiu.html" rel="bookmark"
+        title="Permalink to Yii2学习笔记系列22——Requests（请求处理之请求）">Yii2学习笔记系列22——Requests（请求处理之请求）</a></h3>
+    </header>
+
+<h6 class="subheader" title="2016-06-07T13:54:23+08:00">二 07 六月 2016
+</h6>
+
+
+    <h3>请求</h3>
+<p>对于一个应用程序来说，请求代表<a href="http://www.yiiframework.com/doc-2.0/yii-web-request.html">yii\web\Request</a>对象，它可以提供诸如请求参数、HTTP请求头、cookies等信息。对于一个给定的request，你可以通过<code>request</code><a href="http://www.yiiframework.com/doc-2.0/guide-structure-application-components.html">应用组件</a>（默认情况下是<a href="http://www.yiiframework.com/doc-2.0/yii-web-request.html">yii\web\Request</a>的实例）来访问相应的请求对象。在本章节中，我们主要讲解如何在你的应用程序中使用该组件。</p>
+<h4>请求参数</h4>
+<p>为了得到请求的参数，你可以通过调用<code>request</code>组件的<a href="http://www.yiiframework.com/doc-2.0/yii-web-request.html#get()-detail">get()</a>和<a href="http://www.yiiframework.com/doc-2.0/yii-web-request.html#post()-detail">post()</a>方法，他们会分别返回<code>$_GET</code>和<code>$_POST</code>的值。例如：</p>
+<div class="highlight"><pre><span></span><span class="x">$request = Yii::$app-&gt;request;</span>
+
+<span class="x">$geet = $request-&gt;get();</span>
+<span class="x">// 等价于：$get = $_GET;</span>
+
+<span class="x">$id = $request-&gt;get(&#39;id&#39;);</span>
+<span class="x">// 等价于：$id = isset($_GET[&#39;id&#39;]) ? $_GET[&#39;id&#39;] : null;</span>
+
+<span class="x">$id = $request-&gt;get(&#39;id&#39;, 1);</span>
+<span class="x">// 等价于：$id = isset($_GET[&#39;id&#39;]) ? $_GET[&#39;id&#39;] : 1;</span>
+
+<span class="x">$post = $request-&gt;post();</span>
+<span class="x">// 等价于：$post = $_POST;</span>
+
+<span class="x">$name = $request-&gt;post(&#39;name&#39;);</span>
+<span class="x">// 等价于：$name = isset($_POST[&#39;name&#39;]) ? $_POST[&#39;name&#39;] : null;</span>
+
+<span class="x">$name = $request-&gt;post(&#39;name&#39;, &#39;&#39;);</span>
+<span class="x">// 等价于：$name = isset($_POST[&#39;name&#39;]) ? $_POST[&#39;name&#39;] : &#39;&#39;;</span>
+</pre></div>
+
+
+<blockquote>
+<p>信息：除了可以直接通过<code>$_GET</code>和<code>$_POST</code>来获取请求的参数，更多的还是建议你像上面展示的那样儿通过<code>request</code>组件来获取请求参数。这会使得编写测试变得非常容易，因为你可以用假的测试请求数据创建一个模拟请求组件。</p>
+</blockquote>
+<p>当实现<a href="http://www.yiiframework.com/doc-2.0/guide-rest-quick-start.html">RESTful API</a>时，你可能经常需要获取通过PUT、PATCH或者其他<a href="http://www.yiiframework.com/doc-2.0/guide-runtime-requests.html#request-methods">请求方法</a>提交的参数。你可以通过调用<a href="http://www.yiiframework.com/doc-2.0/yii-web-request.html#getBodyParam()-detail">yii\web\Request::getBodyParam()</a>方法来获取这些参数。例如：</p>
+<div class="highlight"><pre><span></span><span class="x">$request = Yii::$app-&gt;request;</span>
+
+<span class="x">// 返回所有的参数</span>
+<span class="x">$params = $request-&gt;bodyParams;</span>
+
+<span class="x">// 返回名为&quot;id&quot;的参数</span>
+<span class="x">$param = $request-&gt;getBodyParam(&#39;id&#39;);</span>
+</pre></div>
+
+
+<blockquote>
+<p>信息：不同于通过<code>GET</code>提交的参数，通过<code>POST</code>、<code>PUT</code>、<code>PATCH</code>等方法提交的参数，是被发送到request body（即请求体）中的。当你通过上述方法访问这些参数时，<code>request</code>组件会解析这些参数。你可以通过配置<a href="http://www.yiiframework.com/doc-2.0/yii-web-request.html#$parsers-detail">yii\web\Request::parsers</a>属性来自定义解析这些参数的方式。</p>
+</blockquote>
+<h4>请求方法</h4>
+<p>你可以通过表达式<code>Yii::$app-&gt;request-&gt;method</code>获取当前的请求所使用的HTTP方法，同时还会提供一系列的布尔类型属性用于检查当前方法是否适用于某些特定类型。例如：</p>
+<div class="highlight"><pre><span></span><span class="x">$request = Yii::$app-&gt;request;</span>
+
+<span class="x">if ($request-&gt;isAjax) { /*请求是AJAX请求*/ }</span>
+<span class="x">if ($request-&gt;isGet) { /*请求方法是GET*/ }</span>
+<span class="x">if ($request-&gt;isPost) { /*请求方法是POST*/ }</span>
+<span class="x">if ($request-&gt;isPut) { /*请求方法是PUT*/ }</span>
+</pre></div>
+
+
+<h4>请求URL</h4>
+<p><code>request</code>组件提供了许多检查当前请求的URL的方法。</p>
+<p>假设请求的URL是<code>http://example.com/admin/index.php/product?id=100</code>，你可以像如下总结的一样获取URL的各个部分：</p>
+<ul>
+<li><a href="http://www.yiiframework.com/doc-2.0/yii-web-request.html#$url-detail">url</a>：返回<code>/admin/index.php/product?id=100</code>，这是不包含host信息部分的URL</li>
+<li><a href="http://www.yiiframework.com/doc-2.0/yii-web-request.html#$absoluteUrl-detail">absoluteUrl</a>：返回<code>http://example.com/admin/index.php/product?id=100</code>，这是整个的URL，包括host信息部分</li>
+<li><a href="http://www.yiiframework.com/doc-2.0/yii-web-request.html#$hostInfo-detail">hostInfo</a>：返回<code>http://example.com</code>，这是URL的host信息部分</li>
+<li><a href="http://www.yiiframework.com/doc-2.0/yii-web-request.html#$pathInfo-detail">pathInfo</a>：返回<code>/product</code>，这是在入口脚本之后、查询标记（即URL中的<code>?</code>号）之前的部分</li>
+<li><a href="http://www.yiiframework.com/doc-2.0/yii-web-request.html#$queryString-detail">queryString</a>：返回<code>id=100</code>，这是在查询标记之后的部分</li>
+<li><a href="http://www.yiiframework.com/doc-2.0/yii-web-request.html#$baseUrl-detail">baseUrl</a>：返回<code>/admin</code>，这是在host信息之后、入口脚本之前的那部分</li>
+<li><a href="http://www.yiiframework.com/doc-2.0/yii-web-request.html#$scriptUrl-detail">scriptUrl</a>：返回<code>/admin/index.php</code>，这是不包含路径信息和查询字符串的那部分URL</li>
+<li><a href="http://www.yiiframework.com/doc-2.0/yii-web-request.html#$serverName-detail">serverName</a>：返回<code>example.com</code>，这是URL中的host名</li>
+<li><a href="http://www.yiiframework.com/doc-2.0/yii-web-request.html#$serverPort-detail">serverPort</a>：返回80，这是Web server使用的端口号</li>
+</ul>
+<h4>HTTP请求头</h4>
+<p>你可以从<a href="http://www.yiiframework.com/doc-2.0/yii-web-request.html#$headers-detail">yii\web\Request::headeres</a>属性返回的<a href="http://www.yiiframework.com/doc-2.0/yii-web-headercollection.html">header collection - 请求头集合</a>中提取HTTP请求头信息。例如：</p>
+<div class="highlight"><pre><span></span><span class="x">// $headers是yii\web\HeaderCollection的一个对象</span>
+<span class="x">$headers = Yii::$app-&gt;request0&gt;headers;</span>
+
+<span class="x">// 返回接受的header值</span>
+<span class="x">$accept = $headers-&gt;get(&#39;Accept&#39;);</span>
+
+<span class="x">if ($headers-&gt;has(&#39;User-Agent&#39;)) { /*可以获取到User-Agent头*/ }</span>
+</pre></div>
+
+
+<p><code>request</code>组件也提供了快速访问一些常用的头文件的支持，例如：</p>
+<ul>
+<li><a href="http://www.yiiframework.com/doc-2.0/yii-web-request.html#$userAgent-detail">userAgent</a>：返回<code>User-Agent</code>的值</li>
+<li><a href="http://www.yiiframework.com/doc-2.0/yii-web-request.html#$contentType-detail">contentType</a>：返回<code>Content-Type</code>，用于指示请求体中数据的MIME类型</li>
+<li><a href="http://www.yiiframework.com/doc-2.0/yii-web-request.html#$acceptableContentTypes-detail">acceptableContentTypes</a>：返回用户可接受的语言，顺序根据用户的偏好设置顺序而定，第一个元素代表了最喜欢的语言</li>
+</ul>
+<p>如果你的应用支持多种语言，并且你想要以终端用户最喜欢的语言展示页面，你可以使用语言协商方法<a href="http://www.yiiframework.com/doc-2.0/yii-web-request.html#getPreferredLanguage()-detail">yii\web\Request::getPreferredLanguage()</a>，该方法获取你的应用支持的语言列表，将其与<a href="http://www.yiiframework.com/doc-2.0/yii-web-request.html#$acceptableLanguages-detail">acceptableLanguages</a>做对比，返回最适合的语言。</p>
+<blockquote>
+<p>提示：你也可以使用<a href="http://www.yiiframework.com/doc-2.0/yii-filters-contentnegotiator.html">ContentNegotiator</a>过滤器来动态判断应该在响应中使用哪种内容类型和语言。过滤器实现了上述属性和方法的内容协商。</p>
+</blockquote>
+<h4>客户端信息</h4>
+<p>你可以分别通过<a href="http://www.yiiframework.com/doc-2.0/yii-web-request.html#$userHost-detail">usereHost</a>和<a href="http://www.yiiframework.com/doc-2.0/yii-web-request.html#$userIP-detail">userIP</a>方法获取客户端机器的host名和IP地址。例如：</p>
+<div class="highlight"><pre><span></span><span class="x">$userHost = Yii:$app-&gt;request-&gt;userHost;</span>
+<span class="x">$userIP = Yii:$app-&gt;request-&gt;userIP;</span>
+</pre></div>
+<p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+
+</p>
+
+
+
+
+	<h4>Comments</h4>
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        var disqus_shortname = 'erictang'
+        var disqus_identifier = "yii2xue-xi-bi-ji-xi-lie-22-requestsqing-qiu-chu-li-zhi-qing-qiu.html";
+        var disqus_url = "http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-22-requestsqing-qiu-chu-li-zhi-qing-qiu.html";
+
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</article>
+        </div>
+        <!-- End Main Content -->
+
+        <!-- Sidebar -->
+        <aside class="large-3 columns">
+            <h5 class="sidebar-title">Site</h5>
+            <ul class="side-nav">
+                <li><a href="http://jeepxiaozi.github.io/archives.html">Archives</a>
+                    <li><a href="http://jeepxiaozi.github.io/tags.html">Tags</a>              </ul>
+
+            <h5 class="sidebar-title">Categories</h5>
+            <ul class="side-nav">
+                <li><a href="http://jeepxiaozi.github.io/category/android-develop.html">Android Develop</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/git.html">Git</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/ios-develop.html">iOS Develop</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/ji-zhu-sheng-huo.html">技术生活</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/markdownxie-zuo.html">Markdown写作</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/multicopter.html">MultiCopter</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/pages.html">Pages</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+                </li>
+                <li><a href="http://jeepxiaozi.github.io/category/server-develop.html">Server Develop</a>
+                </li>
+            </ul>
+             <h5 class="sidebar-title">Links</h5>
+            <ul class="side-nav">
+                <li><a href="http://www.linuxzen.com">cold's world</a>
+                </li>
+                <li><a href="http://www.icnws.com/">城南往事小站</a>
+                </li>
+                <li><a href="http://wellmakers.com">电子匠人</a>
+                </li>
+                <li><a href="http://androidcat.com/">AndroidCat</a>
+                </li>
+            </ul>
+             <h5 class="sidebar-title">Social</h5>
+            <ul class="side-nav social">
+                <li><a href="https://twitter.com/jeepxiaoxiaozi">twitter</a>
+                </li>
+                <li><a href="https://github.com/jeepxiaozi">GitHub</a>
+                </li>
+                <li><a href="http://weibo.com/u/1375170263/">Weibo</a>
+                </li>
+            </ul>
+
+        </aside>
+        <!-- End Sidebar -->
+
+    </div>
+    <!-- End Main Content and Sidebar -->
+
+
+    <!-- Footer -->
+    <footer class="row">
+        <div class="large-12 columns">
+            <hr />
+            <div class="row">
+                <div class="large-6 columns">
+                    <p><a href="http://jeepxiaozi.github.io">一把汤勺</a> &copy; EricTang 2016 
+ 
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1254253569'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s95.cnzz.com/z_stat.php%3Fid%3D1254253569%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));</script>
+                 </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

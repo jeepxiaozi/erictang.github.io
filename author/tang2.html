@@ -49,6 +49,37 @@
 
 
             <article>
+                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-12-application-structure-modelsying-yong-jie-gou-zhi-mo-xing.html"><h3 class="article-title">Yii2学习笔记系列12——Application Structure-Models（应用结构之模型）</h3></a>
+<h6 class="subheader" title="2016-04-17T16:50:19+08:00">日 17 四月 2016
+</h6>
+
+
+<h3>模型</h3>
+<p>模型是MVC设计模式中的一部分，是代表业务数据、规则和逻辑的对象。我们可以通过继承yii\base\Model或它的子类定义模型类，基类yii\base\Model支持许多实用的特性：</p>
+<ul>
+<li>属性（Attributes）：代表业务数据，可以像普通类属性或者数组一样被访问；</li>
+<li>属性标签（Attribute labels）：为属性指定的展示标签</li>
+<li>块赋值（Massive assignment）：支持一步内给多个属性同时赋值</li>
+<li>验证规则（Validation rules）：确保输入的数据都是通过了验证规则的</li>
+<li>数据导出（Data Exporting）：允许模型数据导出为自定义格式的数组</li>
+</ul>
+<p><code>Model</code>类也是更多高级模型例如Active Record活动记录类的基类，更多关于高级模型的详情请参考相关手册。</p>
+<p>注意：模型并不强制一定要继承yii\base\Model，但是由于很多组件支持yii\base\Model，所以最好使用它作为模型基类。</p>
+<h4>属性</h4>
+<p>模型通过属性来代表业务数据，每个属性都像是模型的公有可访问属性，yii\base\Modell::attributes()方法制定了模型类包含的属性 ...</p><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
+
+</p>
+
+
+
+<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-12-application-structure-modelsying-yong-jie-gou-zhi-mo-xing.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-12-application-structure-modelsying-yong-jie-gou-zhi-mo-xing.html">Read More</a>
+                <hr  class="gradient"/>
+            </article>
+
+        
+
+
+            <article>
                 <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-11-application-structure-controllersying-yong-jie-gou-zhi-kong-zhi-qi.html"><h3 class="article-title">Yii2学习笔记系列11——Application Structure-Controllers（应用结构之控制器）</h3></a>
 <h6 class="subheader" title="2016-04-15T14:37:52+08:00">五 15 四月 2016
 </h6>
@@ -361,32 +392,6 @@
 
 
 <p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-3-hello-world.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-3-hello-world.html">Read More</a>
-                <hr  class="gradient"/>
-            </article>
-
-        
-
-
-            <article>
-                <a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-2-yun-xing-ying-yong.html"><h3 class="article-title">Yii2学习笔记系列2——运行应用</h3></a>
-<h6 class="subheader" title="2016-04-05T01:05:49+08:00">二 05 四月 2016
-</h6>
-
-
-<h3>Yii2笔记系列2——运行应用</h3>
-<p>上一篇笔记中我们完成了Yii的简单介绍和安装，之后我们就有了一个可运行的Yii应用，通过<code>http://hostname/basic/web/index.php</code>或者<code>http://hostname/index.php</code>进行访问。</p>
-<h4>Yii应用包含的功能部分</h4>
-<p>安装完的完整的Yii的基本应用包含四项：</p>
-<ul>
-<li>主页，默认访问<code>http://hostname/</code>时显示的页面</li>
-<li>关于页，<code>http://hostname/web/index.php?r=site%2Fabout</code>，默认只有一行提示文字，你可以自主编辑<code>/path/to/basic/views/site/about.php</code>以展示自定义关于页面内容</li>
-<li>联系页，<code>http://hostname/web/index.php?r ...</code></li></ul><p class="subheader">Category: <a href="http://jeepxiaozi.github.io/category/php-develop.html">PHP Develop</a>
-
-</p>
-
-
-
-<p><a href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-2-yun-xing-ying-yong.html#disqus_thread">comments</a></p>                <a class="button radius secondary small right" href="http://jeepxiaozi.github.io/yii2xue-xi-bi-ji-xi-lie-2-yun-xing-ying-yong.html">Read More</a>
                 <hr  class="gradient"/>
             </article>
 
